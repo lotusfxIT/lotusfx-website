@@ -4,12 +4,18 @@ import type { NextRequest } from 'next/server'
 const COOKIE_NAME = 'NEXT_COUNTRY'
 const VALID_COUNTRIES = ['AU', 'NZ', 'FJ'] as const
 
-// Subdomain (or root) → country. Configure your production domain here.
+// Host → country. Production: lotusfx.com. Testing: stafflotusfx.com.
 const HOST_TO_COUNTRY: Record<string, (typeof VALID_COUNTRIES)[number]> = {
+  // Production
   'au.lotusfx.com': 'AU',
   'fj.lotusfx.com': 'FJ',
   'nz.lotusfx.com': 'NZ',
-  'lotusfx.com': 'NZ', // root = default NZ
+  'lotusfx.com': 'NZ',
+  // Testing (stafflotusfx.com)
+  'au.stafflotusfx.com': 'AU',
+  'fj.stafflotusfx.com': 'FJ',
+  'nz.stafflotusfx.com': 'NZ',
+  'stafflotusfx.com': 'NZ',
 }
 
 function getCountryFromHost(hostname: string): (typeof VALID_COUNTRIES)[number] | null {
