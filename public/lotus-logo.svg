@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Top petal -->
+  <path d="M50 10 Q55 15 58 25 Q60 35 55 42 Q50 45 45 42 Q40 35 42 25 Q45 15 50 10" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Top-right petal -->
+  <path d="M72 20 Q80 18 85 28 Q88 38 80 43 Q72 42 70 32 Q70 24 72 20" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Bottom-right petal -->
+  <path d="M75 65 Q83 70 85 80 Q83 90 72 92 Q65 88 65 78 Q66 70 75 65" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Bottom-left petal -->
+  <path d="M25 65 Q17 70 15 80 Q17 90 28 92 Q35 88 35 78 Q34 70 25 65" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Top-left petal -->
+  <path d="M28 20 Q20 18 15 28 Q12 38 20 43 Q28 42 30 32 Q30 24 28 20" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Center dot -->
+  <circle cx="50" cy="50" r="3" fill="#DC2626"/>
+</svg>
+

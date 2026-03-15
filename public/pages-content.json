@@ -1,0 +1,351 @@
+{
+  "home": {
+    "title": "Home",
+    "description": "Best Currency Exchange Rates",
+    "hero": {
+      "title": "Best Currency Exchange Rates in Australia",
+      "subtitle": "Get the best rates for international money transfers and currency exchange",
+      "badge": "Trusted by 560,000+ customers",
+      "cta_primary": "Get Started",
+      "cta_secondary": "Learn More"
+    },
+    "features": {
+      "title": "Why Choose LotusFX?",
+      "subtitle": "We offer the best rates and fastest service",
+      "items": [
+        {
+          "title": "Best Rates",
+          "description": "Competitive exchange rates updated in real-time"
+        },
+        {
+          "title": "Fast Service",
+          "description": "Quick processing and instant transfers"
+        },
+        {
+          "title": "Expert Support",
+          "description": "Round-the-clock customer support"
+        }
+      ]
+    }
+  },
+  "currency-exchange": {
+    "title": "Currency Exchange",
+    "description": "Exchange currencies at the best rates",
+    "hero": {
+      "title": "Currency Exchange Services",
+      "subtitle": "Get competitive rates for all major currencies"
+    }
+  },
+  "money-transfer": {
+    "title": "Money Transfer",
+    "description": "Fast and secure international money transfers",
+    "hero": {
+      "title": "International Money Transfer",
+      "subtitle": "Send money to 50+ countries safely and quickly"
+    }
+  },
+  "about": {
+    "title": "About LotusFX",
+    "description": "Learn about LotusFX - Your trusted partner for currency exchange and international money transfers across the Pacific",
+    "hero": {
+      "title": "About LotusFX",
+      "subtitle": "A Leading Foreign Exchange Company in the Pacific with 15+ Years of Excellence",
+      "badge": "Trusted by 14,000+ Customers Across AU, NZ & Fiji",
+      "cta_text": "Get Started Today",
+      "cta_link": "/currency-exchange"
+    },
+    "features": {
+      "title": "Why LotusFX Stands Out",
+      "subtitle": "We're more than just a currency exchange company - we're your trusted partner for international financial needs",
+      "items": [
+        {
+          "icon": "🇦🇺",
+          "title": "Australia - 30+ Branches",
+          "description": "Serving 6,000+ customers across major cities. Contact: aucustomercare@lotusfx.com. Fast eWire transfers to NZ & Fiji with zero fees."
+        },
+        {
+          "icon": "🇳🇿",
+          "title": "New Zealand - 18+ Branches",
+          "description": "Trusted by 5,000+ customers nationwide. Contact: nzcustomercare@lotusfx.com. Convenient access to all major cities and regions."
+        },
+        {
+          "icon": "🇫🇯",
+          "title": "Fiji - 16+ Branches",
+          "description": "Supporting 3,000+ customers across the islands. Contact: fjcustomercare@lotusfx.com. Your gateway to the Pacific region."
+        },
+        {
+          "icon": "💰",
+          "title": "Unbeatable Rates",
+          "description": "No Commission on currency exchange. Our rates are typically 2-3% better than banks. We provide the best exchange rates at the time of transaction, usually better than published bank rates."
+        },
+        {
+          "icon": "⚡",
+          "title": "Fast & Convenient",
+          "description": "Multiple ways to transact: Online, via our mobile app, or in-branch. Most transfers complete within 24 hours. Choose what works best for you."
+        },
+        {
+          "icon": "👥",
+          "title": "Expert Support",
+          "description": "Our experienced team handles everything from simple currency exchanges to complex commercial payments. We provide personalized service and expert advice for all your currency needs."
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Trusted by Thousands",
+      "subtitle": "4.9★ Rating from Our Valued Customers",
+      "items": [
+        {
+          "rating": 5,
+          "text": "LotusFX offers the best rates I've found. Their service is fast and reliable. Highly recommended!",
+          "name": "Mike AC Ledesma",
+          "role": "Regular Customer"
+        },
+        {
+          "rating": 5,
+          "text": "I've been using LotusFX for years. The rates are unbeatable and the staff is always helpful.",
+          "name": "Samantha Bainbridge",
+          "role": "Business Customer"
+        },
+        {
+          "rating": 5,
+          "text": "Excellent service and competitive rates. I trust LotusFX with all my international transfers.",
+          "name": "Nicole Baker",
+          "role": "Frequent Traveler"
+        }
+      ]
+    },
+    "faq": {
+      "title": "About LotusFX - FAQ",
+      "items": [
+        {
+          "question": "What services does LotusFX offer?",
+          "answer": "We offer comprehensive foreign exchange services including: Currency Exchange (18+ currencies), Money Transfer (eWire, Wire Transfer, MoneyGram), Online Money Transfer, Branch Money Transfer, Buy Currency, Cash Passport Platinum Mastercard, and specialized commercial payment solutions for importers and exporters."
+        },
+        {
+          "question": "Who can use LotusFX services?",
+          "answer": "We cater to everyone: tourists needing travel currency, local residents sending money abroad, immigrants supporting families overseas, and commercial customers (importers/exporters) making international payments. There are no limits on how much you can exchange or send."
+        },
+        {
+          "question": "Is LotusFX regulated and licensed?",
+          "answer": "Yes, LotusFX is fully licensed and regulated by financial authorities in Australia, New Zealand, and Fiji. We comply with all anti-money laundering laws and know-your-customer regulations. Your data is protected and stored securely with regular compliance audits."
+        },
+        {
+          "question": "How many branches does LotusFX have?",
+          "answer": "We have 60+ branches across the Pacific: 30+ in Australia, 18+ in New Zealand, and 16+ in Fiji. Plus, we have associates around the world. Find your nearest branch on our locations page."
+        },
+        {
+          "question": "What makes LotusFX different from banks?",
+          "answer": "As a niche market player specializing in foreign exchange, we offer: Better rates (2-3% better than banks), No commission on currency exchange, Lower fees, Faster processing, Expert staff trained in currency exchange, and personalized service. We better understand the dynamics of each market and have products tailored to your needs."
+        }
+      ]
+    }
+  },
+  "contact": {
+    "title": "Contact LotusFX",
+    "description": "Get in touch with LotusFX - We're here to help with your currency exchange and money transfer needs",
+    "hero": {
+      "title": "Contact LotusFX",
+      "subtitle": "We're Committed to Providing the Highest Quality Service. Reach Out Through Any Channel That Works Best for You.",
+      "badge": "Expert Support Available",
+      "cta_text": "Send Message",
+      "cta_link": "#contact-form"
+    },
+    "features": {
+      "title": "Multiple Ways to Reach Us",
+      "subtitle": "Choose the contact method that works best for you",
+      "items": [
+        {
+          "icon": "📞",
+          "title": "Phone Support",
+          "description": "Call us during business hours for immediate assistance. Our experienced team is ready to help with your currency exchange, money transfer, or any other questions."
+        },
+        {
+          "icon": "✉️",
+          "title": "Email Support",
+          "description": "Send us an email with your inquiry. We respond within 24 hours. Perfect for detailed questions, documentation, or complex transactions."
+        },
+        {
+          "icon": "🏢",
+          "title": "Visit a Branch",
+          "description": "Visit any of our 60+ branches across Australia, New Zealand, and Fiji for personalized face-to-face service. Our expert staff can assist with all your currency needs."
+        },
+        {
+          "icon": "💬",
+          "title": "Live Chat",
+          "description": "Chat with our support team in real-time during business hours. Get instant answers to your questions about rates, services, and transactions."
+        },
+        {
+          "icon": "📱",
+          "title": "Mobile App",
+          "description": "Download the Lotus app (iOS & Android) to contact support, track transfers, get instant quotes, and manage your transactions anytime, anywhere."
+        },
+        {
+          "icon": "🌐",
+          "title": "Social Media",
+          "description": "Follow us on Facebook and Instagram for updates, tips, exchange rate information, and to reach out with questions or feedback."
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Direct Contact Information",
+      "subtitle": "Reach us through these channels",
+      "items": [
+        {
+          "rating": 5,
+          "text": "🇳🇿 nzcustomercare@lotusfx.com | 🇦🇺 aucustomercare@lotusfx.com | 🇫🇯 fjcustomercare@lotusfx.com",
+          "name": "Email Support",
+          "role": "Response within 24 hours"
+        },
+        {
+          "rating": 5,
+          "text": "Visit any of our 60+ branches across Australia, New Zealand, and Fiji",
+          "name": "In-Branch Service",
+          "role": "Face-to-face assistance available"
+        },
+        {
+          "rating": 5,
+          "text": "Download from Apple App Store or Google Play",
+          "name": "Lotus Mobile App",
+          "role": "Available on iOS & Android"
+        }
+      ]
+    },
+    "faq": {
+      "title": "Contact & Support FAQ",
+      "items": [
+        {
+          "question": "What are your business hours?",
+          "answer": "We're open Monday to Friday, 9am-5pm in your local timezone. Some branches may have extended hours or weekend service. Check our locations page for specific branch hours and holiday schedules."
+        },
+        {
+          "question": "How quickly will you respond to my inquiry?",
+          "answer": "We aim to respond to all inquiries within 24 hours. Phone calls are answered immediately during business hours. For urgent matters, please call us directly or visit your nearest branch."
+        },
+        {
+          "question": "Can I schedule an appointment?",
+          "answer": "Yes, you can schedule an appointment at any of our branches. Call ahead, use our mobile app, or visit in person to book a time that works for you. This is especially helpful for large transactions or complex currency needs."
+        },
+        {
+          "question": "Do you offer corporate or business accounts?",
+          "answer": "Yes, we offer specialized services for businesses including importers, exporters, and commercial customers. We provide better rates for high-volume transfers and personalized support. Contact our business team at nzcustomercare@lotusfx.com for more information."
+        },
+        {
+          "question": "What documents do I need for transactions?",
+          "answer": "For most transactions, you'll need a valid government-issued ID (passport, national identity card, or driver's license plus bank card) and proof of address (utility bill or bank statement). For larger transactions, additional documentation may be required to comply with regulations."
+        },
+        {
+          "question": "Is my personal information secure?",
+          "answer": "Yes, your personal details are stored securely. We comply with all relevant data protection regulations and conduct regular security audits. Your information is protected from unauthorized access with the highest security standards."
+        }
+      ]
+    }
+  },
+  "rates": {
+    "title": "Exchange Rates",
+    "description": "Live exchange rates with no commission, no hidden fees, and rates 2-3% better than banks",
+    "hero": {
+      "title": "Live Exchange Rates",
+      "subtitle": "No Commission on Currency Exchange. Rates Updated Every Minute. Typically 2-3% Better Than Banks.",
+      "badge": "Competitive Rates Guaranteed",
+      "cta_text": "Check Rates Now",
+      "cta_link": "/currency-exchange"
+    },
+    "features": {
+      "title": "Why LotusFX Rates Are Unbeatable",
+      "subtitle": "We specialize in foreign exchange, so we can offer better rates than banks",
+      "items": [
+        {
+          "icon": "📊",
+          "title": "Real-Time Updates",
+          "description": "Our exchange rates are updated every minute during market hours to reflect current market conditions. You always get the most competitive rate available at the time of your transaction."
+        },
+        {
+          "icon": "💯",
+          "title": "No Commission, No Hidden Fees",
+          "description": "What you see is what you pay. We don't add hidden charges or surprise fees. Complete transparency in every transaction. Save money with commission-free currency exchange."
+        },
+        {
+          "icon": "🏦",
+          "title": "2-3% Better Than Banks",
+          "description": "Our rates are typically 2-3% better than major banks. As a niche market player specializing in foreign exchange, we can offer superior rates that banks simply can't match."
+        },
+        {
+          "icon": "🔒",
+          "title": "Rate Lock Guarantee",
+          "description": "Pre-order currency and lock in your rate for up to 30 days. Protect yourself from market fluctuations. Pay at the time of order to secure your rate."
+        },
+        {
+          "icon": "🌍",
+          "title": "18+ Currencies Available",
+          "description": "Buy currency in 18 different foreign currencies including USD, EUR, GBP, JPY, AUD, NZD, FJD, SGD, HKD, CAD, INR, CNY, THB, MYR, PHP, IDR, VND, and more."
+        },
+        {
+          "icon": "⚡",
+          "title": "Instant Quotes & eWire",
+          "description": "Get instant quotes online, via our mobile app, or in-branch. Use eWire for zero-fee transfers between AU, NZ & Fiji. No waiting, no delays, no hidden charges."
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Understanding Exchange Rates",
+      "subtitle": "Learn how our rates work and what they mean",
+      "items": [
+        {
+          "rating": 5,
+          "text": "The rate at which we buy foreign currency from you when you're exchanging foreign currency to local currency. For example, if you're returning from overseas with USD and want NZD.",
+          "name": "Buy Rate",
+          "role": "When you sell foreign currency"
+        },
+        {
+          "rating": 5,
+          "text": "The rate at which we sell foreign currency to you when you're buying foreign currency from us and paying in local currency. For example, if you need USD for travel and have NZD.",
+          "name": "Sell Rate",
+          "role": "When you buy foreign currency"
+        },
+        {
+          "rating": 5,
+          "text": "The rate between banks with no margin. Our rates are typically much closer to the mid-market rate than bank rates, meaning you get a better deal with LotusFX.",
+          "name": "Mid-Market Rate",
+          "role": "The true market rate"
+        }
+      ]
+    },
+    "faq": {
+      "title": "Exchange Rates FAQ",
+      "items": [
+        {
+          "question": "How often are your rates updated?",
+          "answer": "Our rates are updated every minute during market hours to reflect current market conditions. This ensures you always get the most competitive rate available. Website rates may differ from those displayed in-store and on the Lotus FX Online app due to real-time market movements."
+        },
+        {
+          "question": "Can I lock in a rate?",
+          "answer": "Yes! You can pre-order currency and lock in your rate for up to 30 days. Simply select the currency and amount you need, choose a pickup location, and pay at the time of order. This protects you from market fluctuations and gives you peace of mind."
+        },
+        {
+          "question": "Why do your rates differ from the mid-market rate?",
+          "answer": "The mid-market rate is the rate between banks with no margin. Our rates include a small margin to cover our operational costs, but this margin is much smaller than banks charge. This is why our rates are typically 2-3% better than bank rates."
+        },
+        {
+          "question": "Do you charge fees on top of the exchange rate?",
+          "answer": "No, we don't charge any fees on currency exchange. Our rate includes everything. What you see is what you pay - complete transparency. No commission, no hidden charges, no surprises."
+        },
+        {
+          "question": "How do I get the best rate?",
+          "answer": "Pre-order online or through our app to lock in the rate and avoid market fluctuations. Larger amounts may qualify for better rates. Contact our business team at nzcustomercare@lotusfx.com for volume discounts and commercial rates."
+        },
+        {
+          "question": "What currencies do you exchange?",
+          "answer": "We exchange 18+ currencies including USD, EUR, GBP, JPY, AUD, NZD, FJD, SGD, HKD, CAD, and many more. Check our website for the complete list of available currencies and current rates."
+        },
+        {
+          "question": "Are rates indicative only?",
+          "answer": "Yes, rates are indicative only as they are influenced by market conditions and subject to change. However, once you lock in a rate through pre-order, that rate is guaranteed for your transaction."
+        },
+        {
+          "question": "Is there a limit on how much I can exchange?",
+          "answer": "There are no limits on how much currency you can exchange or send. However, for larger transactions, we may require additional information to comply with financial regulations. Contact us for details on large transfers."
+        }
+      ]
+    }
+  }
+}

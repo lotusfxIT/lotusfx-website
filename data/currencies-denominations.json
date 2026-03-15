@@ -1,0 +1,47 @@
+{
+  "currencies": [
+    { "code": "USD", "name": "US Dollar", "symbol": "$", "notes": [1, 5, 10, 20, 50, 100], "coins": [0.01, 0.05, 0.10, 0.25, 0.50, 1] },
+    { "code": "AUD", "name": "Australian Dollar", "symbol": "$", "notes": [5, 10, 20, 50, 100], "coins": [0.05, 0.10, 0.20, 0.50, 1, 2] },
+    { "code": "NZD", "name": "New Zealand Dollar", "symbol": "$", "notes": [5, 10, 20, 50, 100], "coins": [0.10, 0.20, 0.50, 1, 2] },
+    { "code": "FJD", "name": "Fijian Dollar", "symbol": "$", "notes": [5, 10, 20, 50, 100], "coins": [0.05, 0.10, 0.20, 0.50, 1, 2] },
+    { "code": "AED", "name": "UAE Dirham", "symbol": "د.إ", "notes": [5, 10, 20, 50, 100, 200, 500, 1000] },
+    { "code": "BDT", "name": "Bangladeshi Taka", "symbol": "৳", "notes": [10, 20, 50, 100, 200, 500, 1000] },
+    { "code": "CAD", "name": "Canadian Dollar", "symbol": "$", "notes": [5, 10, 20, 50, 100] },
+    { "code": "CHF", "name": "Swiss Franc", "symbol": "CHF", "notes": [10, 20, 50, 100, 200, 1000] },
+    { "code": "CNY", "name": "Chinese Yuan", "symbol": "¥", "notes": [1, 5, 10, 20, 50, 100] },
+    { "code": "EUR", "name": "Euro", "symbol": "€", "notes": [5, 10, 20, 50, 100, 200] },
+    { "code": "GBP", "name": "British Pound", "symbol": "£", "notes": [5, 10, 20, 50] },
+    { "code": "HKD", "name": "Hong Kong Dollar", "symbol": "$", "notes": [10, 20, 50, 100, 500, 1000] },
+    { "code": "IDR", "name": "Indonesian Rupiah", "symbol": "Rp", "notes": [1000, 2000, 5000, 10000, 20000, 50000, 100000] },
+    { "code": "INR", "name": "Indian Rupee", "symbol": "₹", "notes": [10, 20, 50, 100, 200, 500] },
+    { "code": "JPY", "name": "Japanese Yen", "symbol": "¥", "notes": [1000, 2000, 5000, 10000] },
+    { "code": "KRW", "name": "South Korean Won", "symbol": "₩", "notes": [1000, 5000, 10000, 50000] },
+    { "code": "LKR", "name": "Sri Lankan Rupee", "symbol": "Rs", "notes": [20, 50, 100, 500, 1000, 5000] },
+    { "code": "MXN", "name": "Mexican Peso", "symbol": "$", "notes": [20, 50, 100, 200, 500, 1000] },
+    { "code": "MYR", "name": "Malaysian Ringgit", "symbol": "RM", "notes": [1, 5, 10, 20, 50, 100] },
+    { "code": "PGK", "name": "Papua New Guinean Kina", "symbol": "K", "notes": [2, 5, 10, 20, 50, 100] },
+    { "code": "PHP", "name": "Philippine Peso", "symbol": "₱", "notes": [20, 50, 100, 200, 500, 1000] },
+    { "code": "PKR", "name": "Pakistani Rupee", "symbol": "₨", "notes": [10, 20, 50, 100, 500, 1000] },
+    { "code": "SAR", "name": "Saudi Riyal", "symbol": "﷼", "notes": [5, 10, 50, 100, 500] },
+    { "code": "SGD", "name": "Singapore Dollar", "symbol": "$", "notes": [2, 5, 10, 50, 100, 1000] },
+    { "code": "THB", "name": "Thai Baht", "symbol": "฿", "notes": [20, 50, 100, 500, 1000] },
+    { "code": "TOP", "name": "Tongan Paʻanga", "symbol": "T$", "notes": [2, 5, 10, 20, 50] },
+    { "code": "TRY", "name": "Turkish Lira", "symbol": "₺", "notes": [5, 10, 20, 50, 100, 200] },
+    { "code": "TWD", "name": "New Taiwan Dollar", "symbol": "NT$", "notes": [100, 200, 500, 1000, 2000] },
+    { "code": "VND", "name": "Vietnamese Dong", "symbol": "₫", "notes": [10000, 20000, 50000, 100000, 200000, 500000] },
+    { "code": "VUV", "name": "Vanuatu Vatu", "symbol": "VT", "notes": [200, 500, 1000, 2000, 5000, 10000] },
+    { "code": "WST", "name": "Samoan Tala", "symbol": "WS$", "notes": [2, 5, 10, 20, 50, 100] },
+    { "code": "XPF", "name": "CFP Franc", "symbol": "₣", "notes": [500, 1000, 5000, 10000] },
+    {
+      "code": "ZAR",
+      "name": "South African Rand",
+      "symbol": "R",
+      "notes": [10, 20, 50, 100, 200],
+      "byCountry": {
+        "AU": { "notes": [10, 20] },
+        "NZ": { "notes": [10, 20, 50, 100, 200] },
+        "FJ": { "notes": [10, 20, 50] }
+      }
+    }
+  ]
+}

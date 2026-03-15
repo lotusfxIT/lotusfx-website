@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extract Google Tokens</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .token-box {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .copy-btn {
+            background: #2196F3;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        .copy-btn:hover {
+            background: #0b7dda;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 Extract Google OAuth Tokens</h1>
+        <p>This tool extracts your Google OAuth tokens from localStorage.</p>
+        
+        <div class="instructions">
+            <strong>Instructions:</strong>
+            <ol>
+                <li>Make sure you've authenticated at <code>/locations</code> page</li>
+                <li>Click "Extract Tokens" below</li>
+                <li>Copy the tokens to your <code>.env.local</code> file</li>
+                <li>Restart your dev server</li>
+            </ol>
+        </div>
+
+        <button onclick="extractTokens()">Extract Tokens</button>
+        <button onclick="clearTokens()" style="background: #f44336;">Clear Tokens</button>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        function extractTokens() {
+            const accessToken = localStorage.getItem('google_access_token')
+            const refreshToken = localStorage.getItem('google_refresh_token')
+            const expiry = localStorage.getItem('google_token_expiry')
+
+            const resultsDiv = document.getElementById('results')
+            
+            if (!accessToken || !refreshToken) {
+                resultsDiv.innerHTML = `
+                    <div style="background: #ffebee; padding: 15px; border-radius: 4px; color: #c62828;">
+                        <strong>⚠️ No tokens found!</strong><br>
+                        Please authenticate at <a href="/locations" target="_blank">/locations</a> first.
+                    </div>
+                `
+                return
+            }
+
+            // Calculate expiry if needed
+            let expiryValue = expiry
+            if (!expiryValue) {
+                // Default to 1 hour from now
+                expiryValue = Date.now() + (3600 * 1000)
+            }
+
+            const envContent = `# Google OAuth (should already be set)
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_client_id_here
+GOOGLE_CLIENT_SECRET=your_client_secret_here
+
+# Server-side tokens (NEW - add these)
+GOOGLE_ACCESS_TOKEN=${accessToken}
+GOOGLE_REFRESH_TOKEN=${refreshToken}
+GOOGLE_TOKEN_EXPIRY=${expiryValue}
+
+# Site URL
+NEXT_PUBLIC_SITE_URL=http://localhost:8004`
+
+            resultsDiv.innerHTML = `
+                <h2>✅ Tokens Found!</h2>
+                
+                <div class="token-box">
+                    <strong>Access Token:</strong>
+                    <div style="word-break: break-all; margin-top: 5px;">${accessToken.substring(0, 50)}...</div>
+                </div>
+
+                <div class="token-box">
+                    <strong>Refresh Token:</strong>
+                    <div style="word-break: break-all; margin-top: 5px;">${refreshToken.substring(0, 50)}...</div>
+                </div>
+
+                <div class="token-box">
+                    <strong>Expiry:</strong> ${new Date(parseInt(expiryValue)).toLocaleString()}
+                </div>
+
+                <h3 style="margin-top: 30px;">📝 Add this to your <code>.env.local</code> file:</h3>
+                <div style="position: relative;">
+                    <button class="copy-btn" onclick="copyToClipboard()" style="position: absolute; top: 10px; right: 10px;">Copy All</button>
+                    <pre id="envContent">${envContent}</pre>
+                </div>
+
+                <div class="instructions" style="margin-top: 20px;">
+                    <strong>Next Steps:</strong>
+                    <ol>
+                        <li>Create <code>.env.local</code> file in your "New Website" folder</li>
+                        <li>Paste the content above (replace your_client_id_here with actual values)</li>
+                        <li>Restart your dev server: <code>npm run dev</code></li>
+                        <li>Test again at <a href="/test-locations" target="_blank">/test-locations</a></li>
+                    </ol>
+                </div>
+            `
+        }
+
+        function copyToClipboard() {
+            const content = document.getElementById('envContent').textContent
+            navigator.clipboard.writeText(content).then(() => {
+                alert('✅ Copied to clipboard!')
+            })
+        }
+
+        function clearTokens() {
+            if (confirm('Are you sure you want to clear all tokens from localStorage?')) {
+                localStorage.removeItem('google_access_token')
+                localStorage.removeItem('google_refresh_token')
+                localStorage.removeItem('google_token_expiry')
+                document.getElementById('results').innerHTML = `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 4px; color: #856404;">
+                        ✅ Tokens cleared from localStorage
+                    </div>
+                `
+            }
+        }
+
+        // Auto-extract on load if tokens exist
+        window.onload = () => {
+            const accessToken = localStorage.getItem('google_access_token')
+            if (accessToken) {
+                extractTokens()
+            }
+        }
+    </script>
+</body>
+</html>
