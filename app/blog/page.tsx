@@ -40,7 +40,7 @@ export default function BlogPage() {
     fetchPosts()
   }, [])
 
-  const categories = ['all', ...new Set(posts.map(p => p.category))]
+  const categories = ['all', ...Array.from(new Set(posts.map(p => p.category)))]
   const filteredPosts = selectedCategory === 'all' 
     ? posts 
     : posts.filter(p => p.category === selectedCategory)

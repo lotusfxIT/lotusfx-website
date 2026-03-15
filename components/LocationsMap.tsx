@@ -19,7 +19,7 @@ type Props = {
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ''
 
-function getInitialView(country: 'AU' | 'NZ' | 'FJ') {
+function getInitialView(country: 'AU' | 'NZ' | 'FJ'): { center: [number, number]; zoom: number } {
   if (country === 'NZ') return { center: [174.7633, -41.0], zoom: 4.2 }
   if (country === 'FJ') return { center: [178.0, -17.8], zoom: 5 }
   return { center: [134.0, -25.0], zoom: 3.3 } // AU default

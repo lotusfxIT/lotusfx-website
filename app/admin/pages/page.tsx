@@ -61,6 +61,7 @@ export default function PagesEditor() {
   }
 
   const handleSave = async () => {
+    if (editingSection == null) return
     setSaving(true)
     try {
       const token = localStorage.getItem('adminToken')

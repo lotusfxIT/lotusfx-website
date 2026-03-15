@@ -6,6 +6,7 @@ import { ReactNode } from 'react'
 interface MotionWrapperProps {
   children: ReactNode
   initial?: any
+  animate?: any
   whileInView?: any
   transition?: any
   viewport?: any
@@ -15,6 +16,7 @@ interface MotionWrapperProps {
 export default function MotionWrapper({
   children,
   initial,
+  animate,
   whileInView,
   transition,
   viewport,
@@ -23,6 +25,7 @@ export default function MotionWrapper({
   return (
     <motion.div
       initial={initial}
+      animate={animate}
       whileInView={whileInView}
       transition={transition}
       viewport={viewport}
