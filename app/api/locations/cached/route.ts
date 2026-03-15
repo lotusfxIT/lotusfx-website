@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getValidServerAccessToken } from '@/lib/google-auth-server'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Cached Locations API Endpoint
  *
