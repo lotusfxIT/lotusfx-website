@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// For development: Allow self-signed or invalid SSL certificates
-// WARNING: This is insecure and should ONLY be used in development!
-// In production, the API server should have a valid SSL certificate
-// Set ALLOW_INSECURE_SSL=true in .env.local for development
-if (process.env.NODE_ENV === 'development' && process.env.ALLOW_INSECURE_SSL === 'true') {
-  // Node.js fetch uses undici, which respects NODE_TLS_REJECT_UNAUTHORIZED
+// When the backend (au/nz/fj.app.lotusfx.com) has an invalid or self-signed SSL cert,
+// Node on Vercel cannot verify it. Set ALLOW_INSECURE_SSL=true to skip verification
+// for outbound requests from this route only. Prefer fixing the backend certificate.
+if (process.env.ALLOW_INSECURE_SSL === 'true') {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-  console.warn('[Exchange Rate API] WARNING: SSL certificate validation disabled for development!')
+  if (process.env.NODE_ENV === 'production') {
+    console.warn('[Exchange Rate API] SSL verification disabled (ALLOW_INSECURE_SSL). Fix backend certificate when possible.')
+  }
 }
 
 /**
