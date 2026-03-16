@@ -132,7 +132,7 @@ export default function GoogleMyBusiness() {
                     {items.map((loc) => (
                       <li key={loc.id}>
                         <Link
-                          href={`/locations/${loc.id}`}
+                          href={`/locations/${loc.slug}`}
                           onMouseEnter={() => setSelectedLocationId(loc.id)}
                           onFocus={() => setSelectedLocationId(loc.id)}
                           className="inline-flex items-center gap-2 py-1.5 text-sm md:text-base text-primary-700 hover:text-primary-900 font-semibold"

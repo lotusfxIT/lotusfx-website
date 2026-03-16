@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { STATIC_LOCATIONS } from '@/data/locations-static'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:8004'
@@ -55,27 +56,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  // Dynamic location pages
-  const locationPages: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/locations/104313690701494015090`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/locations/111995429804675309959`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/locations/101281606270379913163`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-  ]
+  // Dynamic location pages (clean slug URLs)
+  const locationPages: MetadataRoute.Sitemap = STATIC_LOCATIONS.map((loc) => ({
+    url: `${baseUrl}/locations/${loc.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }))
 
   // Dynamic blog pages
   const blogPages: MetadataRoute.Sitemap = [

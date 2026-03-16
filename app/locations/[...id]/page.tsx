@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -12,6 +12,7 @@ import {
   StarIcon,
 } from '@heroicons/react/24/outline'
 import { motion } from 'framer-motion'
+import { useCountry } from '@/context/CountryContext'
 import { STATIC_LOCATIONS } from '@/data/locations-static'
 
 interface Location {
@@ -52,9 +53,20 @@ const ENABLE_BRANCH_PHOTOS = false
 
 export default function LocationPage() {
   const params = useParams()
+  const router = useRouter()
+  const { selectedCountry } = useCountry()
   const rawId = params.id as string | string[]
-  // Handle both single segment and array (catch-all) routes
-  const locationId = Array.isArray(rawId) ? rawId.join('/') : rawId
+  // Handle both single segment (slug) and array (catch-all, old full id) routes
+  const pathSegment = Array.isArray(rawId) ? rawId.join('/') : rawId
+  // If it looks like a slug (no slash), resolve to full Google location id
+  const locationId =
+    pathSegment.includes('/') ?
+      pathSegment
+    : (() => {
+        const bySlug = STATIC_LOCATIONS.filter((loc) => loc.slug === pathSegment)
+        const byCountry = bySlug.find((loc) => loc.country === selectedCountry)
+        return (byCountry ?? bySlug[0])?.id ?? pathSegment
+      })()
   const [location, setLocation] = useState<Location | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -65,6 +77,14 @@ export default function LocationPage() {
   const [reviewsLoadedOnce, setReviewsLoadedOnce] = useState(false)
   const [averageRating, setAverageRating] = useState<number | null>(null)
   const [totalReviews, setTotalReviews] = useState<number | null>(null)
+
+  // Redirect old long URLs to clean slug URLs
+  useEffect(() => {
+    if (pathSegment.includes('/')) {
+      const loc = STATIC_LOCATIONS.find((l) => l.id === pathSegment)
+      if (loc) router.replace(`/locations/${loc.slug}`)
+    }
+  }, [pathSegment, router])
 
   useEffect(() => {
     const fetchLocation = async () => {

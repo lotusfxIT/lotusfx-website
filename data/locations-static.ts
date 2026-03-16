@@ -1,5 +1,6 @@
 export type StaticLocation = {
   id: string // Google location resource name: accounts/{accountId}/locations/{locationId}
+  slug: string // URL-friendly id, e.g. parramatta, mt-druitt
   name: string
   country: 'AU' | 'NZ' | 'FJ'
   region: string // state / region heading
@@ -8,7 +9,16 @@ export type StaticLocation = {
   highlight?: string
 }
 
-export const STATIC_LOCATIONS: StaticLocation[] = [
+function slugFromName(name: string): string {
+  return name
+    .replace(/^Lotus Foreign Exchange - /i, '')
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/\./g, '')
+    .replace(/[^a-z0-9-]/g, '')
+}
+
+const RAW_LOCATIONS: Omit<StaticLocation, 'slug'>[] = [
   // Australia - New South Wales
   {
     id: 'accounts/104313690701494015090/locations/12518939540817423491',
@@ -451,4 +461,16 @@ export const STATIC_LOCATIONS: StaticLocation[] = [
     lng: 0,
   },
 ]
+
+const seen = new Set<string>()
+export const STATIC_LOCATIONS: StaticLocation[] = RAW_LOCATIONS.map((loc) => {
+  let slug = slugFromName(loc.name)
+  if (seen.has(slug)) {
+    let i = 2
+    while (seen.has(`${slug}-${i}`)) i++
+    slug = `${slug}-${i}`
+  }
+  seen.add(slug)
+  return { ...loc, slug }
+})
 
