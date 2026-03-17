@@ -103,12 +103,46 @@ export default function AboutPage() {
               <h3 className="text-2xl font-bold mb-6">Our Milestones</h3>
               <div className="space-y-6">
                 {[
-                  { year: '2002', event: 'LotusFX founded with first branch in Australia' },
-                  { year: '2012', event: 'Expanded to New Zealand with multiple branches' },
-                  { year: '2015', event: 'Launched online tools for rates and branch information' },
-                  { year: '2018', event: 'Opened operations in Fiji, serving the Pacific' },
-                  { year: '2020', event: 'Reached $1 billion in total transfers' },
-                  { year: '2024', event: `${STATS.branches.total} branches serving ${STATS.customers.total} customers` },
+                  {
+                    year: '2002',
+                    event:
+                      'Lotus FX was established in New Zealand, opening its first branch in St Lukes, Auckland. In the same year, the business expanded into Fiji and became a Super Agent for MoneyGram, laying the foundation for its growth across the South Pacific.',
+                  },
+                  {
+                    year: '2004',
+                    event:
+                      'Opened the first Lotus FX branch in Australia, marking an important step in the company’s regional expansion.',
+                  },
+                  {
+                    year: '2014',
+                    event:
+                      'Launched the 4D system and mobile app, enhancing operational efficiency and customer convenience.',
+                  },
+                  {
+                    year: '2020',
+                    event:
+                      'Launched the Lotus FX website across New Zealand, Australia, and Fiji, strengthening the Group’s digital presence.',
+                  },
+                  {
+                    year: '2023',
+                    event:
+                      'Introduced onboard currency exchange services for cruise ship passengers in Auckland, offering greater convenience to international visitors.',
+                  },
+                  {
+                    year: '2024',
+                    event:
+                      'Became a title sponsor of Auckland Rugby League, supporting community activities and championing the spirit of sport.',
+                  },
+                  {
+                    year: '2025',
+                    event:
+                      'Began working with Mastercard and Western Union, further strengthening payment and remittance capabilities while reaching a major branch growth milestone across New Zealand, Australia, and Fiji.',
+                  },
+                  {
+                    year: '2026',
+                    event:
+                      'Surpassed 30,000 positive customer reviews across the Group, reflecting strong customer trust and service excellence.',
+                  },
                 ].map((milestone) => (
                   <div key={milestone.year} className="flex gap-4">
                     <div className="flex-shrink-0 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center font-bold">

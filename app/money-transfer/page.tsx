@@ -14,8 +14,9 @@ import {
 import { STATS } from '@/config/stats'
 
 export const metadata: Metadata = {
-  title: 'Money Transfer - Fast & Secure International Transfers | LotusFX',
-  description: 'Send money internationally with LotusFX. Fast, secure, and affordable money transfers to 200+ countries. No hidden fees, competitive rates.',
+  title: 'Money Transfers in Australia, New Zealand & Fiji | LotusFX',
+  description:
+    'Send money internationally with LotusFX from Australia, New Zealand and Fiji. Competitive rates, clear fees and fast processing to over 200 countries.',
   keywords: [
     'money transfer',
     'international transfer',
@@ -24,11 +25,14 @@ export const metadata: Metadata = {
     'remittance',
     'international payments',
     'money transfer Australia',
-    'LotusFX'
+    'money transfer New Zealand',
+    'money transfer Fiji',
+    'LotusFX',
   ],
   openGraph: {
-    title: 'Money Transfer - Fast & Secure International Transfers | LotusFX',
-    description: 'Send money internationally with LotusFX. Fast, secure, and affordable money transfers to 200+ countries.',
+    title: 'Money Transfers in Australia, New Zealand & Fiji | LotusFX',
+    description:
+      'Send money internationally with LotusFX from Australia, New Zealand and Fiji. Competitive rates, clear fees and fast processing to over 200 countries.',
     images: ['/images/money-transfer-og.jpg'],
   },
 }
