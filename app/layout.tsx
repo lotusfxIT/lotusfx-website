@@ -5,6 +5,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Analytics from '@/components/Analytics'
 import { CountryProvider } from '@/context/CountryContext'
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -113,6 +114,7 @@ export default function RootLayout({
       <body className="antialiased bg-white text-gray-900">
         <CountryProvider>
           <Analytics />
+          <VercelAnalytics />
           <Header />
           <main className="min-h-screen">
             {children}
