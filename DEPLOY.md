@@ -75,7 +75,55 @@ The app’s middleware reads the hostname and sets a cookie so the site shows th
 
 ---
 
-## 4. Audit URL
+## 4. Testing with stafflotusfx.com (before going live on lotusfx.com)
+
+Use **stafflotusfx.com** and subdomains first. Same app; middleware already maps them.
+
+### 4a. Vercel – environment variable
+
+1. Vercel → your project → **Settings** → **Environment Variables**.
+2. Add or edit:
+   - **Key:** `NEXT_PUBLIC_SITE_URL`
+   - **Value:** `https://stafflotusfx.com`
+   - **Environments:** Production (and Preview if you use it).
+3. Save, then **Deployments** → … on latest → **Redeploy**.
+
+### 4b. Vercel – domains
+
+In **Settings** → **Domains**, add:
+
+- `stafflotusfx.com`
+- `au.stafflotusfx.com`
+- `nz.stafflotusfx.com`
+- `fj.stafflotusfx.com`
+
+Add the DNS records Vercel shows at your DNS provider for **stafflotusfx.com** (CNAME for `au`, `nz`, `fj`, and A or CNAME for root).
+
+### 4c. Google OAuth – authorized origins and redirect URIs
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/) → your project → **APIs & Services** → **Credentials**.
+2. Open your **OAuth 2.0 Client ID** (Web application).
+3. Under **Authorized JavaScript origins**, add (one per line or paste all):
+   ```
+   https://stafflotusfx.com
+   https://au.stafflotusfx.com
+   https://nz.stafflotusfx.com
+   https://fj.stafflotusfx.com
+   ```
+4. Under **Authorized redirect URIs**, add:
+   ```
+   https://stafflotusfx.com/auth/callback
+   https://au.stafflotusfx.com/auth/callback
+   https://nz.stafflotusfx.com/auth/callback
+   https://fj.stafflotusfx.com/auth/callback
+   ```
+5. Click **Save**.
+
+When you switch to production, add the same for `lotusfx.com`, `au.lotusfx.com`, `nz.lotusfx.com`, `fj.lotusfx.com` (and keep or remove stafflotusfx.com as you prefer).
+
+---
+
+## 5. Audit URL
 
 After deploy, share your live URL for audit, e.g.:
 

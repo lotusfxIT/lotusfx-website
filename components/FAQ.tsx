@@ -11,7 +11,7 @@ const faqs = [
   },
   {
     question: 'How do I exchange currency with LotusFX?',
-    answer: 'You can exchange currency with us in three ways: 1) Visit any of our 50+ branches across Australia, New Zealand, and Fiji, 2) Use our online platform to order currency and pick it up at a branch, or 3) Use our mobile app for instant quotes and branch booking. All methods offer the same competitive rates.',
+    answer: 'You can exchange currency with us in three ways: 1) Visit any of our 54 branches across Australia, New Zealand, and Fiji, 2) Use our online platform to order currency and pick it up at a branch, or 3) Use our mobile app for instant quotes and branch booking. All methods offer the same competitive rates.',
   },
   {
     question: 'Is it safe to exchange currency with LotusFX?',

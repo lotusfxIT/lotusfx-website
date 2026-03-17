@@ -21,15 +21,16 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: 'LotusFX - Best Currency Exchange Rates | Money Transfer Australia',
+    default: 'LotusFX | Currency Exchange & Money Transfers in Australia, New Zealand & Fiji',
     template: '%s | LotusFX'
   },
-  description: 'Get the best currency exchange rates in Australia, New Zealand & Fiji. Fast, secure money transfers with 4.9★ customer rating. 50+ branches across AU/NZ & Fiji.',
+  description:
+    'Exchange currency and send money internationally with LotusFX. Compare rates online and visit branches across Australia, New Zealand and Fiji.',
   keywords: [
     'currency exchange',
     'money transfer',
     'foreign exchange',
-    'best exchange rates',
+    'exchange rates',
     'currency converter',
     'travel money',
     'AUD to USD',
@@ -59,8 +60,9 @@ export const metadata: Metadata = {
     locale: 'en_AU',
     url: 'https://lotusfx.com',
     siteName: 'LotusFX',
-    title: 'LotusFX - Best Currency Exchange Rates | Money Transfer Australia',
-    description: 'Get the best currency exchange rates in Australia, New Zealand & Fiji. Fast, secure money transfers with 4.9★ customer rating. 50+ branches across AU/NZ & Fiji.',
+    title: 'LotusFX | Currency Exchange & Money Transfers in Australia, New Zealand & Fiji',
+    description:
+      'Exchange currency and send money internationally with LotusFX. Compare rates online and visit branches across Australia, New Zealand and Fiji.',
     images: [
       {
         url: '/images/og-image.jpg',
@@ -72,8 +74,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'LotusFX - Best Currency Exchange Rates | Money Transfer Australia',
-    description: 'Get the best currency exchange rates in Australia, New Zealand & Fiji. Fast, secure money transfers with 4.9★ customer rating.',
+    title: 'LotusFX | Currency Exchange & Money Transfers in Australia, New Zealand & Fiji',
+    description:
+      'Exchange currency and send money internationally with LotusFX. Compare rates online and visit branches across Australia, New Zealand and Fiji.',
     images: ['/images/og-image.jpg'],
   },
   robots: {
@@ -86,9 +89,6 @@ export const metadata: Metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
-  },
-  verification: {
-    google: 'your-google-verification-code',
   },
 }
 

@@ -10,9 +10,9 @@ const DEFAULT_PAGES = {
     title: 'Home',
     description: 'Best Currency Exchange Rates',
     hero: {
-      title: 'Best Currency Exchange Rates in Australia',
-      subtitle: 'Get the best rates for international money transfers and currency exchange',
-      badge: 'Trusted by 6,000+ customers',
+      title: 'Currency Exchange & Money Transfers in Australia, New Zealand & Fiji',
+      subtitle: 'Exchange currency and send money internationally with competitive rates and no hidden fees',
+      badge: 'Trusted by 560,000+ customers',
       cta_primary: 'Get Started',
       cta_secondary: 'Learn More',
     },

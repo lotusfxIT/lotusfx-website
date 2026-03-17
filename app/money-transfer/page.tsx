@@ -51,7 +51,7 @@ const features = [
   {
     icon: CurrencyDollarIcon,
     title: 'Competitive Rates',
-    description: 'Get the best exchange rates with transparent pricing and no hidden fees.',
+    description: 'Get competitive exchange rates with transparent pricing and no hidden fees.',
     color: 'text-accent-600',
     bgColor: 'bg-accent-50',
   },

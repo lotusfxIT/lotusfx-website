@@ -8,8 +8,9 @@ import currenciesDenominations from '@/data/currencies-denominations.json'
 import { BuildingOffice2Icon, GlobeAltIcon, DevicePhoneMobileIcon } from '@heroicons/react/24/outline'
 
 export const metadata: Metadata = {
-  title: 'Currency Exchange - Best Rates in Australia | LotusFX',
-  description: 'Get the best currency exchange rates in Australia, New Zealand & Fiji. No hidden fees, fast processing, 50+ branches. Trusted by 6,000+ customers.',
+  title: 'Currency Exchange in Australia, New Zealand & Fiji | LotusFX',
+  description:
+    'Exchange currency with LotusFX in Australia, New Zealand and Fiji. Competitive rates, no hidden fees, and branches across all three countries.',
   keywords: [
     'currency exchange',
     'foreign exchange',
@@ -19,12 +20,13 @@ export const metadata: Metadata = {
     'AUD to USD',
     'AUD to EUR',
     'currency exchange near me',
-    'best exchange rates',
+    'exchange rates',
     'LotusFX'
   ],
   openGraph: {
-    title: 'Currency Exchange - Best Rates in Australia | LotusFX',
-    description: 'Get the best currency exchange rates in Australia, New Zealand & Fiji. No hidden fees, fast processing, 50+ branches.',
+    title: 'Currency Exchange in Australia, New Zealand & Fiji | LotusFX',
+    description:
+      'Exchange currency with LotusFX in Australia, New Zealand and Fiji. Competitive rates, no hidden fees, and branches across all three countries.',
     images: ['/images/currency-exchange-og.jpg'],
   },
 }
@@ -43,12 +45,12 @@ export default function CurrencyExchangePage() {
                 Currency Exchange
               </p>
               <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                Best Currency Exchange Rates in Australia
+                Currency Exchange in Australia, New Zealand &amp; Fiji
               </h1>
               <p className="text-lg text-gray-600 mb-10 max-w-xl">
-                Get the most competitive exchange rates with no hidden fees. 
-                Exchange 25+ currencies at our 50+ branches across Australia, 
-                New Zealand, and Fiji.
+                Get competitive exchange rates with no hidden fees. 
+                Exchange 25+ currencies at our 54 branches across Australia, 
+                New Zealand and Fiji.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button className="btn-primary text-lg px-8 py-4">

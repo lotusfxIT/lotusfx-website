@@ -12,7 +12,7 @@ const statsTemplate = [
   { label: 'Customer Rating', value: '4.9★', subtext: '{customers}' },
   { label: 'Branches', value: '{branchValue}', subtext: 'Branches in {countryName}' },
   { label: 'Currencies', value: '25+', subtext: 'Currencies available' },
-  { label: 'Years', value: '15+', subtext: 'Experience' },
+  { label: 'Years', value: '{years}', subtext: 'Experience' },
 ]
 
 const features = [
@@ -59,7 +59,8 @@ export default function Hero() {
     value: stat.value
       .replace('{branches}', content?.branches || STATS.branches.total)
       .replace('{branchValue}', currentBranchValue)
-      .replace('{customers}', content?.customers || STATS.customers.total),
+      .replace('{customers}', content?.customers || STATS.customers.total)
+      .replace('{years}', STATS.yearsOfExcellence),
     subtext: stat.subtext
       .replace('{customers}', 'satisfied customers')
       .replace('{countryName}', currentCountryName),
@@ -168,7 +169,9 @@ export default function Hero() {
                         className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium border border-white/30"
                       >
                         <StarIcon className="w-4 h-4" />
-                        <span>Trusted by {content?.customers || '6,000+ customers'}</span>
+                        <span>
+                          Trusted by {content?.customers || `${STATS.customers.total} customers`}
+                        </span>
                       </motion.div>
 
                       <motion.h1
@@ -177,7 +180,8 @@ export default function Hero() {
                         transition={{ duration: 0.6, delay: 0.3 }}
                         className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
                       >
-                        {content?.heroTitle || 'Best Currency Exchange Rates in Australia'}
+                        {content?.heroTitle ||
+                          'Currency Exchange & Money Transfers in Australia, New Zealand & Fiji'}
                       </motion.h1>
 
                       <motion.p
@@ -186,7 +190,8 @@ export default function Hero() {
                         transition={{ duration: 0.6, delay: 0.4 }}
                         className="text-base sm:text-lg lg:text-xl text-accent-100 max-w-2xl"
                       >
-                        {content?.heroSubtitle || 'Get the best exchange rates with no hidden fees. Fast, secure money transfers across Australia, New Zealand & Fiji.'}
+                        {content?.heroSubtitle ||
+                          'Get competitive exchange rates with no hidden fees. Fast, secure money transfers across Australia, New Zealand & Fiji.'}
                       </motion.p>
                     </div>
 

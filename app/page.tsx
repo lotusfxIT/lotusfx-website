@@ -28,7 +28,7 @@ export default function Home() {
             <p className="text-base sm:text-lg text-gray-700 mb-4 max-w-xl">
               LotusFX is a specialist foreign exchange and money transfer group with{' '}
               {STATS.branches.total} branches across Australia, New Zealand and Fiji.
-              Since 2008, we&apos;ve focused on one thing: helping customers move money
+              Since 2002, we&apos;ve focused on one thing: helping customers move money
               simply, safely and at better rates than the big banks.
             </p>
             <p className="text-sm sm:text-base text-gray-600 mb-3 max-w-xl">

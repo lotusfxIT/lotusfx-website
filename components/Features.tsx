@@ -14,8 +14,8 @@ import { STATS } from '@/config/stats'
 const features = [
   {
     icon: CurrencyDollarIcon,
-    title: 'Best Exchange Rates',
-    description: 'Get the most competitive rates in the market with our real-time pricing and no hidden fees.',
+    title: 'Competitive Exchange Rates',
+    description: 'Get strong rates with real-time pricing and no hidden fees.',
     color: 'text-primary-600',
     bgColor: 'bg-primary-50',
   },
@@ -29,7 +29,7 @@ const features = [
   {
     icon: ShieldCheckIcon,
     title: 'Trusted & Licensed',
-    description: 'Licensed by ASIC and trusted by 6,000+ customers with 4.9★ rating across all platforms.',
+    description: `Licensed and trusted by ${STATS.customers.total} customers across the Pacific.`,
     color: 'text-primary-600',
     bgColor: 'bg-primary-50',
   },

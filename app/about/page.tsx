@@ -52,8 +52,8 @@ export default function AboutPage() {
                 Your Trusted Partner for Foreign Exchange Across the Pacific
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                Since 2008, LotusFX has been helping individuals and businesses exchange currency 
-                and transfer money internationally with better rates, faster service, and expert support.
+                Since 2002, LotusFX has been helping individuals and businesses exchange currency 
+                and transfer money internationally with competitive rates, fast service, and expert support.
               </p>
             </MotionWrapper>
           </div>
@@ -76,7 +76,7 @@ export default function AboutPage() {
               </h2>
               <div className="space-y-4 text-gray-600">
                 <p>
-                  LotusFX was founded in 2008 with a simple mission: to provide better foreign exchange 
+                  LotusFX was founded in 2002 with a simple mission: to provide better foreign exchange 
                   services than traditional banks. We saw that customers were paying too much in fees and 
                   getting poor exchange rates, so we set out to change that.
                 </p>
@@ -103,17 +103,12 @@ export default function AboutPage() {
               <h3 className="text-2xl font-bold mb-6">Our Milestones</h3>
               <div className="space-y-6">
                 {[
-                  { year: '2008', event: 'LotusFX founded with first branch in Australia' },
-                  { year: '2012', event: 'Expanded to New Zealand with 5 branches' },
-                  { year: '2015', event: 'Launched mobile app and online platform' },
+                  { year: '2002', event: 'LotusFX founded with first branch in Australia' },
+                  { year: '2012', event: 'Expanded to New Zealand with multiple branches' },
+                  { year: '2015', event: 'Launched online tools for rates and branch information' },
                   { year: '2018', event: 'Opened operations in Fiji, serving the Pacific' },
                   { year: '2020', event: 'Reached $1 billion in total transfers' },
-                  { year: '2023', event: `${STATS.branches.total} branches serving ${STATS.customers.total} customers` },
-                  { year: '2024', event: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-                  { year: '2025', event: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' },
-                  { year: '2026', event: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' },
-                  { year: '2027', event: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.' },
-                  { year: '2028', event: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia.' },
+                  { year: '2024', event: `${STATS.branches.total} branches serving ${STATS.customers.total} customers` },
                 ].map((milestone) => (
                   <div key={milestone.year} className="flex gap-4">
                     <div className="flex-shrink-0 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center font-bold">

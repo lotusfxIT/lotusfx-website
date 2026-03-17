@@ -19,7 +19,7 @@ export const STATS = {
   },
 
   // Other key statistics
-  yearsOfExcellence: '15+',
+  yearsOfExcellence: '20+',
   totalTransferred: '$2.4B+',
   
   // Contact emails by country
