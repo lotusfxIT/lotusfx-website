@@ -22,11 +22,11 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: 'LotusFX | Currency Exchange & Money Transfers in Australia, New Zealand & Fiji',
+    default: 'Competitive Currency Exchange & Money Transfers | LotusFX',
     template: '%s | LotusFX'
   },
   description:
-    'Exchange currency and send money internationally with LotusFX. Compare rates online and visit branches across Australia, New Zealand and Fiji.',
+    'Exchange foreign currency with competitive rates and no commission fees. Currency exchange across Australia, New Zealand & Fiji plus global money transfers.',
   keywords: [
     'currency exchange',
     'money transfer',
@@ -62,9 +62,9 @@ export const metadata: Metadata = {
     locale: 'en_AU',
     url: 'https://lotusfx.com',
     siteName: 'LotusFX',
-    title: 'LotusFX | Currency Exchange & Money Transfers in Australia, New Zealand & Fiji',
+    title: 'Competitive Currency Exchange & Money Transfers | LotusFX',
     description:
-      'Exchange currency and send money internationally with LotusFX. Compare rates online and visit branches across Australia, New Zealand and Fiji.',
+      'Exchange foreign currency with competitive rates and no commission fees. Currency exchange across Australia, New Zealand & Fiji plus global money transfers.',
     images: [
       {
         url: '/images/og-image.jpg',
@@ -76,9 +76,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'LotusFX | Currency Exchange & Money Transfers in Australia, New Zealand & Fiji',
+    title: 'Competitive Currency Exchange & Money Transfers | LotusFX',
     description:
-      'Exchange currency and send money internationally with LotusFX. Compare rates online and visit branches across Australia, New Zealand and Fiji.',
+      'Exchange foreign currency with competitive rates and no commission fees. Currency exchange across Australia, New Zealand & Fiji plus global money transfers.',
     images: ['/images/og-image.jpg'],
   },
   robots: {

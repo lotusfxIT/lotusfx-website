@@ -14,43 +14,49 @@ import { STATS } from '@/config/stats'
 const features = [
   {
     icon: CurrencyDollarIcon,
-    title: 'Competitive Exchange Rates',
-    description: 'Get strong rates with real-time pricing and no hidden fees.',
+    title: 'Market leading exchange rates',
+    description:
+      'Get more value from your travel money with competitive currency exchange rates across a wide range of major and minor currencies. No gimmicks, no inflated airport rates — just fair everyday value.',
     color: 'text-primary-600',
     bgColor: 'bg-primary-50',
   },
   {
-    icon: ClockIcon,
-    title: 'Fast & Secure',
-    description: 'Complete your currency exchange in minutes with our secure online platform and instant transfers.',
-    color: 'text-primary-700',
-    bgColor: 'bg-red-50',
-  },
-  {
     icon: ShieldCheckIcon,
-    title: 'Trusted & Licensed',
-    description: `Licensed and trusted by ${STATS.customers.total} customers across the Pacific.`,
+    title: 'No commission fees',
+    description:
+      "We don't charge commission on currency exchange, so more of your money goes toward your holiday, not unnecessary fees.",
     color: 'text-primary-600',
     bgColor: 'bg-primary-50',
   },
   {
     icon: MapPinIcon,
-    title: `${STATS.branches.total} Locations`,
-    description: 'Visit any of our branches across Australia, New Zealand, and Fiji for in-person service.',
+    title: 'Convenient locations',
+    description:
+      "With 50+ branches across Australia, New Zealand and Fiji, it's easy to sort your travel money somewhere familiar, convenient and close to where you already are.",
     color: 'text-accent-700',
     bgColor: 'bg-accent-50',
   },
   {
-    icon: GlobeAltIcon,
-    title: 'Global Reach',
-    description: 'Send money to over 100+ countries worldwide. Our international transfer network ensures your funds reach anywhere you need, quickly and securely.',
+    icon: PhoneIcon,
+    title: 'Friendly, travel-savvy service',
+    description:
+      "Our team helps travelers every day and understands the practical side of preparing for a trip. Whether you need help choosing denominations or working out how much cash to take, we're here to help.",
+    color: 'text-primary-700',
+    bgColor: 'bg-red-50',
+  },
+  {
+    icon: ClockIcon,
+    title: 'Quick & straightforward',
+    description:
+      'Most visits take just minutes. No confusing process and no unnecessary delays. Just simple, efficient currency exchange or money transfers when you need them.',
     color: 'text-primary-600',
     bgColor: 'bg-primary-50',
   },
   {
     icon: GlobeAltIcon,
-    title: '25+ Currencies',
-    description: 'Exchange between 25+ currencies including major and exotic currencies worldwide.',
+    title: 'Major & minor currencies available',
+    description:
+      'From US Dollars and Euros to Fijian Dollars and Yen, we offer a broad range of currencies for holidays, business trips and international travel.',
     color: 'text-accent-700',
     bgColor: 'bg-accent-50',
   },
@@ -102,8 +108,8 @@ export default function Features() {
             Why Choose LotusFX?
           </h2>
           <p className="text-lg text-gray-600">
-            We're committed to providing the best currency exchange experience with 
-            competitive rates, secure transactions, and exceptional customer service.
+            Market-leading rates, no commission on currency exchange, and friendly teams across
+            Australia, New Zealand and Fiji.
           </p>
         </motion.div>
 

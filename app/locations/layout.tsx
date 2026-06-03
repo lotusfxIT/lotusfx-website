@@ -1,8 +1,9 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Branch Locations - Find LotusFX Near You | Australia, NZ, Fiji',
-  description: 'Find your nearest LotusFX branch across Australia, New Zealand, and Fiji. 30+ locations with expert currency exchange and money transfer services.',
+  title: 'Find a Branch | Lotus FX',
+  description:
+    'Choose from over 50+ convenient Lotus FX locations across Australia, New Zealand and Fiji. Market-leading exchange rates and no commission fees.',
   keywords: [
     'LotusFX locations',
     'currency exchange near me',

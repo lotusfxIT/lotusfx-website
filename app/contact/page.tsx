@@ -43,11 +43,11 @@ export default function ContactPage() {
                 Expert Support Available
               </div>
               <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                Get in Touch with LotusFX
+                Need to reach us?
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                We're committed to providing the highest quality service. Reach out through any 
-                channel that works best for you.
+                Here&apos;s how you can contact LotusFX no matter where you are. Reach out through
+                any channel that works best for you.
               </p>
             </MotionWrapper>
           </div>

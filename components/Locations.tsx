@@ -20,11 +20,12 @@ export default function Locations() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <MapPinIcon className="w-8 h-8 text-white" />
             <h2 className="text-2xl lg:text-3xl font-bold text-white">
-              Find Us Near You
+              Find a branch
             </h2>
           </div>
           <p className="text-primary-100 mb-4">
-            LotusFX branches across Australia, New Zealand, and Fiji are powered by real-time Google location data. Explore every branch, live hours, reviews, and directions in one place.
+            Choose from over 50+ convenient locations across New Zealand, Australia, and Fiji.
+            Browse branches by region, see hours, reviews, and directions.
           </p>
           <Link
             href="/locations"

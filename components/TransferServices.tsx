@@ -16,28 +16,32 @@ const SERVICES: {
     iconBg: 'bg-primary-600',
     icon: '⚡',
     title: 'eWire',
-    summary: 'Super fast transfers between LotusFX locations in NZ, AU & Fiji',
+    summary:
+      'Send and receive money across New Zealand, Australia and Fiji through Lotus FX\u2019s own transfer platform.',
   },
   {
     key: 'wire',
     iconBg: 'bg-blue-600',
     icon: '🏦',
     title: 'Wire Transfer',
-    summary: 'Send to any bank account worldwide',
+    summary:
+      'Send money directly to overseas bank accounts for individuals and businesses.',
   },
   {
     key: 'moneygram',
     iconBg: 'bg-red-600',
     icon: '💰',
     title: 'MoneyGram',
-    summary: 'Cash pick-up and transfers via MoneyGram',
+    summary:
+      'Cash pickup and bank deposits across 200+ countries and territories.',
   },
   {
     key: 'westernunion',
     iconBg: 'bg-yellow-500',
     icon: '🌍',
     title: 'Western Union',
-    summary: 'Trusted global cash pick-up network',
+    summary:
+      'Fast cash pickup and global reach across hundreds of countries and territories.',
   },
 ]
 

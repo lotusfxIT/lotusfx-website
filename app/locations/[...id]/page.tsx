@@ -361,6 +361,12 @@ export default function LocationPage() {
       : location.reviewCount || 0
 
   const staticLoc = STATIC_LOCATIONS.find((loc) => loc.id === location.id)
+  const areaLabel =
+    staticLoc?.region ||
+    location.address.locality ||
+    location.address.administrativeArea ||
+    location.displayName
+  const streetLine = location.address.addressLines[0] || fullAddress
   const regionHighlight =
     staticLoc?.highlight ||
     (staticLoc?.region
@@ -499,11 +505,49 @@ export default function LocationPage() {
                   </div>
                 </div>
 
-                <div className="rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-primary-600 to-accent-500 text-white shadow-strong border border-primary-500/30 space-y-3">
-                  <h3 className="text-lg font-semibold mb-1">
-                    About this branch
-                  </h3>
-                  <p className="text-sm text-primary-100">{regionHighlight}</p>
+                <div className="space-y-6 border-t border-gray-100 pt-6">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-3">
+                      Friendly, expert help with your travel money
+                    </h2>
+                    <p className="text-gray-600 mb-3">
+                      Our team in {areaLabel} works with travellers every day, helping people prepare
+                      for trips with confidence and ease.
+                    </p>
+                    <p className="text-gray-600">
+                      Whether you&apos;re unsure how much cash to take, need help choosing the right
+                      mix of notes, or want quick guidance before you travel, our staff can help you
+                      get everything sorted. We also support customers with leftover currency and
+                      after-sales queries.
+                    </p>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-3">
+                      Convenient foreign currency exchange in {areaLabel}
+                    </h2>
+                    <p className="text-gray-600">
+                      With competitive exchange rates, no commission fees, and a wide range of major
+                      and minor currencies available, Lotus FX helps you exchange money quickly and
+                      confidently in a professional, trusted environment. {regionHighlight}
+                    </p>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-3">
+                      International money transfers also available
+                    </h2>
+                    <p className="text-gray-600 mb-4">
+                      This branch can also help you send money overseas through services including
+                      MoneyGram, wire transfers and eWire. Whether you need to make an international
+                      payment or send money abroad, our friendly team can help you choose the right
+                      option for your needs.
+                    </p>
+                    <Link
+                      href="/money-transfer"
+                      className="inline-flex text-primary-600 font-semibold hover:text-primary-700"
+                    >
+                      Learn About Money Transfers →
+                    </Link>
+                  </div>
                 </div>
               </div>
 

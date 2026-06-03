@@ -74,8 +74,9 @@ function getDefaultContent(country: string) {
     AU: {
       country: 'Australia',
       flag: '🇦🇺',
-      heroTitle: 'Best Currency Exchange Rates in Australia',
-      heroSubtitle: `Get the most competitive exchange rates with no hidden fees. Exchange 25+ currencies at our ${STATS.branches.australia} branches across Australia.`,
+      heroTitle: 'Get more holiday out of your travel money',
+      heroSubtitle:
+        'Market-leading exchange rates, no commission on currency exchange, and 50+ locations across Australia, New Zealand and Fiji.',
       exchangeRates: 'Competitive rates updated in real-time',
       branches: STATS.branches.australia,
       customers: STATS.customers.australia,
@@ -84,8 +85,9 @@ function getDefaultContent(country: string) {
     NZ: {
       country: 'New Zealand',
       flag: '🇳🇿',
-      heroTitle: 'Best Currency Exchange Rates in New Zealand',
-      heroSubtitle: `Get the most competitive exchange rates with no hidden fees. Exchange 25+ currencies at our ${STATS.branches.newZealand} branches across New Zealand.`,
+      heroTitle: 'Get more holiday out of your travel money',
+      heroSubtitle:
+        'Market-leading exchange rates, no commission on currency exchange, and 50+ locations across Australia, New Zealand and Fiji.',
       exchangeRates: 'Competitive rates updated in real-time',
       branches: STATS.branches.newZealand,
       customers: STATS.customers.newZealand,
@@ -94,8 +96,9 @@ function getDefaultContent(country: string) {
     FJ: {
       country: 'Fiji',
       flag: '🇫🇯',
-      heroTitle: 'Best Currency Exchange Rates in Fiji',
-      heroSubtitle: `Get the most competitive exchange rates with no hidden fees. Exchange 25+ currencies at our ${STATS.branches.fiji} branches across Fiji.`,
+      heroTitle: 'Get more holiday out of your travel money',
+      heroSubtitle:
+        'Market-leading exchange rates, no commission on currency exchange, and 50+ locations across Australia, New Zealand and Fiji.',
       exchangeRates: 'Competitive rates updated in real-time',
       branches: STATS.branches.fiji,
       customers: STATS.customers.fiji,

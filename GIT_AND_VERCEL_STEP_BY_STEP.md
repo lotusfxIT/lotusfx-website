@@ -109,7 +109,7 @@ git config --global user.email "your-email@example.com"
 Replace `your-email@example.com` with the **same email** you use on GitHub.
 
 ```bash
-git config --global user.name "Your Name"
+git config --global user.name "Ash"
 ```
 
 Replace `Your Name` with your name (e.g. “Ash”).
@@ -161,7 +161,7 @@ git branch -M main
 Replace the URL with the one you copied in Part 2 (e.g. `https://github.com/YOUR_USERNAME/lotusfx-website.git`):
 
 ```bash
-git remote add origin https://github.com/YOUR_USERNAME/lotusfx-website.git
+git remote add origin https://github.com/lotusfxIT/lotusfx-website.git
 ```
 
 If you get “remote origin already exists”, run:

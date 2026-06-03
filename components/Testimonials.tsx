@@ -102,11 +102,11 @@ export default function Testimonials() {
             ))}
           </div>
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            What Our Customers Say
+            See what clients say about LotusFX
           </h2>
           <p className="text-lg text-gray-600">
-            Don't just take our word for it - hear from thousands of satisfied customers 
-            who trust LotusFX for their currency exchange and money transfer needs.
+            Trusted by customers across Australia, New Zealand and Fiji for currency exchange
+            and international money transfers.
           </p>
         </motion.div>
 

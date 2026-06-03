@@ -89,7 +89,7 @@ export default function ZeroCommission() {
                     href="/currency-exchange"
                     className="inline-flex items-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white font-bold px-8 py-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                   >
-                    <span className="text-base lg:text-lg">Check out exchange rates</span>
+                    <span className="text-base lg:text-lg">Check today&apos;s rates</span>
                     <ArrowRightIcon className="w-5 h-5 lg:w-6 lg:h-6" />
                   </Link>
                 </div>

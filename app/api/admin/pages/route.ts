@@ -10,11 +10,12 @@ const DEFAULT_PAGES = {
     title: 'Home',
     description: 'Best Currency Exchange Rates',
     hero: {
-      title: 'Currency Exchange & Money Transfers in Australia, New Zealand & Fiji',
-      subtitle: 'Exchange currency and send money internationally with competitive rates and no hidden fees',
+      title: 'Get more holiday out of your travel money',
+      subtitle:
+        'Market-leading exchange rates, no commission on currency exchange, and friendly service across Australia, New Zealand and Fiji.',
       badge: 'Trusted by 560,000+ customers',
-      cta_primary: 'Get Started',
-      cta_secondary: 'Learn More',
+      cta_primary: 'Order online',
+      cta_secondary: "Check today's rates",
     },
     features: {
       title: 'Why Choose LotusFX?',

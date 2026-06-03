@@ -9,20 +9,20 @@ const countryInfo = {
   AU: {
     name: 'Australia',
     description:
-      'Find your nearest LotusFX branch in Australia for expert currency exchange and international money transfers.',
-    branchCount: '20 branches',
+      'Choose from over 50+ convenient Lotus FX locations across Australia. Exchange foreign currency with market-leading rates and no commission fees.',
+    branchCount: '20+ branches',
   },
   NZ: {
     name: 'New Zealand',
     description:
-      'Find your nearest LotusFX branch in New Zealand for convenient currency exchange and international money transfers.',
-    branchCount: '18 branches',
+      'Choose from over 50+ convenient Lotus FX locations across New Zealand. Exchange foreign currency with market-leading rates and no commission fees.',
+    branchCount: '18+ branches',
   },
   FJ: {
     name: 'Fiji',
     description:
-      'Visit our branches across Fiji for reliable currency exchange and money transfer services.',
-    branchCount: '16 branches',
+      'Choose from over 50+ convenient Lotus FX locations across Fiji. Exchange foreign currency with market-leading rates and no commission fees.',
+    branchCount: '16+ branches',
   },
 }
 
@@ -64,11 +64,11 @@ export default function LocationsPage() {
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-5 leading-tight">
-                Find a Branch in {country.name}
+                Find a branch
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-primary-100 mb-6 max-w-2xl">
-                {country.description} Browse branches by region, see live hours and reviews, and get
-                directions in one click.
+                {country.description} Browse branches in {country.name} by region, see hours,
+                reviews, and directions.
               </p>
 
               {/* Removed extra chips under header per design request */}

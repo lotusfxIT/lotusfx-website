@@ -75,9 +75,8 @@ export default function GoogleMyBusiness() {
             </div>
           </div>
           <p className="text-sm md:text-base text-gray-600 max-w-2xl">
-            Browse all LotusFX branches. Choose a state or region to see its
-            branches, then hover or click a branch to focus it on the map and view
-            full details.
+            Choose from over 50+ convenient locations. Browse by region, then select a branch to
+            view details, hours, and directions on the map.
           </p>
         </div>
         {filtered.length > 0 && (

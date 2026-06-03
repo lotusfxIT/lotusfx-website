@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
 import { ArrowRightIcon, CheckCircleIcon, StarIcon } from '@heroicons/react/24/outline'
 import CurrencyCalculator from './CurrencyCalculator'
 import { useCountryContent } from '@/hooks/useCountryContent'
@@ -11,15 +12,15 @@ import { useCountry } from '@/context/CountryContext'
 const statsTemplate = [
   { label: 'Customer Rating', value: '4.9★', subtext: '{customers}' },
   { label: 'Branches', value: '{branchValue}', subtext: 'Branches in {countryName}' },
-  { label: 'Currencies', value: '25+', subtext: 'Currencies available' },
+  { label: 'Currencies', value: '40+', subtext: 'Currencies available' },
   { label: 'Years', value: '{years}', subtext: 'Experience' },
 ]
 
 const features = [
-  'Best exchange rates guaranteed',
-  'No hidden fees or commissions',
-  'Fast & secure transfers',
-  'Expert customer support',
+  'The most competitive exchange rates',
+  'No commission on currency exchange',
+  '50+ locations across Australia, New Zealand & Fiji',
+  '40+ currencies available',
 ]
 
 export default function Hero() {
@@ -180,8 +181,7 @@ export default function Hero() {
                         transition={{ duration: 0.6, delay: 0.3 }}
                         className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
                       >
-                        {content?.heroTitle ||
-                          'Currency Exchange & Money Transfers in Australia, New Zealand & Fiji'}
+                        {content?.heroTitle || 'Get more holiday out of your travel money'}
                       </motion.h1>
 
                       <motion.p
@@ -191,7 +191,7 @@ export default function Hero() {
                         className="text-base sm:text-lg lg:text-xl text-accent-100 max-w-2xl"
                       >
                         {content?.heroSubtitle ||
-                          'Get competitive exchange rates with no hidden fees. Fast, secure money transfers across Australia, New Zealand & Fiji.'}
+                          'Your money should go toward the trip, not exchange fees. Lotus FX helps you sort your travel money properly with market-leading exchange rates, convenient locations, and a local, friendly service. No hassles. No commissions. Just more money left for the moments you\u2019re travelling for.'}
                       </motion.p>
                     </div>
 
@@ -227,24 +227,26 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.8 }}
               className="flex flex-col sm:flex-row gap-3"
             >
-              <button
+              <Link
+                href="/currency-exchange"
                 className="text-base lg:text-lg px-7 py-3 flex items-center justify-center space-x-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-white"
                 style={{
                   background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
                 }}
               >
-                <span>Get Best Rates Now</span>
+                <span>Order online</span>
                 <ArrowRightIcon className="w-5 h-5" />
-              </button>
-              <button
+              </Link>
+              <Link
+                href="/currency-exchange"
                 className="text-base lg:text-lg px-7 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-white flex items-center justify-center space-x-2"
                 style={{
                   background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
                 }}
               >
-                <span>Find Nearest Branch</span>
+                <span>Check today&apos;s rates</span>
                 <ArrowRightIcon className="w-5 h-5" />
-              </button>
+              </Link>
             </motion.div>
 
             {/* Stats */}
