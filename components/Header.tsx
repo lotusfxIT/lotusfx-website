@@ -63,6 +63,7 @@ export default function Header() {
         { name: 'Currency Exchange', href: '/currency-exchange' },
         { name: 'Money Transfer', href: '/money-transfer' },
         { name: 'Locations', href: '/locations' },
+        { name: 'Reviews', href: '/customer-reviews' },
         { name: 'About Us', href: '/about' },
         { name: 'Contact Us', href: '/contact' },
       ])
