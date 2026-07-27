@@ -15,6 +15,10 @@
         "href": "/locations"
       },
       {
+        "name": "Reviews",
+        "href": "/customer-reviews"
+      },
+      {
         "name": "Rates",
         "href": "/rates"
       },

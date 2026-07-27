@@ -14,8 +14,8 @@ const DEFAULT_PAGES = {
       subtitle:
         'Market-leading exchange rates, no commission on currency exchange, and friendly service across Australia, New Zealand and Fiji.',
       badge: 'Trusted by 560,000+ customers',
-      cta_primary: 'Order online',
-      cta_secondary: "Check today's rates",
+      cta_primary: 'Quick Order',
+      cta_secondary: 'Find a branch',
     },
     features: {
       title: 'Why Choose LotusFX?',

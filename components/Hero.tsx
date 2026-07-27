@@ -227,24 +227,26 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.8 }}
               className="flex flex-col sm:flex-row gap-3"
             >
-              <Link
-                href="/currency-exchange"
+              <a
+                href="https://lotus-au-web-app.web.app/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-base lg:text-lg px-7 py-3 flex items-center justify-center space-x-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-white"
                 style={{
                   background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
                 }}
               >
-                <span>Order online</span>
+                <span>Quick Order</span>
                 <ArrowRightIcon className="w-5 h-5" />
-              </Link>
+              </a>
               <Link
-                href="/currency-exchange"
+                href="/locations"
                 className="text-base lg:text-lg px-7 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-white flex items-center justify-center space-x-2"
                 style={{
                   background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
                 }}
               >
-                <span>Check today&apos;s rates</span>
+                <span>Find a branch</span>
                 <ArrowRightIcon className="w-5 h-5" />
               </Link>
             </motion.div>
@@ -285,7 +287,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative h-full flex flex-col min-h-0"
           >
-            <div className="bg-white rounded-2xl shadow-strong p-4 sm:p-6 border border-gray-100 relative z-10 w-full max-w-lg mx-auto lg:mx-auto lg:mr-8 flex-1 min-h-0 flex flex-col">
+            <div className="bg-white rounded-2xl shadow-strong p-4 sm:p-6 border border-gray-100 relative z-10 w-full max-w-lg mx-auto lg:mx-auto lg:mr-8 flex flex-col min-h-[800px]">
               {/* Currency symbols - LEFT side of calculator - Distributed */}
               <div
                 className="absolute top-0 bottom-0 pointer-events-none hidden lg:block overflow-visible"

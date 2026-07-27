@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowsRightLeftIcon, ArrowDownTrayIcon, BanknotesIcon, PaperAirplaneIcon, ChevronDownIcon, MagnifyingGlassIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
+import { ArrowsRightLeftIcon, ArrowLeftIcon, BanknotesIcon, PaperAirplaneIcon, ChevronDownIcon, MagnifyingGlassIcon, PencilSquareIcon, MapPinIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { useCountry } from '@/context/CountryContext'
+import Link from 'next/link'
 
 // Currency code → ISO country code for flag images (flagcdn.com)
 const currencyToCountry: Record<string, string> = {
@@ -110,15 +111,22 @@ const exchangeRates: { [key: string]: { [key: string]: number } } = {
 type CurrencyCalculatorProps = {
   onOptionChosen?: () => void
   forceCashOnly?: boolean
+  /** Pre-select the foreign currency on currency detail pages */
+  defaultToCurrency?: string
 }
 
-export default function CurrencyCalculator({ onOptionChosen, forceCashOnly = false }: CurrencyCalculatorProps) {
+export default function CurrencyCalculator({
+  onOptionChosen,
+  forceCashOnly = false,
+  defaultToCurrency,
+}: CurrencyCalculatorProps) {
   const { selectedCountry } = useCountry()
   const [chosen, setChosen] = useState<boolean>(forceCashOnly ? true : false)
   const [quoteType, setQuoteType] = useState<'cash' | 'transfer'>('cash')
   const [buyOrSell, setBuyOrSell] = useState<'buy' | 'sell'>('buy') // Foreign Exchange: You Buy / You Sell → isBuy in API
-  const [fromCurrency, setFromCurrency] = useState('AUD')
-  const [toCurrency, setToCurrency] = useState('USD')
+  const baseCurrency = getBaseCurrency(selectedCountry)
+  const [fromCurrency, setFromCurrency] = useState(baseCurrency)
+  const [toCurrency, setToCurrency] = useState(defaultToCurrency || 'USD')
   const [transferMode, setTransferMode] = useState<TransferMode>('Wire')
   const [amount, setAmount] = useState('1000')
   const [convertedAmount, setConvertedAmount] = useState('')
@@ -126,11 +134,30 @@ export default function CurrencyCalculator({ onOptionChosen, forceCashOnly = fal
   const [isCalculating, setIsCalculating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const baseCurrency = getBaseCurrency(selectedCountry)
+  useEffect(() => {
+    const base = getBaseCurrency(selectedCountry)
+    setFromCurrency(base)
+    if (defaultToCurrency) {
+      setToCurrency(defaultToCurrency)
+    }
+  }, [selectedCountry, defaultToCurrency])
+
   const toCountryOptions = toCountries.filter((c) => c.currency !== baseCurrency)
   const allowEWire = toCurrency === 'NZD' || toCurrency === 'FJD' || toCurrency === 'AUD'
   const allowWallet = toCurrency === 'FJD'
   const allowWire = !['AUD', 'NZD', 'FJD'].includes(toCurrency)
+  // Moneygram / Western Union not offered for NZ or Fiji destinations
+  const allowMoneygram = toCurrency !== 'NZD' && toCurrency !== 'FJD'
+  const allowWesternUnion = allowMoneygram
+
+  const defaultTransferMode = (): TransferMode => {
+    if (allowEWire) return 'eWire'
+    if (allowWire) return 'Wire'
+    if (allowWallet) return 'Wallet'
+    if (allowMoneygram) return 'Moneygram'
+    if (allowWesternUnion) return 'Western Union'
+    return 'Wire'
+  }
 
   const calculateConversion = async () => {
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
@@ -220,16 +247,21 @@ export default function CurrencyCalculator({ onOptionChosen, forceCashOnly = fal
   }
 
   useEffect(() => {
+    if (!chosen && !forceCashOnly) return
     calculateConversion()
-  }, [fromCurrency, toCurrency, amount, selectedCountry, quoteType, transferMode, buyOrSell])
+  }, [fromCurrency, toCurrency, amount, selectedCountry, quoteType, transferMode, buyOrSell, chosen, forceCashOnly])
 
   // Money Transfer: keep transfer mode valid when "to country" changes
   useEffect(() => {
     if (quoteType !== 'transfer') return
-    if (transferMode === 'Wallet' && !allowWallet) setTransferMode(allowEWire ? 'eWire' : allowWire ? 'Wire' : 'Moneygram')
-    else if (transferMode === 'eWire' && !allowEWire) setTransferMode(allowWire ? 'Wire' : 'Moneygram')
-    else if (transferMode === 'Wire' && !allowWire) setTransferMode(allowEWire ? 'eWire' : 'Moneygram')
-  }, [quoteType, transferMode, allowWallet, allowEWire, allowWire, toCurrency])
+    const invalid =
+      (transferMode === 'Wallet' && !allowWallet) ||
+      (transferMode === 'eWire' && !allowEWire) ||
+      (transferMode === 'Wire' && !allowWire) ||
+      (transferMode === 'Moneygram' && !allowMoneygram) ||
+      (transferMode === 'Western Union' && !allowWesternUnion)
+    if (invalid) setTransferMode(defaultTransferMode())
+  }, [quoteType, transferMode, allowWallet, allowEWire, allowWire, allowMoneygram, allowWesternUnion, toCurrency])
 
   // Money Transfer: if "to country" equals base, pick first available
   useEffect(() => {
@@ -281,44 +313,48 @@ export default function CurrencyCalculator({ onOptionChosen, forceCashOnly = fal
   // First-time: two big buttons (only when not forced into cash-only mode)
   if (!forceCashOnly && !chosen) {
     return (
-      <div className="flex-1 flex flex-col justify-start pt-3 min-h-0 w-full min-w-0">
-        <div className="flex justify-center mb-6 w-full">
+      <div className="flex-1 flex flex-col justify-evenly py-2 min-h-0 w-full min-w-0 h-full">
+        <div className="flex justify-center w-full shrink-0">
           <img src="/images/LFX-Flower.png" alt="LotusFX" className="h-20 w-auto sm:h-24 md:h-28 object-contain" />
         </div>
-        <p className="text-center text-sm font-medium text-gray-600 mb-5 w-full">What would you like to do?</p>
-        <div className="grid grid-cols-1 gap-4 w-full min-w-0">
-          <motion.button
-            type="button"
-            onClick={() => chooseOption('cash')}
-            className="flex items-center gap-4 p-4 sm:p-5 rounded-2xl border-2 border-primary-200 bg-gradient-to-br from-primary-50 to-white hover:from-primary-100 hover:to-primary-50 hover:border-primary-500 transition-all shadow-soft text-left min-w-0"
-            whileTap={{ scale: 0.98 }}
-          >
-            <div className="w-14 h-14 shrink-0 rounded-xl bg-primary-600/15 flex items-center justify-center ring-2 ring-primary-200">
-              <BanknotesIcon className="w-8 h-8 text-primary-600" />
-            </div>
-            <div className="flex-1 min-w-0 text-left">
-              <span className="block text-lg font-bold text-gray-900">Foreign Exchange</span>
-              <span className="block text-sm text-gray-500 mt-1">Get Cash Exchange Rates</span>
-              <span className="inline-block mt-2.5 text-xs font-medium text-primary-600 bg-primary-100 px-2 py-1 rounded">20 branches in Australia</span>
-            </div>
-          </motion.button>
-          <motion.button
-            type="button"
-            onClick={() => chooseOption('transfer')}
-            className="flex items-center gap-4 p-4 sm:p-5 rounded-2xl border-2 border-primary-200 bg-gradient-to-br from-primary-50 to-white hover:from-primary-100 hover:to-primary-50 hover:border-primary-500 transition-all shadow-soft text-left min-w-0"
-            whileTap={{ scale: 0.98 }}
-          >
-            <div className="w-14 h-14 shrink-0 rounded-xl bg-primary-600/15 flex items-center justify-center ring-2 ring-primary-200">
-              <PaperAirplaneIcon className="w-8 h-8 text-primary-600" />
-            </div>
-            <div className="flex-1 min-w-0 text-left">
-              <span className="block text-lg font-bold text-gray-900">Money Transfer</span>
-              <span className="block text-sm text-gray-500 mt-1">Send money overseas</span>
-              <span className="inline-block mt-2.5 text-xs font-medium text-primary-600 bg-primary-100 px-2 py-1 rounded">200+ countries</span>
-            </div>
-          </motion.button>
+
+        <div className="w-full min-w-0">
+          <p className="text-center text-sm font-medium text-gray-600 mb-4 w-full">What would you like to do?</p>
+          <div className="grid grid-cols-1 gap-4 w-full min-w-0">
+            <motion.button
+              type="button"
+              onClick={() => chooseOption('cash')}
+              className="flex items-center gap-4 p-4 sm:p-5 rounded-2xl border-2 border-primary-200 bg-gradient-to-br from-primary-50 to-white hover:from-primary-100 hover:to-primary-50 hover:border-primary-500 transition-all shadow-soft text-left min-w-0"
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="w-14 h-14 shrink-0 rounded-xl bg-primary-600/15 flex items-center justify-center ring-2 ring-primary-200">
+                <BanknotesIcon className="w-8 h-8 text-primary-600" />
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <span className="block text-lg font-bold text-gray-900">Foreign Exchange</span>
+                <span className="block text-sm text-gray-500 mt-1">Get Cash Exchange Rates</span>
+                <span className="inline-block mt-2.5 text-xs font-medium text-primary-600 bg-primary-100 px-2 py-1 rounded">20 branches in Australia</span>
+              </div>
+            </motion.button>
+            <motion.button
+              type="button"
+              onClick={() => chooseOption('transfer')}
+              className="flex items-center gap-4 p-4 sm:p-5 rounded-2xl border-2 border-primary-200 bg-gradient-to-br from-primary-50 to-white hover:from-primary-100 hover:to-primary-50 hover:border-primary-500 transition-all shadow-soft text-left min-w-0"
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="w-14 h-14 shrink-0 rounded-xl bg-primary-600/15 flex items-center justify-center ring-2 ring-primary-200">
+                <PaperAirplaneIcon className="w-8 h-8 text-primary-600" />
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <span className="block text-lg font-bold text-gray-900">Money Transfer</span>
+                <span className="block text-sm text-gray-500 mt-1">Send money overseas</span>
+                <span className="inline-block mt-2.5 text-xs font-medium text-primary-600 bg-primary-100 px-2 py-1 rounded">200+ countries</span>
+              </div>
+            </motion.button>
+          </div>
         </div>
-        <div className="mt-6 pt-5 border-t border-gray-100 shrink-0 w-full">
+
+        <div className="pt-5 border-t border-gray-100 shrink-0 w-full">
           <p className="text-center text-xs text-gray-500 mb-3">Download on</p>
           <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
             <a
@@ -351,7 +387,7 @@ export default function CurrencyCalculator({ onOptionChosen, forceCashOnly = fal
   }
 
   return (
-    <>
+    <div className="flex-1 flex flex-col min-h-0 w-full min-w-0">
       <style dangerouslySetInnerHTML={{
         __html: `
           .amount-input::-webkit-inner-spin-button,
@@ -365,40 +401,39 @@ export default function CurrencyCalculator({ onOptionChosen, forceCashOnly = fal
         `,
       }} />
       <motion.div
-        className="space-y-5 w-full min-w-0"
+        className={`flex flex-col flex-1 h-full min-h-0 w-full min-w-0 ${
+          quoteType === 'cash' ? 'justify-evenly gap-3' : 'gap-5 sm:gap-6'
+        }`}
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
       >
-        {/* Foreign Exchange / Money Transfer toggle */}
+        {/* Back to option choice + current mode label (centered) */}
       {!forceCashOnly && (
-        <div className="flex gap-2">
-          <motion.button
+        <div className="relative flex items-center justify-center min-h-[2.5rem]">
+          <button
             type="button"
-            onClick={() => setQuoteType('cash')}
-            className={`flex-1 text-xs md:text-sm font-semibold px-3 py-2 rounded-lg border ${
-              quoteType === 'cash'
-                ? 'bg-primary-600 text-white border-primary-600'
-                : 'bg-white text-gray-700 border-gray-200'
-            }`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              setChosen(false)
+              setError(null)
+              setConvertedAmount('')
+              setRate(0)
+            }}
+            className="absolute left-0 inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-primary-300 hover:text-primary-700 transition-colors"
+            aria-label="Back to options"
           >
-            Foreign Exchange
-          </motion.button>
-          <motion.button
-            type="button"
-            onClick={() => setQuoteType('transfer')}
-            className={`flex-1 text-xs md:text-sm font-semibold px-3 py-2 rounded-lg border ${
-              quoteType === 'transfer'
-                ? 'bg-primary-600 text-white border-primary-600'
-                : 'bg-white text-gray-700 border-gray-200'
-            }`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            Money Transfer
-          </motion.button>
+            <ArrowLeftIcon className="w-5 h-5" />
+          </button>
+          <div className="flex items-center justify-center gap-2 px-10">
+            {quoteType === 'cash' ? (
+              <BanknotesIcon className="w-5 h-5 text-primary-600 shrink-0" />
+            ) : (
+              <PaperAirplaneIcon className="w-5 h-5 text-primary-600 shrink-0" />
+            )}
+            <span className="text-base font-bold text-gray-900">
+              {quoteType === 'cash' ? 'Foreign Exchange' : 'Money Transfer'}
+            </span>
+          </div>
         </div>
       )}
 
@@ -411,20 +446,22 @@ export default function CurrencyCalculator({ onOptionChosen, forceCashOnly = fal
             transition={{ duration: 0.5 }}
             className="space-y-2"
           >
-            <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">You send</label>
-            <div className="flex space-x-3">
-              <div className="flex-1 flex items-center h-14 px-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-medium text-gray-700">
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center sm:text-left">
+              You send
+            </label>
+            <div className="flex gap-3">
+              <div className="flex-1 flex items-center justify-center h-14 px-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-semibold text-gray-800 text-lg">
                 {baseCurrency}
               </div>
-              <div className="w-32 relative">
+              <div className="flex-1 relative">
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="Amount"
-                  className="amount-input w-full h-14 pl-3 pr-9 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg hover:border-primary-300"
+                  className="amount-input w-full h-14 pl-4 pr-10 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg text-center hover:border-primary-300"
                 />
-                <PencilSquareIcon className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden />
+                <PencilSquareIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden />
               </div>
             </div>
           </motion.div>
@@ -435,107 +472,133 @@ export default function CurrencyCalculator({ onOptionChosen, forceCashOnly = fal
             transition={{ duration: 0.5, delay: 0.05 }}
             className="space-y-2"
           >
-            <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">To country</label>
-            <div className="flex space-x-3">
-              <div className="flex-1 relative" ref={countryDropdownRef}>
-                <button
-                  type="button"
-                  onClick={() => { const next = openDropdown === 'country' ? null : 'country'; setOpenDropdown(next); if (next) setDropdownSearch('') }}
-                  className="w-full h-14 px-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-medium hover:border-primary-300 flex items-center gap-3 text-left"
-                >
-                  {(() => {
-                    const c = toCountryOptions.find((x) => x.currency === toCurrency) || toCountryOptions[0]
-                    if (!c) return <span className="text-gray-500">Select country</span>
-                    return (
-                      <>
-                        <CountryFlagImg countryCode={c.countryCode} />
-                        <span>{c.country}</span>
-                      </>
-                    )
-                  })()}
-                  <ChevronDownIcon className={`w-5 h-5 ml-auto shrink-0 transition-transform ${openDropdown === 'country' ? 'rotate-180' : ''}`} />
-                </button>
-                {openDropdown === 'country' && (
-                  <div className="absolute top-full left-0 right-0 mt-1 py-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg z-50 max-h-72 overflow-hidden flex flex-col">
-                    <div className="p-2 border-b border-gray-100 sticky top-0 bg-white">
-                      <div className="flex items-center gap-2 px-2 py-1.5 bg-gray-100 rounded-lg">
-                        <MagnifyingGlassIcon className="w-4 h-4 text-gray-400 shrink-0" />
-                        <input
-                          type="text"
-                          value={dropdownSearch}
-                          onChange={(e) => setDropdownSearch(e.target.value)}
-                          onKeyDown={(e) => e.stopPropagation()}
-                          placeholder="Search country..."
-                          className="flex-1 bg-transparent border-0 outline-none text-sm placeholder:text-gray-400"
-                        />
-                      </div>
-                    </div>
-                    <div className="overflow-auto max-h-52 py-1">
-                      {(() => {
-                        const filtered = toCountryOptions.filter((c) => {
-                          const q = dropdownSearch.trim().toLowerCase()
-                          return !q || c.country.toLowerCase().includes(q) || c.currency.toLowerCase().includes(q)
-                        })
-                        if (filtered.length === 0) return <p className="px-4 py-3 text-gray-500 text-sm">No countries match</p>
-                        return filtered.map((c) => (
-                          <button
-                            key={c.currency}
-                            type="button"
-                            onClick={() => { setToCurrency(c.currency); setOpenDropdown(null); setDropdownSearch('') }}
-                            className="w-full px-4 py-2 flex items-center gap-3 hover:bg-primary-50 text-left"
-                          >
-                            <CountryFlagImg countryCode={c.countryCode} />
-                            <span>{c.country}</span>
-                          </button>
-                        ))
-                      })()}
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center sm:text-left">
+              To country
+            </label>
+            <div className="relative" ref={countryDropdownRef}>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = openDropdown === 'country' ? null : 'country'
+                  setOpenDropdown(next)
+                  if (next) setDropdownSearch('')
+                }}
+                className="w-full h-14 px-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-medium hover:border-primary-300 flex items-center justify-center gap-3 text-left"
+              >
+                {(() => {
+                  const c = toCountryOptions.find((x) => x.currency === toCurrency) || toCountryOptions[0]
+                  if (!c) return <span className="text-gray-500">Select country</span>
+                  return (
+                    <>
+                      <CountryFlagImg countryCode={c.countryCode} />
+                      <span className="font-semibold text-gray-900">{c.country}</span>
+                    </>
+                  )
+                })()}
+                <ChevronDownIcon
+                  className={`w-5 h-5 ml-auto shrink-0 text-gray-400 transition-transform ${
+                    openDropdown === 'country' ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+              {openDropdown === 'country' && (
+                <div className="absolute top-full left-0 right-0 mt-1 py-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg z-50 max-h-72 overflow-hidden flex flex-col">
+                  <div className="p-2 border-b border-gray-100 sticky top-0 bg-white">
+                    <div className="flex items-center gap-2 px-2 py-1.5 bg-gray-100 rounded-lg">
+                      <MagnifyingGlassIcon className="w-4 h-4 text-gray-400 shrink-0" />
+                      <input
+                        type="text"
+                        value={dropdownSearch}
+                        onChange={(e) => setDropdownSearch(e.target.value)}
+                        onKeyDown={(e) => e.stopPropagation()}
+                        placeholder="Search country..."
+                        className="flex-1 bg-transparent border-0 outline-none text-sm placeholder:text-gray-400"
+                      />
                     </div>
                   </div>
-                )}
-              </div>
-              <div className="w-32 min-w-[8rem]">
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="w-full h-14 flex items-center justify-center px-3 bg-gradient-to-br from-primary-600 to-primary-700 border-2 border-primary-700 rounded-xl text-white font-bold text-lg text-center"
-                >
-                  {(transferMode === 'Wire' || transferMode === 'eWire' || transferMode === 'Wallet') ? (
-                    isCalculating ? (
-                      <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="inline-block">⏳</motion.div>
-                    ) : (
-                      <motion.span key={convertedAmount} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3 }}>
-                        {convertedAmount}
-                      </motion.span>
-                    )
-                  ) : transferMode === 'Moneygram' ? (
-                    <span className="text-xs sm:text-sm font-semibold leading-tight">Login to get the rate</span>
-                  ) : (
-                    <span className="text-xs sm:text-sm font-semibold leading-tight">Please visit us in store</span>
-                  )}
-                </motion.div>
-              </div>
+                  <div className="overflow-auto max-h-52 py-1">
+                    {(() => {
+                      const filtered = toCountryOptions.filter((c) => {
+                        const q = dropdownSearch.trim().toLowerCase()
+                        return !q || c.country.toLowerCase().includes(q) || c.currency.toLowerCase().includes(q)
+                      })
+                      if (filtered.length === 0)
+                        return <p className="px-4 py-3 text-gray-500 text-sm text-center">No countries match</p>
+                      return filtered.map((c) => (
+                        <button
+                          key={c.currency}
+                          type="button"
+                          onClick={() => {
+                            setToCurrency(c.currency)
+                            setOpenDropdown(null)
+                            setDropdownSearch('')
+                          }}
+                          className="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-primary-50 text-left"
+                        >
+                          <CountryFlagImg countryCode={c.countryCode} />
+                          <span>{c.country}</span>
+                        </button>
+                      ))
+                    })()}
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
+
+          {/* Recipient gets — fixed height to avoid hero layout shift */}
+          <div className="rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 px-4 py-3 text-center text-white shadow-md h-[5.75rem] flex flex-col items-center justify-center shrink-0">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-white/80 leading-none mb-1">
+              Recipient gets
+            </div>
+            <div className="text-2xl font-bold tabular-nums leading-tight min-h-[1.75rem] flex items-center justify-center">
+              {(transferMode === 'Wire' || transferMode === 'eWire' || transferMode === 'Wallet') ? (
+                isCalculating ? (
+                  <span className="text-white/70">…</span>
+                ) : (
+                  <>
+                    {convertedAmount || '—'}{' '}
+                    <span className="text-lg font-semibold text-white/90">{toCurrency}</span>
+                  </>
+                )
+              ) : transferMode === 'Moneygram' ? (
+                <span className="text-sm font-semibold leading-snug">Login to get the rate</span>
+              ) : (
+                <span className="text-sm font-semibold leading-snug">Please visit us in store</span>
+              )}
+            </div>
+            <div className="mt-1 text-xs text-white/75 min-h-[1rem] leading-none">
+              {rate > 0 &&
+              (transferMode === 'Wire' || transferMode === 'eWire' || transferMode === 'Wallet') &&
+              !isCalculating
+                ? `1 ${baseCurrency} = ${rate.toFixed(4)} ${toCurrency}`
+                : '\u00A0'}
+            </div>
+          </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="space-y-1.5"
+            className="space-y-2"
           >
-            <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">Transfer type</label>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center sm:text-left">
+              Transfer type
+            </label>
             <div className="space-y-1.5">
               {[
                 ...(allowEWire ? [transferModes.find((m) => m.value === 'eWire')!] : []),
                 ...(allowWire ? [transferModes.find((m) => m.value === 'Wire')!] : []),
-                transferModes.find((m) => m.value === 'Moneygram')!,
-                transferModes.find((m) => m.value === 'Western Union')!,
+                ...(allowMoneygram ? [transferModes.find((m) => m.value === 'Moneygram')!] : []),
+                ...(allowWesternUnion ? [transferModes.find((m) => m.value === 'Western Union')!] : []),
                 ...(allowWallet ? [transferModes.find((m) => m.value === 'Wallet')!] : []),
               ].map((mode) => (
                 <label
                   key={mode.value}
-                  className={`flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors ${
-                    transferMode === mode.value ? 'border-primary-500 bg-primary-50/50' : 'border-gray-200'
+                  className={`flex items-center gap-2.5 px-3 py-2 border-2 rounded-lg cursor-pointer transition-colors ${
+                    transferMode === mode.value
+                      ? 'border-primary-500 bg-primary-50/50'
+                      : 'border-gray-200 hover:bg-gray-50'
                   }`}
                 >
                   <input
@@ -544,17 +607,23 @@ export default function CurrencyCalculator({ onOptionChosen, forceCashOnly = fal
                     value={mode.value}
                     checked={transferMode === mode.value}
                     onChange={() => setTransferMode(mode.value)}
-                    className="text-primary-600 focus:ring-primary-500"
+                    className="text-primary-600 focus:ring-primary-500 shrink-0"
                   />
-                  <div>
-                    <span className="font-semibold text-gray-900">
+                  <div className="min-w-0 leading-tight">
+                    <span className="text-sm font-semibold text-gray-900">
                       {mode.value === 'eWire' ? (
-                        <span className="inline-flex items-center gap-1"><span className="text-primary-500" aria-hidden>⚡</span> {mode.label} <span className="font-normal text-gray-500">(Lotus special service)</span></span>
+                        <span className="inline-flex items-center gap-1 flex-wrap">
+                          <span className="text-primary-500" aria-hidden>
+                            ⚡
+                          </span>{' '}
+                          {mode.label}{' '}
+                          <span className="font-normal text-gray-500 text-xs">(Lotus special service)</span>
+                        </span>
                       ) : (
                         mode.label
                       )}
                     </span>
-                    <p className="text-xs text-gray-500">{mode.description}</p>
+                    <p className="text-[11px] text-gray-500 mt-0.5">{mode.description}</p>
                   </div>
                 </label>
               ))}
@@ -793,86 +862,91 @@ export default function CurrencyCalculator({ onOptionChosen, forceCashOnly = fal
         </>
       )}
 
-      {/* Exchange Rate */}
-      {(rate > 0 || (quoteType === 'transfer' && (transferMode === 'Moneygram' || transferMode === 'Western Union'))) && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={`rounded-xl border-2 border-primary-700 shadow-md bg-gradient-to-r from-primary-600 to-primary-700 ${
-            quoteType === 'transfer' ? 'px-4 py-2.5' : 'p-5'
-          }`}
-        >
-          {quoteType === 'transfer' ? (
-            /* Money Transfer: rate line or Moneygram/WU message */
-            <div className="text-center flex flex-wrap items-center justify-center gap-2 text-white">
-              {(transferMode === 'Moneygram' || transferMode === 'Western Union') ? (
-                <span className="text-base sm:text-lg font-bold">
-                  {transferMode === 'Moneygram' ? 'Please Login or Download our app' : 'Please visit us in store'}
-                </span>
-              ) : (
-                <>
-                  <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Exchange Rate</span>
-                  <motion.span initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="text-base sm:text-lg font-bold">
-                    1 {baseCurrency} = {rate.toFixed(4)} {toCurrency}
-                  </motion.span>
-                </>
-              )}
-            </div>
-          ) : (
-            /* Foreign Exchange: 2 lines */
-            <div className="text-center">
-              <div className="text-xs font-bold text-white/80 uppercase tracking-widest mb-2">Exchange Rate</div>
-              <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="text-2xl font-bold text-white">
-                1 {fromCurrency} = {rate.toFixed(4)} {toCurrency}
-              </motion.div>
-            </div>
-          )}
-        </motion.div>
-      )}
-
-      {/* CTA Buttons */}
-      <div className="space-y-2 pt-2">
-        <motion.button
-          whileHover={{ scale: 1.005 }}
-          whileTap={{ scale: 0.98 }}
-          className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200"
-        >
-          <ArrowDownTrayIcon className="w-5 h-5" />
-          <span>Get This Rate</span>
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.005   }}
-          whileTap={{ scale: 0.98 }}
-          className="w-full btn-secondary shadow-md hover:shadow-lg transition-shadow duration-200"
-        >
-          Find Nearest Branch
-        </motion.button>
-      </div>
-
-      {/* Error Message */}
-      {error && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700"
-        >
-          ⚠️ {error} (Using estimated rates)
-        </motion.div>
-      )}
-
-      {/* Additional Info - only for Foreign Exchange */}
+      {/* Exchange Rate — fixed height so hero doesn't jump when rate loads */}
       {quoteType === 'cash' && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="text-center text-sm text-gray-600 space-y-1 pt-2"
-        >
-          <p className="font-medium">✓ Rates updated every 30 seconds</p>
-          <p className="text-gray-500">No commission fees • Best rates guaranteed</p>
-        </motion.div>
+        <div className="rounded-xl bg-gradient-to-r from-primary-600 to-primary-700 shadow-md h-[5.75rem] flex flex-col items-center justify-center px-4 shrink-0">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-white/80 leading-none mb-1">
+            Exchange Rate
+          </div>
+          <div className="text-2xl font-bold text-white tabular-nums leading-tight min-h-[1.75rem] flex items-center justify-center">
+            {isCalculating ? (
+              <span className="text-white/70">…</span>
+            ) : rate > 0 ? (
+              <>
+                1 {fromCurrency} = {rate.toFixed(4)} {toCurrency}
+              </>
+            ) : (
+              <span className="text-white/70">—</span>
+            )}
+          </div>
+          <div className="mt-1 text-xs text-white/75 min-h-[1rem] leading-none" aria-hidden>
+            &nbsp;
+          </div>
+        </div>
       )}
+
+      {/* CTA + footer — transfer pins to bottom; FX spaces evenly with the form */}
+      <div className={`space-y-3 shrink-0 ${quoteType === 'transfer' ? 'mt-auto pt-4 sm:pt-6' : 'pt-1'}`}>
+        <div className="space-y-2.5">
+          {quoteType === 'cash' && (
+            <a
+              href="https://lotus-au-web-app.web.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
+            >
+              <ShoppingBagIcon className="w-5 h-5" />
+              <span>Quick Order</span>
+            </a>
+          )}
+          {quoteType === 'transfer' && (
+            <a
+              href={
+                selectedCountry === 'AU'
+                  ? 'https://auportal.lotusfx.com/customers/login.shtml'
+                  : 'https://nzcportal.lotusfx.com/customers/login.shtml'
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
+            >
+              <span>Login / Sign Up</span>
+            </a>
+          )}
+          <Link
+            href="/locations"
+            className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
+          >
+            <MapPinIcon className="w-5 h-5" />
+            <span>Find Nearest Branch</span>
+          </Link>
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700"
+          >
+            ⚠️ {error} (Using estimated rates)
+          </motion.div>
+        )}
+
+        {/* Additional Info - only for Foreign Exchange */}
+        {quoteType === 'cash' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-center text-sm text-gray-600 space-y-1.5 pb-1"
+          >
+            <p className="font-medium">✓ Rates updated every 30 seconds</p>
+            <p className="text-gray-500">No commission fees • Best rates guaranteed</p>
+          </motion.div>
+        )}
+      </div>
       </motion.div>
-    </>
+    </div>
   )
 }

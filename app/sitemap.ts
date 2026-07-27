@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { STATIC_LOCATIONS } from '@/data/locations-static'
+import { ALL_CURRENCIES, currencySlug } from '@/lib/currencies'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:8004'
@@ -31,12 +32,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/currency-exchange/usd`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
       url: `${baseUrl}/money-transfer`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
@@ -61,6 +56,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
   ]
+
+  const currencyPages: MetadataRoute.Sitemap = ALL_CURRENCIES.map((c) => ({
+    url: `${baseUrl}/currency-exchange/${currencySlug(c.code)}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.65,
+  }))
 
   // Dynamic location pages (clean slug URLs)
   const locationPages: MetadataRoute.Sitemap = STATIC_LOCATIONS.map((loc) => ({
@@ -92,6 +94,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  return [...staticPages, ...locationPages, ...blogPages]
+  return [...staticPages, ...currencyPages, ...locationPages, ...blogPages]
 }
 

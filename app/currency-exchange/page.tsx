@@ -126,16 +126,10 @@ export default function CurrencyExchangePage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4 mb-10">
-            <Link
-              href="/currency-exchange/usd"
-              className="px-6 py-3 rounded-lg bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors"
-            >
-              US Dollars (USD)
-            </Link>
-          </div>
-
           <CurrencyGrid currencies={currenciesDenominations.currencies} />
+          <p className="text-center text-sm text-gray-500 mt-4">
+            Select a currency to view exchange rates and available note and coin denominations.
+          </p>
 
           <div className="mt-10 text-center">
             <p className="text-gray-600 mb-4">
