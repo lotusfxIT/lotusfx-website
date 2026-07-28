@@ -70,19 +70,24 @@ export default function PopupModal() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden relative">
-              {/* Close Button */}
+            <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden relative max-h-[90vh] overflow-y-auto">
+              {/* Close Button — high z-index so it stays tappable above the red panel on mobile */}
               <button
-                onClick={handleClose}
-                className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-200 group"
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  handleClose()
+                }}
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-[60] w-11 h-11 rounded-full bg-white/95 hover:bg-white shadow-md border border-gray-200 flex items-center justify-center transition-colors duration-200 touch-manipulation"
                 aria-label="Close"
               >
-                <XMarkIcon className="w-6 h-6 text-gray-600 group-hover:text-gray-900" />
+                <XMarkIcon className="w-6 h-6 text-gray-700 pointer-events-none" />
               </button>
 
               <div className="grid md:grid-cols-[1.2fr_1.8fr] gap-0">
                 {/* Left Side - Visual/Image */}
-                <div className="bg-gradient-to-br from-primary-600 to-primary-700 p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                <div className="bg-gradient-to-br from-primary-600 to-primary-700 p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden isolate">
                   {/* Decorative elements */}
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                   <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
