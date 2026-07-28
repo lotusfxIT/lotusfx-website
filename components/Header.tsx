@@ -236,15 +236,20 @@ export default function Header() {
               <div className="fixed inset-0 bg-black/20" onClick={() => setMobileMenuOpen(false)} />
               <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-xl">
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-accent-500 rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">L</span>
-                    </div>
-                    <span className="text-lg font-bold text-gray-900">LotusFX</span>
-                  </div>
+                  <Link
+                    href="/"
+                    className="flex items-center min-w-0"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <img
+                      src="/images/lotus-logo-horizontal.jpg"
+                      alt="LotusFX Logo"
+                      className="h-9 w-auto max-w-[200px] object-contain"
+                    />
+                  </Link>
                   <button
                     type="button"
-                    className="text-gray-700 hover:text-primary-600 transition-colors duration-200"
+                    className="text-gray-700 hover:text-primary-600 transition-colors duration-200 flex-shrink-0"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <span className="sr-only">Close menu</span>
