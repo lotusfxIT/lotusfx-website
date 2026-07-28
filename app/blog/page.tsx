@@ -46,17 +46,21 @@ export default function BlogPage() {
     : posts.filter(p => p.category === selectedCategory)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-b from-primary-50/40 via-white to-white">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="bg-white border-b border-primary-100">
+        <div className="container-custom py-14 sm:py-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Blog</h1>
-            <p className="text-xl text-gray-600">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              Insights
+            </span>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Blog</h1>
+            <p className="text-xl text-gray-600 max-w-2xl leading-relaxed">
               Tips, insights, and updates about currency exchange and international money transfer
             </p>
           </motion.div>
@@ -64,16 +68,16 @@ export default function BlogPage() {
       </div>
 
       {/* Category Filter */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container-custom py-8">
         <div className="flex gap-2 flex-wrap">
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-full font-semibold transition ${
+              className={`px-4 py-2 rounded-lg font-semibold transition ${
                 selectedCategory === cat
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-white text-gray-700 border border-gray-300 hover:border-blue-500'
+                  ? 'bg-primary-600 text-white shadow-md'
+                  : 'bg-white text-gray-700 border border-gray-200 hover:border-primary-300 hover:text-primary-700'
               }`}
             >
               {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -83,10 +87,10 @@ export default function BlogPage() {
       </div>
 
       {/* Blog Posts Grid */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="container-custom pb-16">
         {loading ? (
           <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
           </div>
         ) : filteredPosts.length === 0 ? (
           <div className="text-center py-12">
@@ -102,7 +106,7 @@ export default function BlogPage() {
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
               >
                 <Link href={`/blog/${post.slug}`}>
-                  <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition h-full flex flex-col">
+                  <div className="bg-white rounded-2xl border border-primary-100 shadow-soft overflow-hidden hover:shadow-lg hover:border-primary-300 transition h-full flex flex-col">
                     {/* Image */}
                     <div className="relative h-48 bg-gray-200">
                       {post.image ? (
@@ -113,8 +117,8 @@ export default function BlogPage() {
                           className="object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center">
-                          <span className="text-white text-4xl">📝</span>
+                        <div className="w-full h-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
+                          <span className="text-white text-4xl font-bold">LFX</span>
                         </div>
                       )}
                     </div>
@@ -122,7 +126,7 @@ export default function BlogPage() {
                     {/* Content */}
                     <div className="p-6 flex flex-col flex-grow">
                       <div className="flex items-center gap-2 mb-3">
-                        <span className="text-xs font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
+                        <span className="text-xs font-semibold text-primary-700 bg-primary-50 px-3 py-1 rounded-full">
                           {post.category}
                         </span>
                         <span className="text-xs text-gray-500">{post.readTime} min read</span>
@@ -136,7 +140,7 @@ export default function BlogPage() {
                         {post.excerpt}
                       </p>
 
-                      <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-200 pt-4">
+                      <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4">
                         <div className="flex items-center gap-4">
                           <span className="flex items-center gap-1">
                             <CalendarIcon className="w-4 h-4" />
@@ -147,7 +151,7 @@ export default function BlogPage() {
                             {post.author}
                           </span>
                         </div>
-                        <ArrowRightIcon className="w-4 h-4 text-blue-500 group-hover:translate-x-1 transition" />
+                        <ArrowRightIcon className="w-4 h-4 text-primary-600" />
                       </div>
                     </div>
                   </div>

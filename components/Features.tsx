@@ -78,8 +78,8 @@ export default function Features() {
           $
         </span>
         <div className="absolute top-24 right-40 flex gap-10 text-red-200 text-6xl font-bold tracking-tight opacity-40">
-          <span>₿</span>
-          <span>₪</span>
+          <span>₺</span>
+          <span>₱</span>
           <span>₹</span>
         </div>
         <div className="absolute top-1/3 left-20 text-red-200 text-7xl font-bold opacity-35">

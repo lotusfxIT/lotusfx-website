@@ -31,21 +31,22 @@ export default function ContactPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="pt-20 pb-16 bg-gradient-to-br from-primary-50 via-white to-accent-50">
+      <section className="pt-28 pb-16 bg-gradient-to-br from-primary-50 via-white to-white">
         <div className="container-custom">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-3xl mx-auto text-center">
             <MotionWrapper
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-block bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
-                Expert Support Available
-              </div>
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+                <span className="h-px w-8 bg-primary-500" aria-hidden />
+                Expert support available
+              </span>
+              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight">
                 Need to reach us?
               </h1>
-              <p className="text-xl text-gray-600 mb-8">
+              <p className="text-xl text-gray-600 leading-relaxed border-l-4 border-primary-500 pl-5 text-left sm:text-center sm:border-0 sm:pl-0">
                 Here&apos;s how you can contact LotusFX no matter where you are. Reach out through
                 any channel that works best for you.
               </p>
@@ -58,7 +59,11 @@ export default function ContactPage() {
       <section className="py-16 bg-white">
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              We&apos;re here to help
+            </span>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
               Multiple Ways to Reach Us
             </h2>
             <p className="text-lg text-gray-600">
@@ -66,73 +71,74 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
                 icon: PhoneIcon,
                 title: 'Phone Support',
                 description: 'Call us during business hours for immediate assistance with your currency exchange or money transfer needs.',
                 action: 'Call Now',
-                color: 'text-primary-600',
-                bgColor: 'bg-primary-50'
+                href: 'tel:+61212345678',
               },
               {
                 icon: EnvelopeIcon,
                 title: 'Email Support',
-                description: 'Send us an email and we\'ll respond within 24 hours. Perfect for detailed questions or documentation.',
+                description: "Send us an email and we'll respond within 24 hours. Perfect for detailed questions or documentation.",
                 action: 'Send Email',
-                color: 'text-accent-600',
-                bgColor: 'bg-accent-50'
+                href: 'mailto:info@lotusfx.com',
               },
               {
                 icon: MapPinIcon,
                 title: 'Visit a Branch',
                 description: `Visit any of our ${STATS.branches.total} branches across Australia, New Zealand, and Fiji for face-to-face service.`,
                 action: 'Find Branch',
-                color: 'text-success-600',
-                bgColor: 'bg-success-50'
+                href: '/locations',
               },
               {
                 icon: ChatBubbleLeftRightIcon,
                 title: 'Live Chat',
                 description: 'Chat with our support team in real-time during business hours for instant answers.',
                 action: 'Start Chat',
-                color: 'text-purple-600',
-                bgColor: 'bg-purple-50'
+                href: '/contact#message',
               },
               {
                 icon: DevicePhoneMobileIcon,
                 title: 'Mobile App',
                 description: 'Download the Lotus app to contact support, track transfers, and manage transactions anytime.',
                 action: 'Get App',
-                color: 'text-blue-600',
-                bgColor: 'bg-blue-50'
+                href: 'https://apps.apple.com/app/lotusfx',
               },
               {
                 icon: GlobeAltIcon,
                 title: 'Social Media',
                 description: 'Follow us on Facebook and Instagram for updates, tips, and to reach out with questions.',
                 action: 'Follow Us',
-                color: 'text-pink-600',
-                bgColor: 'bg-pink-50'
+                href: 'https://www.facebook.com/lotusfx',
               },
             ].map((method, index) => (
               <MotionWrapper
                 key={method.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.6, delay: index * 0.08 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-shadow"
+                className="h-full"
               >
-                <div className={`w-12 h-12 ${method.bgColor} rounded-lg flex items-center justify-center mb-4`}>
-                  <method.icon className={`w-6 h-6 ${method.color}`} />
+                <div className="h-full flex flex-col bg-white rounded-2xl p-6 border border-primary-100 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center mb-4 shadow-md">
+                    <method.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{method.title}</h3>
+                  <p className="text-gray-600 mb-4 text-sm leading-relaxed flex-1">{method.description}</p>
+                  <a
+                    href={method.href}
+                    target={method.href.startsWith('http') ? '_blank' : undefined}
+                    rel={method.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    className="text-sm font-semibold text-primary-600 hover:text-primary-700"
+                  >
+                    {method.action} →
+                  </a>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{method.title}</h3>
-                <p className="text-gray-600 mb-4 text-sm">{method.description}</p>
-                <button className={`text-sm font-semibold ${method.color} hover:underline`}>
-                  {method.action} →
-                </button>
               </MotionWrapper>
             ))}
           </div>
@@ -140,7 +146,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form & Info */}
-      <section className="py-16 bg-gray-50">
+      <section id="message" className="py-16 bg-gray-50 scroll-mt-28">
         <div className="container-custom">
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}

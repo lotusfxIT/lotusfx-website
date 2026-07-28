@@ -153,7 +153,11 @@ export default function WesternUnionPage() {
       <section className="py-16 lg:py-24 bg-white">
         <div className="container-custom px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              Global reach
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
               Why Choose Western Union?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -165,11 +169,13 @@ export default function WesternUnionPage() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+                className="h-full flex flex-col bg-white rounded-2xl border border-primary-100 p-6 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all"
               >
-                <feature.icon className="w-12 h-12 text-yellow-600 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center mb-5 shadow-md">
+                  <feature.icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -180,7 +186,11 @@ export default function WesternUnionPage() {
       <section className="py-16 lg:py-24 bg-gray-50">
         <div className="container-custom px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              Simple process
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
               How It Works
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -192,11 +202,13 @@ export default function WesternUnionPage() {
             {steps.map((step) => (
               <div
                 key={step.number}
-                className="bg-white rounded-xl p-6 border border-gray-200 shadow-soft"
+                className="h-full rounded-2xl border border-primary-100 bg-white p-6 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all"
               >
-                <div className="text-4xl font-bold text-yellow-600 mb-4">{step.number}</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
+                <div className="text-3xl font-black text-primary-600/90 mb-4 tabular-nums tracking-tight">
+                  {step.number}
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">{step.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{step.description}</p>
               </div>
             ))}
           </div>
@@ -204,40 +216,41 @@ export default function WesternUnionPage() {
       </section>
 
       {/* In-Store CTA */}
-      <section className="py-16 lg:py-24 bg-yellow-50">
+      <section className="py-16 lg:py-24 bg-gradient-to-b from-primary-50/60 to-white">
         <div className="container-custom px-4 sm:px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-              Visit Us In-Store Today
-            </h2>
-            <p className="text-lg text-gray-700 mb-8">
-              Our experienced staff at LotusFX branches are ready to help you send money worldwide with Western Union. 
-              We offer competitive rates, transparent fees, and multilingual support.
-            </p>
-            <div className="bg-white rounded-xl p-8 shadow-lg">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">What to Bring</h3>
-              <ul className="text-left max-w-md mx-auto space-y-3 text-gray-700">
-                <li className="flex items-start">
-                  <span className="text-yellow-600 mr-2">✓</span>
-                  <span>Valid government-issued photo ID (driver's license, passport, or national ID)</span>
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-5xl mx-auto">
+            <div>
+              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+                <span className="h-px w-8 bg-primary-500" aria-hidden />
+                In branch
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 tracking-tight">
+                Visit Us In-Store Today
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed border-l-4 border-primary-500 pl-5 mb-8">
+                Our experienced staff at LotusFX branches are ready to help you send money worldwide with Western Union.
+                We offer competitive rates, transparent fees, and multilingual support.
+              </p>
+              <Link href="/locations" className="btn-primary inline-flex">
+                Find Nearest Branch →
+              </Link>
+            </div>
+            <div className="rounded-2xl bg-white border border-primary-100 p-8 shadow-soft">
+              <h3 className="text-xl font-bold text-gray-900 mb-5">What to Bring</h3>
+              <ul className="space-y-4 text-gray-700">
+                <li className="flex items-start gap-3">
+                  <span className="text-primary-600 font-bold mt-0.5">✓</span>
+                  <span>Valid government-issued photo ID (driver&apos;s license, passport, or national ID)</span>
                 </li>
-                <li className="flex items-start">
-                  <span className="text-yellow-600 mr-2">✓</span>
-                  <span>Recipient's full name and location</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-primary-600 font-bold mt-0.5">✓</span>
+                  <span>Recipient&apos;s full name and location</span>
                 </li>
-                <li className="flex items-start">
-                  <span className="text-yellow-600 mr-2">✓</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-primary-600 font-bold mt-0.5">✓</span>
                   <span>Cash or bank transfer details for payment</span>
                 </li>
               </ul>
-            </div>
-            <div className="mt-8">
-              <Link
-                href="/locations"
-                className="inline-block bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-8 py-4 rounded-lg transition-colors shadow-lg"
-              >
-                Find Nearest Branch →
-              </Link>
             </div>
           </div>
         </div>
@@ -247,7 +260,11 @@ export default function WesternUnionPage() {
       <section className="py-16 lg:py-24 bg-white">
         <div className="container-custom px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              FAQs
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
               Frequently Asked Questions
             </h2>
           </div>
@@ -260,7 +277,7 @@ export default function WesternUnionPage() {
               },
               {
                 q: 'What identification do I need?',
-                a: 'You\'ll need a valid government-issued photo ID such as a driver\'s license, passport, or national ID card. Our staff will verify your identity before processing the transfer.',
+                a: "You'll need a valid government-issued photo ID such as a driver's license, passport, or national ID card. Our staff will verify your identity before processing the transfer.",
               },
               {
                 q: 'How long does it take?',
@@ -273,11 +290,11 @@ export default function WesternUnionPage() {
             ].map((faq) => (
               <div
                 key={faq.q}
-                className="rounded-xl border border-gray-200 border-l-4 border-l-primary-400 bg-white shadow-soft"
+                className="rounded-xl border border-gray-200 border-l-4 border-l-primary-500 bg-white shadow-soft"
               >
                 <div className="px-6 py-5">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.q}</h3>
-                  <p className="text-gray-700 leading-relaxed">{faq.a}</p>
+                  <p className="text-gray-600 leading-relaxed">{faq.a}</p>
                 </div>
               </div>
             ))}

@@ -161,7 +161,11 @@ export default function CashPassportPage() {
       <section className="py-16 lg:py-24 bg-white">
         <div className="container-custom px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              Get started
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
               Get Your Cash Passport Card
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -174,11 +178,11 @@ export default function CashPassportPage() {
               <div
                 key={option.title}
                 className={`bg-gradient-to-br ${option.color} text-white rounded-2xl p-8 shadow-xl relative ${
-                  option.highlight ? 'ring-4 ring-orange-200' : ''
+                  option.highlight ? 'ring-4 ring-primary-200' : ''
                 }`}
               >
                 {option.highlight && (
-                  <div className="absolute -top-4 right-4 bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-semibold">
+                  <div className="absolute -top-4 right-4 bg-white text-primary-700 px-4 py-1 rounded-full text-sm font-semibold shadow">
                     Recommended
                   </div>
                 )}
@@ -209,7 +213,11 @@ export default function CashPassportPage() {
       <section className="py-16 lg:py-24 bg-gray-50">
         <div className="container-custom px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              Travel smarter
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
               Why Choose Cash Passport?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -221,11 +229,13 @@ export default function CashPassportPage() {
             {benefits.map((benefit) => (
               <div
                 key={benefit.title}
-                className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+                className="h-full flex flex-col bg-white rounded-2xl border border-primary-100 p-6 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all"
               >
-                <benefit.icon className="w-12 h-12 text-orange-600 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{benefit.title}</h3>
-                <p className="text-gray-600">{benefit.description}</p>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center mb-5 shadow-md">
+                  <benefit.icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{benefit.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{benefit.description}</p>
               </div>
             ))}
           </div>
@@ -237,7 +247,11 @@ export default function CashPassportPage() {
         <div className="container-custom px-4 sm:px-6">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+                <span className="h-px w-8 bg-primary-500" aria-hidden />
+                Multi-currency
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
                 Supported Currencies
               </h2>
               <p className="text-lg text-gray-600">
@@ -248,9 +262,9 @@ export default function CashPassportPage() {
               {currencies.map((currency) => (
                 <div
                   key={currency}
-                  className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl px-4 py-6 text-center border border-orange-200"
+                  className="rounded-xl px-4 py-6 text-center border border-primary-100 bg-gradient-to-br from-primary-50 to-white shadow-soft"
                 >
-                  <div className="text-2xl font-bold text-gray-900">{currency}</div>
+                  <div className="text-xl font-bold text-gray-900">{currency}</div>
                 </div>
               ))}
             </div>
@@ -262,7 +276,11 @@ export default function CashPassportPage() {
       <section className="py-16 lg:py-24 bg-gray-50">
         <div className="container-custom px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              Simple process
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
               How It Works
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -274,11 +292,13 @@ export default function CashPassportPage() {
             {process.map((step, index) => (
               <div
                 key={step.title}
-                className="bg-white rounded-xl p-6 border border-gray-200 shadow-soft"
+                className="h-full rounded-2xl border border-primary-100 bg-white p-6 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all"
               >
-                <div className="text-4xl font-bold text-orange-600 mb-4">0{index + 1}</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
+                <div className="text-3xl font-black text-primary-600/90 mb-4 tabular-nums tracking-tight">
+                  0{index + 1}
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">{step.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{step.description}</p>
               </div>
             ))}
           </div>
@@ -289,7 +309,11 @@ export default function CashPassportPage() {
       <section className="py-16 lg:py-24 bg-white">
         <div className="container-custom px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              FAQs
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
               Frequently Asked Questions
             </h2>
           </div>

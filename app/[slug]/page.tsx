@@ -75,13 +75,17 @@ export default function DynamicPage({ params }: { params: { slug: string } }) {
             className="py-16 md:py-24"
           >
             <div className="max-w-3xl">
+              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+                <span className="h-px w-8 bg-primary-500" aria-hidden />
+                Lotus FX
+              </span>
               {pageData.hero.title && (
-                <h1 className="text-4xl md:text-5xl font-bold text-primary-700 mb-4">
+                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-5 tracking-tight">
                   {pageData.hero.title}
                 </h1>
               )}
               {pageData.hero.subtitle && (
-                <p className="text-xl text-gray-600 mb-8">
+                <p className="text-xl text-gray-600 mb-8 leading-relaxed border-l-4 border-primary-500 pl-5">
                   {pageData.hero.subtitle}
                 </p>
               )}
@@ -103,10 +107,10 @@ export default function DynamicPage({ params }: { params: { slug: string } }) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="py-16 md:py-24 border-t border-gray-200"
+            className="py-16 md:py-24 border-t border-gray-100"
           >
             {pageData.features.title && (
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-700 mb-12 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center tracking-tight">
                 {pageData.features.title}
               </h2>
             )}
@@ -118,18 +122,20 @@ export default function DynamicPage({ params }: { params: { slug: string } }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-gradient-to-br from-primary-50 to-accent-50 p-8 rounded-lg border border-primary-200"
+                  className="bg-white p-8 rounded-2xl border border-primary-100 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all"
                 >
                   {feature.icon && (
-                    <div className="text-4xl mb-4">{feature.icon}</div>
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center text-xl mb-5 shadow-md">
+                      {feature.icon}
+                    </div>
                   )}
                   {feature.title && (
-                    <h3 className="text-xl font-bold text-primary-700 mb-3">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
                       {feature.title}
                     </h3>
                   )}
                   {feature.description && (
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 text-sm leading-relaxed">
                       {feature.description}
                     </p>
                   )}

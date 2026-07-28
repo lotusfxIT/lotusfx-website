@@ -313,7 +313,7 @@ export default function Hero() {
                     textShadow: '0 2px 4px rgba(0,0,0,0.15)',
                   }}
                 >
-                  ₹
+                  $
                 </span>
                 <span
                   className="absolute top-[30%] right-0 text-5xl lg:text-6xl font-bold text-white opacity-70"
@@ -321,7 +321,7 @@ export default function Hero() {
                     textShadow: '0 2px 8px rgba(0,0,0,0.3)',
                   }}
                 >
-                  ₽
+                  ₩
                 </span>
                 <span
                   className="absolute top-[50%] right-[30%] text-4xl lg:text-5xl font-bold"
@@ -335,7 +335,7 @@ export default function Hero() {
                     textShadow: '0 2px 4px rgba(0,0,0,0.15)',
                   }}
                 >
-                  ₩
+                  ₺
                 </span>
                 <span
                   className="absolute top-[70%] right-[10%] text-5xl lg:text-6xl font-bold text-white opacity-75"
@@ -343,7 +343,7 @@ export default function Hero() {
                     textShadow: '0 2px 8px rgba(0,0,0,0.3)',
                   }}
                 >
-                  ₿
+                  ₱
                 </span>
                 <span
                   className="absolute top-[85%] right-[25%] text-4xl lg:text-5xl font-bold"
@@ -357,7 +357,7 @@ export default function Hero() {
                     textShadow: '0 2px 4px rgba(0,0,0,0.15)',
                   }}
                 >
-                  ₪
+                  元
                 </span>
               </div>
 
@@ -402,7 +402,7 @@ export default function Hero() {
                     textShadow: '0 2px 8px rgba(0,0,0,0.3)',
                   }}
                 >
-                  $
+                  ₹
                 </span>
                 <span
                   className="absolute top-[65%] left-[5%] text-4xl lg:text-5xl font-bold"
@@ -424,7 +424,7 @@ export default function Hero() {
                     textShadow: '0 2px 8px rgba(0,0,0,0.3)',
                   }}
                 >
-                  ₦
+                  ₫
                 </span>
               </div>
               {showQuoteHeading && (

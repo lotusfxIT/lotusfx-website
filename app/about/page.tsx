@@ -1,9 +1,18 @@
 'use client'
 
-import { Metadata } from 'next'
 import MotionWrapper from '@/components/MotionWrapper'
 import { STATS } from '@/config/stats'
 import { useCountry } from '@/context/CountryContext'
+import {
+  EyeIcon,
+  HeartIcon,
+  BoltIcon,
+  ShieldCheckIcon,
+  BanknotesIcon,
+  CheckBadgeIcon,
+  UserGroupIcon,
+  DevicePhoneMobileIcon,
+} from '@heroicons/react/24/outline'
 
 function AboutVideo() {
   return (
@@ -71,23 +80,27 @@ export default function AboutPage() {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+                <span className="h-px w-8 bg-primary-500" aria-hidden />
+                Since 2002
+              </span>
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 tracking-tight">
                 Our Story
               </h2>
-              <div className="space-y-4 text-gray-600">
-                <p>
+              <div className="space-y-5 text-gray-600">
+                <p className="text-lg lg:text-xl text-gray-700 leading-relaxed border-l-4 border-primary-500 pl-5">
                   LotusFX was founded in 2002 with a simple mission: to provide better foreign exchange 
                   services than traditional banks. We saw that customers were paying too much in fees and 
                   getting poor exchange rates, so we set out to change that.
                 </p>
-                <p>
-                  Starting with a single branch, we've grown to over 60 locations across Australia, 
+                <p className="text-base lg:text-lg leading-relaxed">
+                  Starting with a single branch, we&apos;ve grown to over 60 locations across Australia, 
                   New Zealand, and Fiji. Our success comes from our commitment to competitive rates, 
                   transparent pricing, and exceptional customer service.
                 </p>
-                <p>
+                <p className="text-base lg:text-lg leading-relaxed">
                   Today, we serve over {STATS.customers.total} customers and have facilitated over {STATS.totalTransferred} in
-                  currency exchanges and international transfers. We're proud to be the trusted choice
+                  currency exchanges and international transfers. We&apos;re proud to be the trusted choice
                   for travelers, families sending money home, and businesses making international payments.
                 </p>
               </div>
@@ -160,94 +173,99 @@ export default function AboutPage() {
       </section>
 
       {/* Our Values */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 lg:py-20 bg-gray-50">
         <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              What we stand for
+            </span>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
               Our Core Values
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               These principles guide everything we do at LotusFX
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                icon: '💎',
+                icon: <EyeIcon className="w-6 h-6" />,
                 title: 'Transparency',
-                description: 'No hidden fees, no surprises. What you see is what you pay.'
+                description: 'No hidden fees, no surprises. What you see is what you pay.',
               },
               {
-                icon: '🎯',
+                icon: <HeartIcon className="w-6 h-6" />,
                 title: 'Customer First',
-                description: 'Your needs come first. We\'re here to serve you, not the other way around.'
+                description: "Your needs come first. We're here to serve you, not the other way around.",
               },
               {
-                icon: '⚡',
+                icon: <BoltIcon className="w-6 h-6" />,
                 title: 'Speed & Efficiency',
-                description: 'Fast processing, quick transfers, and minimal wait times.'
+                description: 'Fast processing, quick transfers, and minimal wait times.',
               },
               {
-                icon: '🤝',
+                icon: <ShieldCheckIcon className="w-6 h-6" />,
                 title: 'Trust & Integrity',
-                description: 'We earn your trust through consistent, reliable, and honest service.'
+                description: 'We earn your trust through consistent, reliable, and honest service.',
               },
             ].map((value, index) => (
-              <MotionWrapper
-                key={value.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-xl p-6 shadow-md text-center"
-              >
-                <div className="text-5xl mb-4">{value.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{value.title}</h3>
-                <p className="text-gray-600">{value.description}</p>
-              </MotionWrapper>
+              <div key={value.title} className="h-full">
+                <div className="h-full flex flex-col bg-white rounded-2xl border border-primary-100 p-7 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all duration-300 text-left">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center mb-5 shadow-md">
+                    {value.icon}
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">{value.title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">{value.description}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Our Presence */}
-      <section className="py-16 bg-white">
+      <section className="py-16 lg:py-20 bg-white">
         <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              Across the Pacific
+            </span>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
               Serving the Pacific Region
             </h2>
-            <p className="text-lg text-gray-600">
-              With {STATS.branches.total} branches across three countries, we're always nearby when you need us
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              With {STATS.branches.total} branches across three countries, we&apos;re always nearby when you need us
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                flag: '🇦🇺',
+                code: 'au',
                 country: 'Australia',
                 branches: `${STATS.branches.australia} Branches`,
                 customers: `${STATS.customers.australia} Customers`,
                 email: STATS.emails.australia,
-                highlights: ['Major cities coverage', 'Extended trading hours', 'eWire to NZ & Fiji']
+                highlights: ['Major cities coverage', 'Extended trading hours', 'eWire to NZ & Fiji'],
               },
               {
-                flag: '🇳🇿',
+                code: 'nz',
                 country: 'New Zealand',
                 branches: `${STATS.branches.newZealand} Branches`,
                 customers: `${STATS.customers.newZealand} Customers`,
                 email: STATS.emails.newZealand,
-                highlights: ['Nationwide network', 'Expert FX advisors', 'Same-day transfers']
+                highlights: ['Nationwide network', 'Expert FX advisors', 'Same-day transfers'],
               },
               {
-                flag: '🇫🇯',
+                code: 'fj',
                 country: 'Fiji',
                 branches: `${STATS.branches.fiji} Branches`,
                 customers: `${STATS.customers.fiji} Customers`,
                 email: STATS.emails.fiji,
-                highlights: ['Island-wide service', 'Pacific specialist', 'Local currency expert']
+                highlights: ['Island-wide service', 'Pacific specialist', 'Local currency expert'],
               },
             ].map((region, index) => (
               <MotionWrapper
@@ -256,29 +274,26 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl p-8 border border-primary-100"
+                className="rounded-2xl border border-primary-100 bg-white p-8 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all"
               >
-                <div className="text-6xl mb-4 text-center">{region.flag}</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">{region.country}</h3>
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-2 text-gray-700">
-                    <span className="font-semibold">🏢</span>
-                    <span>{region.branches}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-700">
-                    <span className="font-semibold">👥</span>
-                    <span>{region.customers}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-700 text-sm">
-                    <span className="font-semibold">✉️</span>
-                    <span className="break-all">{region.email}</span>
-                  </div>
+                <div className="flex items-center gap-3 mb-6">
+                  <img
+                    src={`https://flagcdn.com/w80/${region.code}.png`}
+                    alt=""
+                    className="h-8 w-12 object-cover rounded shadow-sm"
+                  />
+                  <h3 className="text-2xl font-bold text-gray-900">{region.country}</h3>
                 </div>
-                <div className="border-t border-primary-200 pt-4">
+                <div className="space-y-3 mb-6 text-gray-700">
+                  <p className="font-semibold text-primary-700">{region.branches}</p>
+                  <p className="text-sm">{region.customers}</p>
+                  <p className="text-sm break-all text-gray-500">{region.email}</p>
+                </div>
+                <div className="border-t border-primary-100 pt-4">
                   <ul className="space-y-2">
                     {region.highlights.map((highlight) => (
                       <li key={highlight} className="flex items-start gap-2 text-sm text-gray-600">
-                        <span className="text-primary-600">✓</span>
+                        <span className="text-primary-600 font-bold">✓</span>
                         <span>{highlight}</span>
                       </li>
                     ))}
@@ -291,66 +306,70 @@ export default function AboutPage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 lg:py-20 bg-gray-50">
         <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
+              <span className="h-px w-8 bg-primary-500" aria-hidden />
+              The Lotus difference
+            </span>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
               Why Customers Choose LotusFX
             </h2>
-            <p className="text-lg text-gray-600">
-              We're not just another currency exchange - we're your trusted financial partner
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              We&apos;re not just another currency exchange — we&apos;re your trusted financial partner
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
                 title: 'Better Rates Than Banks',
-                description: 'Our rates are typically 2-3% better than major banks. As specialists in foreign exchange, we can offer superior rates that banks simply can\'t match.',
-                icon: '💰'
+                description:
+                  "Our rates are typically 2-3% better than major banks. As specialists in foreign exchange, we can offer superior rates that banks simply can't match.",
+                icon: <BanknotesIcon className="w-6 h-6" />,
               },
               {
                 title: 'No Commission Fees',
-                description: 'We don\'t charge commission on currency exchange. What you see is what you pay - complete transparency with no hidden charges.',
-                icon: '🎯'
+                description:
+                  "We don't charge commission on currency exchange. What you see is what you pay — complete transparency with no hidden charges.",
+                icon: <CheckBadgeIcon className="w-6 h-6" />,
               },
               {
                 title: 'Expert FX Team',
-                description: 'Our staff are trained foreign exchange specialists, not general banking staff. We understand the markets and can provide expert advice.',
-                icon: '👨‍💼'
+                description:
+                  'Our staff are trained foreign exchange specialists, not general banking staff. We understand the markets and can provide expert advice.',
+                icon: <UserGroupIcon className="w-6 h-6" />,
               },
               {
                 title: 'Multiple Service Channels',
-                description: 'Exchange in-branch, online, or via our mobile app. Choose the method that works best for you with consistent rates across all channels.',
-                icon: '📱'
+                description:
+                  'Exchange in-branch, online, or via our mobile app. Choose the method that works best for you with consistent rates across all channels.',
+                icon: <DevicePhoneMobileIcon className="w-6 h-6" />,
               },
               {
                 title: 'Fast Processing',
-                description: 'Most transfers complete within 24 hours. eWire transfers between AU, NZ & Fiji are instant with zero fees.',
-                icon: '⚡'
+                description:
+                  'Most transfers complete within 24 hours. eWire transfers between AU, NZ & Fiji are instant with zero fees.',
+                icon: <BoltIcon className="w-6 h-6" />,
               },
               {
                 title: 'Fully Licensed & Regulated',
-                description: 'We\'re licensed and regulated by financial authorities in all three countries. Your money and data are protected with bank-grade security.',
-                icon: '🔒'
+                description:
+                  "We're licensed and regulated by financial authorities in all three countries. Your money and data are protected with bank-grade security.",
+                icon: <ShieldCheckIcon className="w-6 h-6" />,
               },
-            ].map((reason, index) => (
-              <MotionWrapper
+            ].map((reason) => (
+              <div
                 key={reason.title}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-xl p-6 shadow-md"
+                className="h-full flex flex-col bg-white rounded-2xl border border-primary-100 p-7 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all duration-300"
               >
-                <div className="flex gap-4">
-                  <div className="text-4xl flex-shrink-0">{reason.icon}</div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{reason.title}</h3>
-                    <p className="text-gray-600">{reason.description}</p>
-                  </div>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center mb-5 shadow-md">
+                  {reason.icon}
                 </div>
-              </MotionWrapper>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">{reason.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{reason.description}</p>
+              </div>
             ))}
           </div>
         </div>
