@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getValidServerAccessToken } from '@/lib/google-auth-server'
+import {
+  getValidServerAccessToken,
+  invalidateServerAccessToken,
+} from '@/lib/google-auth-server'
 
 export const dynamic = 'force-dynamic'
 
@@ -119,15 +122,40 @@ function getFallbackRegion(country: string, administrativeArea: string): string 
 // Fetch locations from Google API
 async function fetchLocationsFromGoogle(accessToken: string): Promise<any[]> {
   // Use the same logic as /api/google-my-business
-  const accountsResponse = await fetch('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json'
+  let token = accessToken
+  let accountsResponse = await fetch(
+    'https://mybusinessaccountmanagement.googleapis.com/v1/accounts',
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
     }
-  })
+  )
+
+  if (accountsResponse.status === 401 || accountsResponse.status === 403) {
+    invalidateServerAccessToken()
+    const fresh = await getValidServerAccessToken({ forceRefresh: true })
+    if (fresh) {
+      token = fresh
+      accountsResponse = await fetch(
+        'https://mybusinessaccountmanagement.googleapis.com/v1/accounts',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          cache: 'no-store',
+        }
+      )
+    }
+  }
 
   if (!accountsResponse.ok) {
-    throw new Error('Failed to fetch accounts')
+    const errText = await accountsResponse.text()
+    console.error('[cached locations] accounts error:', accountsResponse.status, errText)
+    throw new Error(`Failed to fetch accounts (${accountsResponse.status}): ${errText.slice(0, 300)}`)
   }
 
   const accountsData = await accountsResponse.json()
@@ -156,9 +184,10 @@ async function fetchLocationsFromGoogle(accessToken: string): Promise<any[]> {
       
       const locationsResponse = await fetch(`https://mybusinessbusinessinformation.googleapis.com/v1/${account.name}/locations?readMask=${encodeURIComponent(readMask)}&pageSize=100${pageParam}`, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        cache: 'no-store',
       })
 
       if (locationsResponse.ok) {

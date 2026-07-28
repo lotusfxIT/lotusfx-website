@@ -1,4 +1,7 @@
-import { getValidServerAccessToken } from '@/lib/google-auth-server'
+import {
+  getValidServerAccessToken,
+  invalidateServerAccessToken,
+} from '@/lib/google-auth-server'
 
 export const LOCATION_DETAILS_CACHE_TTL_MS = 24 * 60 * 60 * 1000 // 1 day
 
@@ -14,12 +17,37 @@ export function getLocationDetailsCache(): Map<string, { data: any; fetchedAt: n
   return globalThis.__locationDetailsCache
 }
 
+function summarizeGoogleError(status: number, errorText: string): string {
+  try {
+    const parsed = JSON.parse(errorText) as {
+      error?: { message?: string; status?: string }
+    }
+    const msg = parsed.error?.message || parsed.error?.status
+    if (msg) return `Google ${status}: ${msg}`
+  } catch {
+    // ignore
+  }
+  const clipped = errorText.replace(/\s+/g, ' ').slice(0, 180)
+  return clipped ? `Google ${status}: ${clipped}` : `Google ${status}`
+}
+
+async function fetchLocationFromGoogle(locId: string, token: string, readMask: string) {
+  const apiUrl = `https://mybusinessbusinessinformation.googleapis.com/v1/locations/${locId}?readMask=${encodeURIComponent(readMask)}`
+  return fetch(apiUrl, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    cache: 'no-store',
+  })
+}
+
 export async function fetchAndCacheLocationDetails(
   locationId: string,
   accessToken?: string | null
 ): Promise<{ ok: true; data: any; cached: boolean } | { ok: false; error: string; status: number }> {
   const cache = getLocationDetailsCache()
-  const token = accessToken ?? (await getValidServerAccessToken())
+  let token = accessToken ?? (await getValidServerAccessToken())
   if (!token) {
     return { ok: false, error: 'Server authentication not configured', status: 503 }
   }
@@ -49,19 +77,26 @@ export async function fetchAndCacheLocationDetails(
     'categories',
   ].join(',')
 
-  const apiUrl = `https://mybusinessbusinessinformation.googleapis.com/v1/locations/${locId}?readMask=${encodeURIComponent(readMask)}`
+  let locationResponse = await fetchLocationFromGoogle(locId, token, readMask)
 
-  const locationResponse = await fetch(apiUrl, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-  })
+  // Stale access token → force refresh once and retry
+  if (locationResponse.status === 401 || locationResponse.status === 403) {
+    invalidateServerAccessToken()
+    const fresh = await getValidServerAccessToken({ forceRefresh: true })
+    if (fresh) {
+      token = fresh
+      locationResponse = await fetchLocationFromGoogle(locId, token, readMask)
+    }
+  }
 
   if (!locationResponse.ok) {
     const errorText = await locationResponse.text()
-    console.error('[location-details-cache] Error:', errorText)
-    return { ok: false, error: 'Location not found', status: 404 }
+    console.error('[location-details-cache] Error:', locationResponse.status, errorText)
+    return {
+      ok: false,
+      error: summarizeGoogleError(locationResponse.status, errorText),
+      status: locationResponse.status === 404 ? 404 : 502,
+    }
   }
 
   const location = await locationResponse.json()
@@ -103,6 +138,7 @@ export async function fetchAndCacheLocationDetails(
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      cache: 'no-store',
     })
 
     if (reviewsResponse.ok) {
@@ -143,6 +179,10 @@ export async function fetchAndCacheLocationDetails(
     reviewCount,
   }
 
+  // Cache under both the static full id and Google's short name
   cache.set(locationId, { data, fetchedAt: Date.now() })
+  if (typeof location.name === 'string' && location.name !== locationId) {
+    cache.set(location.name, { data, fetchedAt: Date.now() })
+  }
   return { ok: true, data, cached: false }
 }
