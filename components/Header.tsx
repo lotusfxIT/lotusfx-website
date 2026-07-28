@@ -85,7 +85,7 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-white shadow-lg border-b border-gray-100 max-w-[100vw]">
+    <header className="fixed inset-x-0 top-0 z-50 bg-white shadow-lg border-b border-gray-100">
       <nav className="container-custom min-w-0">
         <div className="flex items-center justify-between h-16 lg:h-20 gap-3 min-w-0">
           {/* Left: Logo + Navigation */}

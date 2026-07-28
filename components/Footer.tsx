@@ -88,7 +88,7 @@ export default function Footer() {
 
   const sections = config.sections || defaultSections
   return (
-  <footer className="bg-primary-600 text-white overflow-x-hidden w-full max-w-[100vw]">
+  <footer className="bg-primary-600 text-white overflow-x-hidden w-full">
       <div className="container-custom min-w-0">
         {/* Main Footer Content */}
         <div className="py-12 sm:py-16">

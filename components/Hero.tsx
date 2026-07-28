@@ -68,7 +68,7 @@ export default function Hero() {
   }))
 
   return (
-    <section className="relative min-h-[calc(100vh-80px)] flex items-center overflow-hidden pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-12 w-full max-w-[100vw]">
+    <section className="relative min-h-[calc(100vh-80px)] flex items-center overflow-hidden pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-12 w-full">
       {/* Background with red gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800"></div>
 

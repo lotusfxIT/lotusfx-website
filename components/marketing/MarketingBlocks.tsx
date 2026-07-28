@@ -159,19 +159,19 @@ export function AccentPanel({
   items: { label: string; detail: string }[]
 }) {
   return (
-    <div className="relative rounded-3xl bg-gradient-to-br from-primary-600 to-primary-800 p-8 lg:p-10 text-white shadow-strong overflow-hidden min-h-[320px] flex flex-col justify-center">
-      <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full border border-white/20" aria-hidden />
-      <div className="absolute bottom-8 left-8 w-24 h-24 rounded-full border border-white/15" aria-hidden />
+    <div className="relative rounded-3xl bg-gradient-to-br from-primary-600 to-primary-800 p-6 sm:p-8 lg:p-10 text-white shadow-strong overflow-hidden min-h-[280px] sm:min-h-[320px] flex flex-col justify-center min-w-0 w-full max-w-full">
+      <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full border border-white/20 pointer-events-none" aria-hidden />
+      <div className="absolute bottom-8 left-8 w-24 h-24 rounded-full border border-white/15 pointer-events-none" aria-hidden />
       <p className="relative text-sm font-semibold uppercase tracking-widest text-white/80 mb-6">
         {title}
       </p>
-      <ul className="relative space-y-5">
+      <ul className="relative space-y-5 min-w-0">
         {items.map((item) => (
-          <li key={item.label} className="flex gap-4">
+          <li key={item.label} className="flex gap-3 sm:gap-4 min-w-0">
             <span className="mt-1.5 h-2 w-2 rounded-full bg-white shrink-0" aria-hidden />
-            <div>
-              <p className="font-bold text-lg leading-snug">{item.label}</p>
-              <p className="text-white/85 text-sm mt-1 leading-relaxed">{item.detail}</p>
+            <div className="min-w-0">
+              <p className="font-bold text-base sm:text-lg leading-snug break-words">{item.label}</p>
+              <p className="text-white/85 text-sm mt-1 leading-relaxed break-words">{item.detail}</p>
             </div>
           </li>
         ))}
