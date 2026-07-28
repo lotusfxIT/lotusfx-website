@@ -68,7 +68,7 @@ export default function Hero() {
   }))
 
   return (
-    <section className="relative min-h-[calc(100vh-80px)] flex items-center overflow-hidden pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-12">
+    <section className="relative min-h-[calc(100vh-80px)] flex items-center overflow-hidden pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-12 w-full max-w-[100vw]">
       {/* Background with red gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800"></div>
 
@@ -80,15 +80,15 @@ export default function Hero() {
       </div>
       
       <div className="container-custom relative z-10 px-4 sm:px-6">
-        <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-8 sm:gap-10 lg:gap-16 xl:gap-24 items-stretch">
+        <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-8 sm:gap-10 lg:gap-16 xl:gap-24 items-stretch min-w-0">
           {/* Left Column - Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-4 sm:space-y-6 relative"
+            className="space-y-4 sm:space-y-6 relative min-w-0 overflow-hidden"
           >
-            <div className="relative z-10" style={{ height: '520px' }}>
+            <div className="relative z-10 w-full max-w-full overflow-hidden" style={{ height: '520px' }}>
               <AnimatePresence mode="sync">
                 {showLogo ? (
                   // Beautiful Company Name Display
@@ -98,59 +98,30 @@ export default function Hero() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="absolute inset-0 flex flex-col items-center lg:items-start justify-center overflow-visible space-y-1"
+                    className="absolute inset-0 flex flex-col items-center lg:items-start justify-center overflow-hidden w-full max-w-full px-1 space-y-1"
                   >
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.2 }}
-                      className="text-7xl sm:text-8xl lg:text-8.5xl font-semibold leading-tight tracking-widest uppercase"
-                      style={{
-                        letterSpacing: '0.25em',
-                        lineHeight: 1.15,
-                        background: 'linear-gradient(180deg, #ffffff 0%, #f5f0e8 45%, #ebe4d9 100%)',
-                        WebkitBackgroundClip: 'text',
-                        backgroundClip: 'text',
-                        color: 'transparent',
-                        filter: 'drop-shadow(0 2px 20px rgba(0,0,0,0.12))',
-                      }}
-                    >
-                      Lotus
-                    </motion.div>
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.3 }}
-                      className="text-7xl sm:text-8xl lg:text-8.5xl font-semibold leading-tight tracking-widest uppercase"
-                      style={{
-                        letterSpacing: '0.35em',
-                        lineHeight: 1.15,
-                        background: 'linear-gradient(180deg, #ffffff 0%, #f5f0e8 45%, #ebe4d9 100%)',
-                        WebkitBackgroundClip: 'text',
-                        backgroundClip: 'text',
-                        color: 'transparent',
-                        filter: 'drop-shadow(0 2px 20px rgba(0,0,0,0.12))',
-                      }}
-                    >
-                      Foreign
-                    </motion.div>
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.4 }}
-                      className="text-7xl sm:text-8xl lg:text-8.5xl font-semibold leading-tight tracking-widest uppercase"
-                      style={{
-                        letterSpacing: '0.35em',
-                        lineHeight: 1.15,
-                        background: 'linear-gradient(180deg, #ffffff 0%, #f5f0e8 45%, #ebe4d9 100%)',
-                        WebkitBackgroundClip: 'text',
-                        backgroundClip: 'text',
-                        color: 'transparent',
-                        filter: 'drop-shadow(0 2px 20px rgba(0,0,0,0.12))',
-                      }}
-                    >
-                      Exchange
-                    </motion.div>
+                    {[
+                      { word: 'Lotus', delay: 0.2, tracking: 'tracking-[0.12em] sm:tracking-[0.18em] lg:tracking-[0.25em]' },
+                      { word: 'Foreign', delay: 0.3, tracking: 'tracking-[0.08em] sm:tracking-[0.16em] lg:tracking-[0.28em]' },
+                      { word: 'Exchange', delay: 0.4, tracking: 'tracking-[0.06em] sm:tracking-[0.14em] lg:tracking-[0.28em]' },
+                    ].map(({ word, delay, tracking }) => (
+                      <motion.div
+                        key={word}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay }}
+                        className={`w-full max-w-full text-center lg:text-left text-[clamp(2.35rem,11vw,5.25rem)] font-semibold uppercase leading-[1.1] ${tracking}`}
+                        style={{
+                          background: 'linear-gradient(180deg, #ffffff 0%, #f5f0e8 45%, #ebe4d9 100%)',
+                          WebkitBackgroundClip: 'text',
+                          backgroundClip: 'text',
+                          color: 'transparent',
+                          filter: 'drop-shadow(0 2px 20px rgba(0,0,0,0.12))',
+                        }}
+                      >
+                        {word}
+                      </motion.div>
+                    ))}
                   </motion.div>
                 ) : (
                   // Content Display
@@ -285,9 +256,9 @@ export default function Hero() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative h-full flex flex-col min-h-0"
+            className="relative h-full flex flex-col min-h-0 min-w-0 w-full"
           >
-            <div className="bg-white rounded-2xl shadow-strong p-4 sm:p-6 border border-gray-100 relative z-10 w-full max-w-lg mx-auto lg:mx-auto lg:mr-8 flex flex-col min-h-[800px]">
+            <div className="bg-white rounded-2xl shadow-strong p-4 sm:p-6 border border-gray-100 relative z-10 w-full max-w-lg mx-auto lg:mx-auto lg:mr-8 flex flex-col min-h-[800px] min-w-0">
               {/* Currency symbols - LEFT side of calculator - Distributed */}
               <div
                 className="absolute top-0 bottom-0 pointer-events-none hidden lg:block overflow-visible"

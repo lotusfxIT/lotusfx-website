@@ -85,17 +85,17 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed w-full z-50 bg-white shadow-lg border-b border-gray-100">
-      <nav className="container-custom">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+    <header className="fixed inset-x-0 top-0 z-50 bg-white shadow-lg border-b border-gray-100 max-w-[100vw]">
+      <nav className="container-custom min-w-0">
+        <div className="flex items-center justify-between h-16 lg:h-20 gap-3 min-w-0">
           {/* Left: Logo + Navigation */}
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-8 min-w-0">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity flex-shrink-0">
+            <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity flex-shrink-0 min-w-0 max-w-[70vw]">
               <img
                 src="/images/lotus-logo-horizontal.jpg"
                 alt="LotusFX Logo"
-                className="h-10 lg:h-12 w-auto"
+                className="h-9 sm:h-10 lg:h-12 w-auto max-w-full object-contain"
               />
             </Link>
 

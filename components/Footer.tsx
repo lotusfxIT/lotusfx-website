@@ -88,28 +88,28 @@ export default function Footer() {
 
   const sections = config.sections || defaultSections
   return (
-  <footer className="bg-primary-600 text-white">
-      <div className="container-custom">
+  <footer className="bg-primary-600 text-white overflow-x-hidden w-full max-w-[100vw]">
+      <div className="container-custom min-w-0">
         {/* Main Footer Content */}
-        <div className="py-16">
-          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+        <div className="py-12 sm:py-16">
+          <div className="flex flex-col lg:flex-row gap-10 sm:gap-12 lg:gap-16 min-w-0">
             {/* Brand Section */}
-            <div className="lg:w-1/3 flex-shrink-0">
+            <div className="lg:w-1/3 flex-shrink-0 min-w-0">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <Link href="/" className="flex items-center mb-6">
+                <Link href="/" className="inline-flex items-center mb-6 max-w-full">
                   <img
                     src="/images/lotus-logo-white-red-bg.jpg"
                     alt="LotusFX Logo"
-                    className="h-20 lg:h-24 w-auto"
+                    className="h-16 sm:h-20 lg:h-24 w-auto max-w-full object-contain"
                   />
                 </Link>
 
-                <p className="text-white/90 mb-6 leading-relaxed">
+                <p className="text-white/90 mb-6 leading-relaxed break-words">
                   {config.description || 'Your trusted partner for currency exchange and money transfers across Australia, New Zealand, and Fiji. Get the best rates with no hidden fees.'}
                 </p>
 
@@ -125,15 +125,15 @@ export default function Footer() {
                     <h4 className="text-white font-semibold text-lg">{currentOffice.country}</h4>
                     <div className="flex items-start space-x-3">
                       <MapPinIcon className="w-5 h-5 text-white flex-shrink-0 mt-1" />
-                      <p className="text-white/90 text-sm leading-relaxed">
+                      <p className="text-white/90 text-sm leading-relaxed break-words min-w-0">
                         {currentOffice.address}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <PhoneIcon className="w-5 h-5 text-white flex-shrink-0" />
+                    <div className="flex items-start space-x-3 min-w-0">
+                      <PhoneIcon className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                       <a
                         href={`tel:${currentOffice.phone.replace(/\s/g, '').replace(/\//g, '')}`}
-                        className="text-white/90 hover:text-white transition-colors duration-200 text-sm"
+                        className="text-white/90 hover:text-white transition-colors duration-200 text-sm break-words min-w-0"
                       >
                         {currentOffice.phone}
                       </a>
@@ -161,7 +161,7 @@ export default function Footer() {
             </div>
 
             {/* Navigation Sections */}
-            <div className="lg:flex-1 grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 lg:ml-32 xl:ml-48">
+            <div className="lg:flex-1 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 lg:gap-12 lg:ml-16 xl:ml-32 min-w-0">
               {Object.entries(sections).map(([sectionName, items], idx) => (
                 <motion.div
                   key={sectionName}
@@ -203,20 +203,20 @@ export default function Footer() {
           viewport={{ once: true }}
           className="border-t border-white/20 py-8"
         >
-          <div className="flex flex-col lg:flex-row gap-8 items-center">
-            <div className="lg:w-1/3">
+          <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-stretch lg:items-center min-w-0">
+            <div className="lg:w-1/3 min-w-0">
               <h3 className="text-xl font-semibold mb-2">Stay Updated</h3>
               <p className="text-white/90">
                 Get the latest exchange rates and exclusive offers delivered to your inbox.
               </p>
             </div>
-            <div className="lg:flex-1 flex space-x-4 lg:ml-32 xl:ml-48">
+            <div className="lg:flex-1 flex flex-col sm:flex-row gap-3 sm:gap-4 w-full min-w-0 lg:ml-16 xl:ml-32">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:ring-2 focus:ring-white focus:border-white transition-colors duration-200"
+                className="w-full min-w-0 flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:ring-2 focus:ring-white focus:border-white transition-colors duration-200"
               />
-              <button className="bg-white text-primary-600 hover:bg-white/90 font-bold py-3 px-6 rounded-lg transition-all duration-200 whitespace-nowrap">
+              <button className="bg-white text-primary-600 hover:bg-white/90 font-bold py-3 px-6 rounded-lg transition-all duration-200 whitespace-nowrap w-full sm:w-auto flex-shrink-0">
                 Subscribe
               </button>
             </div>
@@ -225,11 +225,11 @@ export default function Footer() {
 
         {/* Social Links & Legal */}
         <div className="border-t border-white/20 py-8">
-          <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-6 min-w-0">
             {/* Social Links */}
-            <div className="flex items-center space-x-6">
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 min-w-0 w-full lg:w-auto">
               <span className="text-white font-medium whitespace-nowrap">Follow us:</span>
-              <div className="flex space-x-4">
+              <div className="flex flex-wrap justify-center gap-3">
                 {config.social_links && config.social_links.map((social) => (
                   <a
                     key={social.name}
