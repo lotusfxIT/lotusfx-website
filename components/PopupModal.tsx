@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { XMarkIcon, ArrowRightIcon, DevicePhoneMobileIcon, GlobeAltIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { useCountry } from '@/context/CountryContext'
+import { trackEvent } from '@/lib/analytics'
 
 export default function PopupModal() {
   const [isOpen, setIsOpen] = useState(false)
@@ -23,14 +24,16 @@ export default function PopupModal() {
   }, [])
 
   const handleClose = () => {
+    trackEvent('popup_interaction', { action: 'close' })
     setIsOpen(false)
     sessionStorage.setItem('lotusfx-popup-seen', 'true')
   }
 
   const handleSendMoney = () => {
+    trackEvent('popup_interaction', { action: 'send_money' })
+    trackEvent('cta_click', { cta_name: 'popup_ewire', location: 'homepage_popup' })
     setIsOpen(false)
     sessionStorage.setItem('lotusfx-popup-seen', 'true')
-    // Navigate to money transfer page
     window.location.href = '/money-transfer'
   }
 

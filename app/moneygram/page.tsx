@@ -2,19 +2,15 @@ import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { DevicePhoneMobileIcon, MapPinIcon, ClockIcon, ShieldCheckIcon, GlobeAltIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'MoneyGram Money Transfers | LotusFX',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'MoneyGram Money Transfers',
   description:
     'Send money worldwide with MoneyGram through LotusFX. Use our app or visit us in-store for fast, secure international money transfers.',
-  keywords: [
-    'MoneyGram',
-    'money transfer',
-    'international remittance',
-    'mobile app',
-    'LotusFX',
-  ],
-}
+  path: '/moneygram',
+  keywords: ['MoneyGram', 'money transfer', 'international remittance', 'LotusFX'],
+})
 
 const features = [
   {

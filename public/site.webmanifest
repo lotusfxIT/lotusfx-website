@@ -1,0 +1,16 @@
+{
+  "name": "LotusFX",
+  "short_name": "LotusFX",
+  "description": "Currency exchange and money transfers across Australia, New Zealand and Fiji.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#b91c1c",
+  "icons": [
+    {
+      "src": "/images/lotus-logo-white-red-bg.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
+}

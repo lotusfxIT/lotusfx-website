@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/Header'
@@ -6,6 +6,7 @@ import Footer from '@/components/Footer'
 import Analytics from '@/components/Analytics'
 import { CountryProvider } from '@/context/CountryContext'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
+import { getSiteUrl } from '@/lib/site-url'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -47,20 +48,17 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://lotusfx.com'),
-  alternates: {
-    canonical: '/',
-    languages: {
-      'x-default': '/',
-      'en-AU': '/au',
-      'en-NZ': '/nz',
-      'en-FJ': '/fj',
-    },
+  metadataBase: new URL(getSiteUrl()),
+  icons: {
+    icon: '/images/lotus-logo-white-red-bg.jpg',
+    apple: '/images/lotus-logo-white-red-bg.jpg',
+    shortcut: '/images/lotus-logo-white-red-bg.jpg',
   },
+  manifest: '/site.webmanifest',
   openGraph: {
     type: 'website',
     locale: 'en_AU',
-    url: 'https://lotusfx.com',
+    url: getSiteUrl(),
     siteName: 'LotusFX',
     title: 'Competitive Currency Exchange & Money Transfers | LotusFX',
     description:
@@ -94,6 +92,10 @@ export const metadata: Metadata = {
   },
 }
 
+export const viewport: Viewport = {
+  themeColor: '#b91c1c',
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -101,16 +103,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
-      <head>
-        <link rel="icon" type="image/jpeg" href="/images/lotus-logo-white-red-bg.jpg" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/images/lotus-logo-white-red-bg.jpg" />
-        <link rel="icon" type="image/jpeg" sizes="32x32" href="/images/lotus-logo-white-red-bg.jpg" />
-        <link rel="icon" type="image/jpeg" sizes="16x16" href="/images/lotus-logo-white-red-bg.jpg" />
-        <link rel="shortcut icon" href="/images/lotus-logo-white-red-bg.jpg" />
-        <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#0ea5e9" />
-        <meta name="msapplication-TileColor" content="#0ea5e9" />
-      </head>
       <body className="antialiased bg-white text-gray-900">
         <CountryProvider>
           <Analytics />

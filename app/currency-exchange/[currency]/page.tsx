@@ -23,6 +23,7 @@ import {
   getCurrencyBySlug,
   type CurrencyDenominations,
 } from '@/lib/currencies'
+import { buildPageMetadata } from '@/lib/seo'
 
 type PageProps = { params: { currency: string } }
 
@@ -32,16 +33,21 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: PageProps): Metadata {
   const currency = getCurrencyBySlug(params.currency)
-  if (!currency) return { title: 'Currency Not Found' }
-
-  return {
-    title: `Buy ${currency.name} (${currency.code}) | Currency Exchange | Lotus FX`,
-    description: `Buy and sell ${currency.name} (${currency.code}) with market-leading exchange rates and no commission fees. View denominations and find a branch across Australia, New Zealand and Fiji.`,
-    openGraph: {
-      title: `Buy ${currency.name} (${currency.code}) | Lotus FX`,
-      description: `Exchange ${currency.code} with competitive rates and no commission fees at Lotus FX.`,
-    },
+  if (!currency) {
+    return buildPageMetadata({
+      title: 'Currency Not Found',
+      description: 'The requested currency page could not be found.',
+      path: '/currency-exchange',
+      noIndex: true,
+    })
   }
+
+  return buildPageMetadata({
+    title: `Buy ${currency.name} (${currency.code})`,
+    description: `Buy and sell ${currency.name} (${currency.code}) with market-leading exchange rates and no commission fees. View denominations and find a branch across Australia, New Zealand and Fiji.`,
+    path: `/currency-exchange/${currencySlug(currency.code)}`,
+    ogImage: '/images/currency-exchange-og.jpg',
+  })
 }
 
 function CurrencyPageSections({ currency }: { currency: CurrencyDenominations }) {

@@ -18,27 +18,16 @@ import {
   SectionHeading,
 } from '@/components/marketing/MarketingBlocks'
 import MotionWrapper from '@/components/MotionWrapper'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'International Money Transfers | Lotus FX',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'International Money Transfers',
   description:
     'Send money overseas with confidence through eWire, Western Union, MoneyGram and wire transfers. Trusted international money transfer services worldwide.',
-  keywords: [
-    'money transfer',
-    'international transfer',
-    'eWire',
-    'Western Union',
-    'MoneyGram',
-    'wire transfer',
-    'Lotus FX',
-  ],
-  openGraph: {
-    title: 'International Money Transfers | Lotus FX',
-    description:
-      'Send money overseas with confidence through eWire, Western Union, MoneyGram and wire transfers. Trusted international money transfer services worldwide.',
-    images: ['/images/money-transfer-og.jpg'],
-  },
-}
+  path: '/money-transfer',
+  ogImage: '/images/money-transfer-og.jpg',
+  keywords: ['money transfer', 'international transfer', 'eWire', 'Western Union', 'MoneyGram', 'wire transfer'],
+})
 
 const transferMethods = [
   {

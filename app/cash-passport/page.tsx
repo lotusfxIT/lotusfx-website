@@ -2,20 +2,15 @@ import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { CreditCardIcon, GlobeAltIcon, ShieldCheckIcon, DevicePhoneMobileIcon, MapPinIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Cash Passport Travel Card | LotusFX',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Cash Passport Travel Card',
   description:
     'Get your Cash Passport multi-currency travel card from LotusFX. Sign up online or visit us in-store. Mastercard security with 10+ currencies.',
-  keywords: [
-    'Cash Passport',
-    'travel card',
-    'multi-currency card',
-    'prepaid travel money',
-    'Mastercard',
-    'LotusFX',
-  ],
-}
+  path: '/cash-passport',
+  keywords: ['Cash Passport', 'travel card', 'multi-currency card', 'prepaid travel money', 'Mastercard', 'LotusFX'],
+})
 
 const benefits = [
   {

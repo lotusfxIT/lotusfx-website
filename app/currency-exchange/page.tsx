@@ -17,26 +17,16 @@ import {
   SectionHeading,
 } from '@/components/marketing/MarketingBlocks'
 import currenciesDenominations from '@/data/currencies-denominations.json'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Currency Exchange & Foreign Cash | Lotus FX',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Currency Exchange & Foreign Cash',
   description:
     'Competitive currency exchange with no commission fees across Australia, New Zealand and Fiji. Buy and sell foreign cash with confidence at Lotus FX.',
-  keywords: [
-    'currency exchange',
-    'foreign exchange',
-    'travel money',
-    'foreign cash',
-    'no commission',
-    'Lotus FX',
-  ],
-  openGraph: {
-    title: 'Currency Exchange & Foreign Cash | Lotus FX',
-    description:
-      'Competitive currency exchange with no commission fees across Australia, New Zealand and Fiji. Buy and sell foreign cash with confidence at Lotus FX.',
-    images: ['/images/currency-exchange-og.jpg'],
-  },
-}
+  path: '/currency-exchange',
+  ogImage: '/images/currency-exchange-og.jpg',
+  keywords: ['currency exchange', 'foreign exchange', 'travel money', 'foreign cash', 'no commission'],
+})
 
 const highlights = [
   {

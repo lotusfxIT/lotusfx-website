@@ -2,19 +2,15 @@ import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { MapPinIcon, ClockIcon, ShieldCheckIcon, GlobeAltIcon } from '@heroicons/react/24/outline'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Western Union Money Transfers | LotusFX',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Western Union Money Transfers',
   description:
     'Send money worldwide with Western Union at LotusFX branches. Visit us in-store for fast, secure international money transfers across 200+ countries.',
-  keywords: [
-    'Western Union',
-    'money transfer',
-    'international remittance',
-    'cash transfer',
-    'LotusFX',
-  ],
-}
+  path: '/western-union',
+  keywords: ['Western Union', 'money transfer', 'international remittance', 'LotusFX'],
+})
 
 const features = [
   {

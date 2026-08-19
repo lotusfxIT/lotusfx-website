@@ -1,16 +1,13 @@
 import type { Metadata } from 'next'
 import CustomerReviewsContent from '@/components/CustomerReviewsContent'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Customer Reviews | LotusFX',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Customer Reviews',
   description:
     'Read real Google reviews from LotusFX customers across Australia, New Zealand and Fiji. Honest feedback on currency exchange and money transfers.',
-  openGraph: {
-    title: 'Customer Reviews | LotusFX',
-    description:
-      'Read what our customers say — real Google reviews from LotusFX branches across the Pacific.',
-  },
-}
+  path: '/customer-reviews',
+})
 
 export default function CustomerReviewsPage() {
   return <CustomerReviewsContent />

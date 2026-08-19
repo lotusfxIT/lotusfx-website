@@ -1,25 +1,19 @@
 import { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Find a Branch | Lotus FX',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Find a Branch',
   description:
     'Choose from over 50+ convenient Lotus FX locations across Australia, New Zealand and Fiji. Market-leading exchange rates and no commission fees.',
+  path: '/locations',
+  ogImage: '/images/locations-og.jpg',
   keywords: [
     'LotusFX locations',
     'currency exchange near me',
     'money transfer branches',
-    'LotusFX Australia',
-    'LotusFX New Zealand',
-    'LotusFX Fiji',
     'branch finder',
-    'nearest currency exchange'
   ],
-  openGraph: {
-    title: 'Branch Locations - Find LotusFX Near You',
-    description: 'Find your nearest LotusFX branch across Australia, New Zealand, and Fiji. 30+ locations with expert services.',
-    images: ['/images/locations-og.jpg'],
-  },
-}
+})
 
 export default function LocationsLayout({
   children,

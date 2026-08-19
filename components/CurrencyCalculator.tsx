@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ArrowsRightLeftIcon, ArrowLeftIcon, BanknotesIcon, PaperAirplaneIcon, ChevronDownIcon, MagnifyingGlassIcon, PencilSquareIcon, MapPinIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { useCountry } from '@/context/CountryContext'
 import Link from 'next/link'
+import { trackEvent } from '@/lib/analytics'
 
 // Currency code → ISO country code for flag images (flagcdn.com)
 const currencyToCountry: Record<string, string> = {
@@ -235,6 +236,12 @@ export default function CurrencyCalculator({
         setRate(displayRate)
       }
       setError(null)
+      trackEvent('view_rates', {
+        quote_type: quoteType,
+        from_currency: quoteType === 'transfer' ? baseCurrency : fromCurrency,
+        to_currency: toCurrency,
+        country: selectedCountry,
+      })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to calculate conversion'
       setError(errorMessage)
@@ -307,6 +314,7 @@ export default function CurrencyCalculator({
     if (forceCashOnly && type === 'transfer') return
     setQuoteType(type)
     setChosen(true)
+    trackEvent('quote_type_select', { quote_type: type, location: 'calculator' })
     onOptionChosen?.()
   }
 
@@ -893,6 +901,13 @@ export default function CurrencyCalculator({
               href="https://lotus-au-web-app.web.app/"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                trackEvent('order_initiation', {
+                  cta_name: 'quick_order',
+                  quote_type: 'cash',
+                  country: selectedCountry,
+                })
+              }
               className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
             >
               <ShoppingBagIcon className="w-5 h-5" />
@@ -908,6 +923,13 @@ export default function CurrencyCalculator({
               }
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                trackEvent('order_initiation', {
+                  cta_name: 'portal_login',
+                  quote_type: 'transfer',
+                  country: selectedCountry,
+                })
+              }
               className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
             >
               <span>Login / Sign Up</span>
@@ -915,6 +937,9 @@ export default function CurrencyCalculator({
           )}
           <Link
             href="/locations"
+            onClick={() =>
+              trackEvent('cta_click', { cta_name: 'find_branch', location: 'calculator' })
+            }
             className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
           >
             <MapPinIcon className="w-5 h-5" />

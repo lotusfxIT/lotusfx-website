@@ -14,6 +14,7 @@ import {
 import { motion } from 'framer-motion'
 import { useCountry } from '@/context/CountryContext'
 import { STATIC_LOCATIONS } from '@/data/locations-static'
+import { trackEvent } from '@/lib/analytics'
 
 interface Location {
   id: string
@@ -200,6 +201,13 @@ export default function LocationPage() {
         const data = await response.json()
         console.log('[Location Details] Successfully fetched location data')
         setLocation(data)
+
+        const slugLoc = STATIC_LOCATIONS.find((l) => l.id === locationId)
+        trackEvent('location_interaction', {
+          action: 'view_branch',
+          branch_slug: slugLoc?.slug ?? pathSegment,
+          country: slugLoc?.country ?? selectedCountry,
+        })
 
         if (typeof data.overallRating === 'number' && data.overallRating > 0) {
           setAverageRating(data.overallRating)

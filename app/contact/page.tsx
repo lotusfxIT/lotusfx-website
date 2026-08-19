@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Metadata } from 'next'
 import MotionWrapper from '@/components/MotionWrapper'
+import { trackEvent } from '@/lib/analytics'
 import {
   PhoneIcon,
   EnvelopeIcon,
@@ -24,7 +24,10 @@ export default function ContactPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
+    trackEvent('form_submit', {
+      form_name: 'contact',
+      subject_category: formData.subject || 'general',
+    })
     console.log('Form submitted:', formData)
   }
 
