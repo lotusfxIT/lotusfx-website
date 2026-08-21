@@ -8,6 +8,7 @@ import { useCountryContent } from '@/hooks/useCountryContent'
 import { useState, useEffect } from 'react'
 import { STATS } from '@/config/stats'
 import { useCountry } from '@/context/CountryContext'
+import { trackEvent } from '@/lib/analytics'
 
 const statsTemplate = [
   { label: 'Customer Rating', value: '4.9★', subtext: '{customers}' },
@@ -202,6 +203,14 @@ export default function Hero() {
                 href="https://lotus-au-web-app.web.app/"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() =>
+                  trackEvent('order_initiation', {
+                    cta_name: 'quick_order',
+                    quote_type: 'cash',
+                    country: selectedCountry,
+                    location: 'hero',
+                  })
+                }
                 className="text-base lg:text-lg px-7 py-3 flex items-center justify-center space-x-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-white"
                 style={{
                   background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
@@ -212,6 +221,13 @@ export default function Hero() {
               </a>
               <Link
                 href="/locations"
+                onClick={() =>
+                  trackEvent('cta_click', {
+                    cta_name: 'find_branch',
+                    location: 'hero',
+                    country: selectedCountry,
+                  })
+                }
                 className="text-base lg:text-lg px-7 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-white flex items-center justify-center space-x-2"
                 style={{
                   background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
