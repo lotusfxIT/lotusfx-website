@@ -6,11 +6,13 @@ import { canLoadAnalytics, isAnalyticsConsentRequired } from '@/lib/analytics-co
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID
+const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID
 
 /**
- * Loads GA4 (direct) and/or GTM once in production.
+ * Loads GA4 (direct) and/or GTM once in production, plus optional Meta Pixel.
  * - If NEXT_PUBLIC_GTM_ID is set, GTM loads GA4/Ads via the container — no direct gtag.js.
  * - If only NEXT_PUBLIC_GA_ID is set, gtag.js loads directly.
+ * - NEXT_PUBLIC_META_PIXEL_ID loads the Facebook/Instagram Pixel (do not also add the same Pixel in GTM).
  * - Never load both GA implementations (prevents duplicate page views).
  */
 export default function AnalyticsScripts() {
@@ -70,6 +72,34 @@ export default function AnalyticsScripts() {
               `,
             }}
           />
+        </>
+      ) : null}
+
+      {META_PIXEL_ID ? (
+        <>
+          <Script
+            id="meta-pixel"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+                n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+                t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+                fbq('init', '${META_PIXEL_ID}');
+              `,
+            }}
+          />
+          <noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: 'none' }}
+              src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+              alt=""
+            />
+          </noscript>
         </>
       ) : null}
     </>

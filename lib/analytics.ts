@@ -1,6 +1,6 @@
 /**
  * Client-side analytics helpers. Never send PII (names, emails, phones, addresses).
- * Events go to gtag (direct GA4) and/or GTM dataLayer when configured.
+ * Events go to gtag (direct GA4), GTM dataLayer, and/or Meta Pixel when configured.
  */
 
 import { canLoadAnalytics } from '@/lib/analytics-consent'
@@ -57,6 +57,8 @@ export function trackEvent(name: AnalyticsEventName, params: AnalyticsEventParam
   if (typeof window.gtag === 'function' && process.env.NEXT_PUBLIC_GA_ID) {
     window.gtag('event', name, safe)
   }
+
+  trackMetaEvent(name, safe)
 }
 
 /** Track SPA route changes — called from AnalyticsPageView only. */
@@ -77,11 +79,33 @@ export function trackPageView(path: string, title?: string): void {
   if (typeof window.gtag === 'function' && process.env.NEXT_PUBLIC_GA_ID) {
     window.gtag('event', 'page_view', params)
   }
+
+  if (typeof window.fbq === 'function' && process.env.NEXT_PUBLIC_META_PIXEL_ID) {
+    window.fbq('track', 'PageView')
+  }
+}
+
+/** Map real site actions to Meta standard events. No Purchase until checkout exists. */
+function trackMetaEvent(name: AnalyticsEventName, params: AnalyticsEventParams): void {
+  if (typeof window.fbq !== 'function' || !process.env.NEXT_PUBLIC_META_PIXEL_ID) return
+
+  if (name === 'form_submit') {
+    window.fbq('track', 'Contact', params)
+    return
+  }
+  if (name === 'order_initiation') {
+    window.fbq('track', 'Lead', params)
+    return
+  }
+  if (name === 'view_rates') {
+    window.fbq('track', 'ViewContent', params)
+  }
 }
 
 declare global {
   interface Window {
     dataLayer?: Record<string, unknown>[]
     gtag?: (...args: unknown[]) => void
+    fbq?: (...args: unknown[]) => void
   }
 }

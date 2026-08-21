@@ -16,6 +16,12 @@ Audit snapshot for the LotusFX Next.js site. **Verify in production** after sett
 - Uses `send_page_view: false` on config; `page_view` is fired manually via `AnalyticsPageView` (App Router navigations).
 - **Vercel Analytics** (`@vercel/analytics`) runs separately — not a duplicate of GA4.
 
+### Meta Pixel (Facebook / Instagram ads)
+- Optional via `NEXT_PUBLIC_META_PIXEL_ID`. Loads in production only.
+- `PageView` on App Router navigations; `Contact` on form submit; `Lead` on Quick Order; `ViewContent` on rate lookup.
+- **No Purchase event** until checkout exists.
+- Do not also add the same Pixel inside GTM (duplicates).
+
 ### Env variables (Vercel / `.env.local`)
 
 | Variable | Purpose |
@@ -23,6 +29,7 @@ Audit snapshot for the LotusFX Next.js site. **Verify in production** after sett
 | `NEXT_PUBLIC_SITE_URL` | Canonical base URL for sitemap, metadata, JSON-LD |
 | `NEXT_PUBLIC_GA_ID` | GA4 measurement ID (e.g. `G-XXXXXXXX`) |
 | `NEXT_PUBLIC_GTM_ID` | GTM container ID (e.g. `GTM-XXXXXXX`) — optional |
+| `NEXT_PUBLIC_META_PIXEL_ID` | Meta Pixel ID for Facebook/Instagram ads |
 | `NEXT_PUBLIC_ANALYTICS_CONSENT_REQUIRED` | Set to `true` when consent banner ships |
 
 **Do not set both GTM and direct GA4 to load the same GA4 property.**
