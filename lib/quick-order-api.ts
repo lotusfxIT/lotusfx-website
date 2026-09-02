@@ -11,29 +11,15 @@ export type QuickOrderApiConfig = {
 }
 
 export function getQuickOrderConfig(): QuickOrderApiConfig | { error: string } {
-  // Defaults match 4dDev public-purchase-standalone.html (test). Override via env when needed.
-  const baseUrl = (
-    process.env.QUICK_ORDER_API_URL ||
-    'https://test.lotusfx.com'
-  ).replace(/\/$/, '')
+  // 4dDev public-purchase test server. Do NOT fall back to AU exchange-rate keys —
+  // those are for au.app.lotusfx.com and return 401 on test.lotusfx.com.
+  const baseUrl = (process.env.QUICK_ORDER_API_URL || 'https://test.lotusfx.com').replace(
+    /\/$/,
+    ''
+  )
 
-  const xKey =
-    process.env.QUICK_ORDER_X_KEY ||
-    process.env.EXCHANGE_RATE_X_KEY_AU ||
-    process.env.EXCHANGE_RATE_X_KEY ||
-    'abc123'
-  const xClient =
-    process.env.QUICK_ORDER_X_CLIENT ||
-    process.env.EXCHANGE_RATE_X_CLIENT_AU ||
-    process.env.EXCHANGE_RATE_X_CLIENT ||
-    'LotusFX'
-
-  if (!xKey || !xClient) {
-    return {
-      error:
-        'Quick Order API credentials missing. Set QUICK_ORDER_X_KEY and QUICK_ORDER_X_CLIENT.',
-    }
-  }
+  const xKey = process.env.QUICK_ORDER_X_KEY || 'abc123'
+  const xClient = process.env.QUICK_ORDER_X_CLIENT || 'LotusFX'
 
   return {
     baseUrl,
@@ -58,7 +44,11 @@ export async function quickOrderApiPost(path: string, payload: unknown): Promise
     throw new Error(config.error)
   }
 
-  if (process.env.ALLOW_INSECURE_SSL === 'true') {
+  // test.lotusfx.com often uses a cert Node cannot verify — same as exchange-rate route
+  if (
+    process.env.ALLOW_INSECURE_SSL === 'true' ||
+    config.baseUrl.includes('test.lotusfx.com')
+  ) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
   }
 
