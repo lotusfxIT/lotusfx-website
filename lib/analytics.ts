@@ -16,7 +16,9 @@ export type AnalyticsEventName =
   | 'form_submit'
   | 'location_interaction'
   | 'popup_interaction'
-  | 'purchase' // reserved for future checkout — see analytics-ecommerce.ts
+  | 'quick_order_step'
+  | 'quick_order_complete'
+  | 'purchase' // reserved for future paid checkout — see analytics-ecommerce.ts
 
 export type AnalyticsEventParams = Record<
   string,
@@ -99,6 +101,10 @@ function trackMetaEvent(name: AnalyticsEventName, params: AnalyticsEventParams):
   }
   if (name === 'view_rates') {
     window.fbq('track', 'ViewContent', params)
+    return
+  }
+  if (name === 'quick_order_complete') {
+    window.fbq('track', 'Lead', { ...params, content_name: 'quick_order_complete' })
   }
 }
 

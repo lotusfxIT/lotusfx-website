@@ -18,6 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/cash-passport`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.75 },
     { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${baseUrl}/quick-order`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
   ]
 
   const currencyPages: MetadataRoute.Sitemap = ALL_CURRENCIES.map((c) => ({

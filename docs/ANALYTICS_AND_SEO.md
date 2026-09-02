@@ -57,9 +57,11 @@ Audit snapshot for the LotusFX Next.js site. **Verify in production** after sett
 | `form_submit` | Contact form submit | `form_name`, `subject_category` |
 | `location_interaction` | Branch detail loaded | `branch_slug`, `country` |
 | `popup_interaction` | Homepage popup | `action` |
+| `quick_order_step` | Quick Order wizard step change | `location` (purchase/fulfillment/details/payment) |
+| `quick_order_complete` | Quick Order created (pay in store) | `foreign_currency`, `has_order_id` |
 
 ### Not implemented (by design)
-- **`purchase`** — no online checkout yet. See `lib/analytics-ecommerce.ts`.
+- **`purchase`** — no online payment yet. Quick Order uses `quick_order_complete` (Lead) instead. See `lib/analytics-ecommerce.ts`.
 
 ---
 

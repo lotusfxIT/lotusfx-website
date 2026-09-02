@@ -6,6 +6,7 @@ import { ArrowsRightLeftIcon, ArrowLeftIcon, BanknotesIcon, PaperAirplaneIcon, C
 import { useCountry } from '@/context/CountryContext'
 import Link from 'next/link'
 import { trackEvent } from '@/lib/analytics'
+import { buildQuickOrderUrl } from '@/lib/quick-order-url'
 
 // Currency code → ISO country code for flag images (flagcdn.com)
 const currencyToCountry: Record<string, string> = {
@@ -897,22 +898,25 @@ export default function CurrencyCalculator({
       <div className={`space-y-3 shrink-0 ${quoteType === 'transfer' ? 'mt-auto pt-4 sm:pt-6' : 'pt-1'}`}>
         <div className="space-y-2.5">
           {quoteType === 'cash' && (
-            <a
-              href="https://lotus-au-web-app.web.app/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href={buildQuickOrderUrl({
+                to: buyOrSell === 'buy' ? toCurrency : fromCurrency,
+                amount,
+                isBuy: buyOrSell === 'buy',
+              })}
               onClick={() =>
                 trackEvent('order_initiation', {
                   cta_name: 'quick_order',
                   quote_type: 'cash',
                   country: selectedCountry,
+                  location: 'calculator',
                 })
               }
               className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
             >
               <ShoppingBagIcon className="w-5 h-5" />
               <span>Quick Order</span>
-            </a>
+            </Link>
           )}
           {quoteType === 'transfer' && (
             <a

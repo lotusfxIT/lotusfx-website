@@ -1,0 +1,65 @@
+import { NextResponse } from 'next/server'
+import {
+  getQuickOrderConfig,
+  quickOrderApiPost,
+  unwrapPayload,
+  unwrapResult,
+} from '@/lib/quick-order-api'
+
+export async function POST() {
+  try {
+    const config = getQuickOrderConfig()
+    if ('error' in config) {
+      return NextResponse.json({ success: false, error: config.error }, { status: 500 })
+    }
+
+    const response = await quickOrderApiPost('/rst/Currencies/getCurrenciesSold', [{}])
+    const payload = unwrapPayload(response)
+    const result = unwrapResult(response)
+
+    if (
+      result.success === false ||
+      String(result.success).toLowerCase() === 'false'
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: String(result.statusText || result.message || 'Unable to load currencies.'),
+        },
+        { status: 400 }
+      )
+    }
+
+    const listCandidate =
+      (result.currencies as unknown) ||
+      result.data ||
+      result.countries ||
+      (payload && typeof payload === 'object' && (payload as { data?: unknown }).data) ||
+      result
+
+    const list = Array.isArray(listCandidate) ? listCandidate : []
+
+    const currencies = list
+      .map((item) => {
+        if (!item || typeof item !== 'object') return null
+        const row = item as Record<string, unknown>
+        const country = String(row.country || '').trim()
+        const currency = String(row.currency || row.ccy || '').trim()
+        const flag = String(row.flag || '').trim()
+        if (!country || !currency) return null
+        return { country, currency, flag }
+      })
+      .filter(Boolean)
+
+    return NextResponse.json({ success: true, currencies })
+  } catch (error) {
+    console.error('[Quick Order] currencies error:', error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unable to load currencies.',
+      },
+      { status: 502 }
+    )
+  }
+}

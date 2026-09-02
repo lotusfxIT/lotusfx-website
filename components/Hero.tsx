@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react'
 import { STATS } from '@/config/stats'
 import { useCountry } from '@/context/CountryContext'
 import { trackEvent } from '@/lib/analytics'
+import { buildQuickOrderUrl } from '@/lib/quick-order-url'
 
 const statsTemplate = [
   { label: 'Customer Rating', value: '4.9★', subtext: '{customers}' },
@@ -199,10 +200,8 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.8 }}
               className="flex flex-col sm:flex-row gap-3"
             >
-              <a
-                href="https://lotus-au-web-app.web.app/"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href={buildQuickOrderUrl()}
                 onClick={() =>
                   trackEvent('order_initiation', {
                     cta_name: 'quick_order',
@@ -218,7 +217,7 @@ export default function Hero() {
               >
                 <span>Quick Order</span>
                 <ArrowRightIcon className="w-5 h-5" />
-              </a>
+              </Link>
               <Link
                 href="/locations"
                 onClick={() =>
