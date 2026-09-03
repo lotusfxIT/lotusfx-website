@@ -474,3 +474,34 @@ export const STATIC_LOCATIONS: StaticLocation[] = RAW_LOCATIONS.map((loc) => {
   return { ...loc, slug }
 })
 
+/** Normalize branch names for fuzzy match (4D ↔ Google / locations page). */
+export function normalizeBranchMatchKey(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/^lotus\s+(foreign\s+exchange|fx)\s*-?\s*/i, '')
+    .replace(/\b(branch|office|store)\b/g, '')
+    .replace(/[^a-z0-9]+/g, '')
+}
+
+/**
+ * Best-effort match of a Quick Order / 4D branch name to a static AU location.
+ * Lists will not always match until production branch IDs are aligned.
+ */
+export function findStaticLocationByBranchName(
+  branchName: string | null | undefined,
+  country: StaticLocation['country'] = 'AU'
+): StaticLocation | null {
+  const key = normalizeBranchMatchKey(branchName || '')
+  if (!key || key.length < 2) return null
+
+  const pool = STATIC_LOCATIONS.filter((loc) => loc.country === country)
+  const exact = pool.find((loc) => normalizeBranchMatchKey(loc.name) === key)
+  if (exact) return exact
+
+  const partial = pool.find((loc) => {
+    const locKey = normalizeBranchMatchKey(loc.name)
+    return locKey.includes(key) || key.includes(locKey)
+  })
+  return partial || null
+}
+

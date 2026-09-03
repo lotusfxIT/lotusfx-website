@@ -18,6 +18,7 @@ export type AnalyticsEventName =
   | 'popup_interaction'
   | 'quick_order_step'
   | 'quick_order_complete'
+  | 'quick_order_over_limit'
   | 'purchase' // reserved for future paid checkout — see analytics-ecommerce.ts
 
 export type AnalyticsEventParams = Record<

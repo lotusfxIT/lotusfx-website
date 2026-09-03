@@ -5,6 +5,7 @@ import {
   unwrapPayload,
   unwrapResult,
 } from '@/lib/quick-order-api'
+import { enrichSoldCurrency } from '@/lib/currencies'
 
 export async function POST() {
   try {
@@ -43,11 +44,13 @@ export async function POST() {
       .map((item) => {
         if (!item || typeof item !== 'object') return null
         const row = item as Record<string, unknown>
-        const country = String(row.country || '').trim()
         const currency = String(row.currency || row.ccy || '').trim()
-        const flag = String(row.flag || '').trim()
-        if (!country || !currency) return null
-        return { country, currency, flag }
+        if (!currency) return null
+        return enrichSoldCurrency({
+          currency,
+          country: String(row.country || '').trim(),
+          flag: String(row.flag || '').trim(),
+        })
       })
       .filter(Boolean)
 

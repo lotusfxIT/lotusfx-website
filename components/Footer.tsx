@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { MapPinIcon, PhoneIcon, EnvelopeIcon, GlobeAltIcon } from '@heroicons/react/24/outline'
@@ -41,13 +42,16 @@ const defaultSections: Record<string, Array<{ name: string; href: string }>> = {
 }
 
 export default function Footer() {
+  const pathname = usePathname()
   const [config, setConfig] = useState<FooterConfig>({})
   const [loading, setLoading] = useState(true)
   const { selectedCountry } = useCountry() // Move hook call before any conditional returns
+  const hideFooter = pathname === '/quick-order' || pathname?.startsWith('/quick-order/')
 
   useEffect(() => {
+    if (hideFooter) return
     fetchConfig()
-  }, [])
+  }, [hideFooter])
 
   const fetchConfig = async () => {
     try {
@@ -59,6 +63,10 @@ export default function Footer() {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (hideFooter) {
+    return null
   }
 
   if (loading) {

@@ -15,7 +15,7 @@ export default function QuickOrderPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center pt-28 text-gray-500">
+        <div className="min-h-screen flex items-center justify-center pt-28 bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-primary-100">
           Loading Quick Order…
         </div>
       }

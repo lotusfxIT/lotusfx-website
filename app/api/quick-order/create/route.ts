@@ -60,7 +60,11 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[Quick Order] create success', {
-      orderId: result.orderId || result.OrderID,
+      orderId:
+        result.WebEwireID ||
+        result.orderId ||
+        result.OrderID ||
+        result.orderUUID,
       statusText: result.statusText,
     })
 
