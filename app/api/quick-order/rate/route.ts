@@ -1,17 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getQuickOrderConfig, quickOrderApiPost, unwrapResult } from '@/lib/quick-order-api'
+import {
+  getQuickOrderBaseCurrency,
+  getQuickOrderConfig,
+  quickOrderApiPost,
+  unwrapResult,
+} from '@/lib/quick-order-api'
 
 export async function POST(request: NextRequest) {
   try {
-    const config = getQuickOrderConfig()
+    const body = await request.json()
+    const country = body?.country || 'AU'
+    const config = getQuickOrderConfig(country)
     if ('error' in config) {
       return NextResponse.json({ success: false, error: config.error }, { status: 500 })
     }
 
-    const body = await request.json()
+    const base = getQuickOrderBaseCurrency(country)
     const {
       fromCcy,
-      toCcy = 'AUD',
+      toCcy = base.code,
       toAmount,
       isBuy = true,
       transferMode = 'booking',
@@ -32,17 +39,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const response = await quickOrderApiPost('/rst/Currencies/getExchangeRate', [
-      {
-        toCcy,
-        fromCcy,
-        toAmount: amount,
-        isBuy,
-        promoGroup: '',
-        customerID: '',
-        transferMode,
-      },
-    ])
+    const response = await quickOrderApiPost(
+      '/rst/Currencies/getExchangeRate',
+      [
+        {
+          toCcy,
+          fromCcy,
+          toAmount: amount,
+          isBuy,
+          promoGroup: '',
+          customerID: '',
+          transferMode,
+        },
+      ],
+      country
+    )
 
     const result = unwrapResult(response)
     if (result.success === false || String(result.success).toLowerCase() === 'false') {
@@ -64,6 +75,7 @@ export async function POST(request: NextRequest) {
       fromCcy,
       toCcy,
       toAmount: amount,
+      country: config.country,
     })
   } catch (error) {
     console.error('[Quick Order] rate error:', error)

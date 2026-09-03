@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import {
   getQuickOrderConfig,
   quickOrderApiPost,
@@ -6,14 +6,22 @@ import {
   unwrapResult,
 } from '@/lib/quick-order-api'
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    const config = getQuickOrderConfig()
+    let country = 'AU'
+    try {
+      const body = await request.json()
+      if (body?.country) country = String(body.country)
+    } catch {
+      /* empty body ok */
+    }
+
+    const config = getQuickOrderConfig(country)
     if ('error' in config) {
       return NextResponse.json({ success: false, error: config.error }, { status: 500 })
     }
 
-    const response = await quickOrderApiPost('/rst/Branches/getBranches', [{}])
+    const response = await quickOrderApiPost('/rst/Branches/getBranches', [{}], country)
     const payload = unwrapPayload(response) as Record<string, unknown> | null
     const result = unwrapResult(response)
 
@@ -52,7 +60,7 @@ export async function POST() {
       })
       .filter(Boolean)
 
-    return NextResponse.json({ success: true, branches })
+    return NextResponse.json({ success: true, branches, country: config.country })
   } catch (error) {
     console.error('[Quick Order] branches error:', error)
     return NextResponse.json(

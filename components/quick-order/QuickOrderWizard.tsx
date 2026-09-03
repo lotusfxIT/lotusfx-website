@@ -18,6 +18,7 @@ import { trackEvent } from '@/lib/analytics'
 import { FLAG_CDN, getCurrencyFlagCode } from '@/lib/currencies'
 import { findStaticLocationByBranchName } from '@/data/locations-static'
 import { STATS } from '@/config/stats'
+import { useCountry } from '@/context/CountryContext'
 
 type StepId = 'purchase' | 'fulfillment' | 'details' | 'payment'
 
@@ -54,11 +55,26 @@ const STEPS: { id: StepId; label: string; icon: typeof ShoppingBagIcon }[] = [
   { id: 'payment', label: 'Confirm', icon: DocumentCheckIcon },
 ]
 
-const BASE_CURRENCY = { code: 'AUD', name: 'Australia', flag: 'AU' }
-
-const PORTAL_LOGIN_URL = 'https://auportal.lotusfx.com/customers/login.shtml'
 const APP_STORE_URL = 'https://apps.apple.com/app/lotusfx'
 const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.lotusfx'
+
+function countryLabel(code: string) {
+  if (code === 'NZ') return 'New Zealand'
+  if (code === 'FJ') return 'Fiji'
+  return 'Australia'
+}
+
+function supportEmailForCountry(code: string) {
+  if (code === 'NZ') return STATS.emails.newZealand
+  if (code === 'FJ') return STATS.emails.fiji
+  return STATS.emails.australia
+}
+
+function defaultBaseCurrency(code: string) {
+  if (code === 'NZ') return { code: 'NZD', name: 'New Zealand', flag: 'NZ' }
+  if (code === 'FJ') return { code: 'FJD', name: 'Fiji', flag: 'FJ' }
+  return { code: 'AUD', name: 'Australia', flag: 'AU' }
+}
 
 const fieldClass =
   'w-full h-14 px-4 border-2 border-gray-200 rounded-xl bg-white font-medium hover:border-primary-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all duration-200'
@@ -149,6 +165,11 @@ function Toast({
 
 export default function QuickOrderWizard() {
   const searchParams = useSearchParams()
+  const { selectedCountry } = useCountry()
+  const marketCountry =
+    selectedCountry === 'NZ' || selectedCountry === 'FJ' || selectedCountry === 'AU'
+      ? selectedCountry
+      : 'AU'
   const lookupTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const [activeStep, setActiveStep] = useState<StepId>('purchase')
@@ -156,6 +177,12 @@ export default function QuickOrderWizard() {
   const [enableDelivery, setEnableDelivery] = useState(false)
   const [apiReady, setApiReady] = useState(true)
   const [loadingMeta, setLoadingMeta] = useState(true)
+  const [baseCurrency, setBaseCurrency] = useState(() => defaultBaseCurrency(marketCountry))
+  const [portalLoginUrl, setPortalLoginUrl] = useState(
+    marketCountry === 'NZ' || marketCountry === 'FJ'
+      ? 'https://nzcportal.lotusfx.com/customers/login.shtml'
+      : 'https://auportal.lotusfx.com/customers/login.shtml'
+  )
 
   const [currenciesSold, setCurrenciesSold] = useState<CurrencySold[]>([])
   const [selectedCurrency, setSelectedCurrency] = useState({
@@ -195,7 +222,7 @@ export default function QuickOrderWizard() {
     suburb: '',
     state: '',
     postalCode: '',
-    country: 'Australia',
+    country: countryLabel(marketCountry),
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -350,11 +377,24 @@ export default function QuickOrderWizard() {
   useEffect(() => {
     const load = async () => {
       setLoadingMeta(true)
+      setPaymentResult(null)
+      setCollectionPlace(null)
+      setSelectedBranch(null)
+      setBaseCurrency(defaultBaseCurrency(marketCountry))
+      setGuest((prev) => ({ ...prev, country: countryLabel(marketCountry) }))
       try {
         const [cfgRes, curRes, brRes] = await Promise.all([
-          fetch('/api/quick-order/config'),
-          fetch('/api/quick-order/currencies', { method: 'POST' }),
-          fetch('/api/quick-order/branches', { method: 'POST' }),
+          fetch(`/api/quick-order/config?country=${encodeURIComponent(marketCountry)}`),
+          fetch('/api/quick-order/currencies', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ country: marketCountry }),
+          }),
+          fetch('/api/quick-order/branches', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ country: marketCountry }),
+          }),
         ])
         const cfg = await cfgRes.json()
         const cur = await curRes.json()
@@ -364,6 +404,17 @@ export default function QuickOrderWizard() {
           setGuestLimit(cfg.guestPurchaseLimit ?? 1000)
           setEnableDelivery(!!cfg.enableDelivery)
           setApiReady(!!cfg.configured)
+          if (cfg.baseCurrency?.code) {
+            setBaseCurrency({
+              code: cfg.baseCurrency.code,
+              name: cfg.baseCurrency.name,
+              flag: cfg.baseCurrency.flag || marketCountry,
+            })
+          }
+          if (cfg.portalLoginUrl) setPortalLoginUrl(cfg.portalLoginUrl)
+          if (!cfg.configured && cfg.configError) {
+            showToast(cfg.configError, 'error')
+          }
         }
 
         if (cur.success && Array.isArray(cur.currencies) && cur.currencies.length) {
@@ -397,7 +448,7 @@ export default function QuickOrderWizard() {
     }
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [marketCountry])
 
   const lookupRate = useCallback(
     async (amountOverride?: number) => {
@@ -410,8 +461,9 @@ export default function QuickOrderWizard() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            country: marketCountry,
             fromCcy: selectedCurrency.code,
-            toCcy: BASE_CURRENCY.code,
+            toCcy: baseCurrency.code,
             toAmount: amount,
             isBuy: true,
             transferMode: 'booking',
@@ -456,7 +508,7 @@ export default function QuickOrderWizard() {
         trackEvent('view_rates', {
           quote_type: 'cash',
           from_currency: selectedCurrency.code,
-          to_currency: BASE_CURRENCY.code,
+          to_currency: baseCurrency.code,
           location: 'quick_order',
         })
       } catch {
@@ -466,7 +518,7 @@ export default function QuickOrderWizard() {
         setIsCalculating(false)
       }
     },
-    [localAmount, selectedCurrency.code, clearRateAmounts, showToast]
+    [localAmount, selectedCurrency.code, baseCurrency.code, marketCountry, clearRateAmounts, showToast]
   )
 
   useEffect(() => {
@@ -518,8 +570,8 @@ export default function QuickOrderWizard() {
       if (amount == null || amount <= 0) return 'Enter a valid purchase amount.'
       if (over) {
         return isMobile
-          ? `Orders over ${BASE_CURRENCY.code} ${guestLimit.toLocaleString()} need the LotusFX app. Download the app to log in or sign up.`
-          : `Orders over ${BASE_CURRENCY.code} ${guestLimit.toLocaleString()} need a LotusFX account. Please log in or sign up to continue.`
+          ? `Orders over ${baseCurrency.code} ${guestLimit.toLocaleString()} need the LotusFX app. Download the app to log in or sign up.`
+          : `Orders over ${baseCurrency.code} ${guestLimit.toLocaleString()} need a LotusFX account. Please log in or sign up to continue.`
       }
     }
 
@@ -602,8 +654,8 @@ export default function QuickOrderWizard() {
         purchase: {
           transactionType: 'currencyPurchase',
           customerReference: guest.email.trim(),
-          sourceCurrency: BASE_CURRENCY.code,
-          debitCurrency: BASE_CURRENCY.code,
+          sourceCurrency: baseCurrency.code,
+          debitCurrency: baseCurrency.code,
           foreignCurrency: selectedCurrency.code,
           foreignAmount: parseAmount(localAmount) || 0,
           exchangeRate: parseAmount(rateValue) || 0,
@@ -635,7 +687,7 @@ export default function QuickOrderWizard() {
       const response = await fetch('/api/quick-order/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...payload, country: marketCountry }),
       })
       const data = await response.json()
 
@@ -656,8 +708,10 @@ export default function QuickOrderWizard() {
         payment.branchName || selectedBranch?.BranchName || ''
       ).trim()
       const matched = findStaticLocationByBranchName(
-        branchNameFromApi || selectedBranch?.BranchName
+        branchNameFromApi || selectedBranch?.BranchName,
+        marketCountry === 'NZ' || marketCountry === 'FJ' ? marketCountry : 'AU'
       )
+      const supportEmail = supportEmailForCountry(marketCountry)
 
       const basePlace: CollectionPlace = {
         name:
@@ -676,7 +730,7 @@ export default function QuickOrderWizard() {
         phone:
           String(payment.branchPhone || selectedBranch?.BranchPhone || '').trim() ||
           undefined,
-        email: STATS.emails.australia,
+        email: supportEmail,
         slug: matched?.slug,
       }
       setCollectionPlace(basePlace)
@@ -705,7 +759,7 @@ export default function QuickOrderWizard() {
                 basePlace.name,
               address: formatted || prev?.address,
               phone: loc.phoneNumbers?.[0] || prev?.phone,
-              email: prev?.email || STATS.emails.australia,
+              email: prev?.email || supportEmail,
               slug: matched.slug,
             }))
           })
@@ -749,7 +803,7 @@ export default function QuickOrderWizard() {
       suburb: '',
       state: '',
       postalCode: '',
-      country: 'Australia',
+      country: countryLabel(marketCountry),
     })
   }
 
@@ -779,13 +833,13 @@ export default function QuickOrderWizard() {
         <div className="flex justify-between gap-3">
           <span className="text-gray-500">You pay</span>
           <span className="font-semibold text-gray-900 text-right">
-            {isCalculating ? '…' : `${BASE_CURRENCY.code} ${foreignAmount}`}
+            {isCalculating ? '…' : `${baseCurrency.code} ${foreignAmount}`}
           </span>
         </div>
         <div className="flex justify-between gap-3">
           <span className="text-gray-500">Rate</span>
           <span className="font-semibold text-gray-900 text-right">
-            1 {selectedCurrency.code} = {rateDisplay} {BASE_CURRENCY.code}
+            1 {selectedCurrency.code} = {rateDisplay} {baseCurrency.code}
           </span>
         </div>
         <div className="flex justify-between gap-3">
@@ -795,7 +849,7 @@ export default function QuickOrderWizard() {
         <div className="flex justify-between gap-3 pt-2 border-t border-gray-200 text-base font-bold mt-auto">
           <span className="text-gray-900">Total due</span>
           <span className="text-primary-700 text-right">
-            {BASE_CURRENCY.code} {totalAmountDue}
+            {baseCurrency.code} {totalAmountDue}
           </span>
         </div>
         {isOverLimit ? (
@@ -888,9 +942,8 @@ export default function QuickOrderWizard() {
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {!apiReady && !loadingMeta ? (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900 text-sm mb-4 shadow-soft">
-              Quick Order API credentials are not configured yet. Ask IT to set{' '}
-              <code className="font-mono text-xs">QUICK_ORDER_X_KEY</code> and{' '}
-              <code className="font-mono text-xs">QUICK_ORDER_X_CLIENT</code> in Vercel.
+              Quick Order API credentials are not configured for this country yet. Ask IT to set
+              the Quick Order (or exchange-rate) keys for AU / NZ in Vercel.
             </div>
           ) : null}
 
@@ -1012,10 +1065,10 @@ export default function QuickOrderWizard() {
                           </dt>
                           <dd className="mt-0.5 font-semibold text-gray-900 m-0 break-all">
                             <a
-                              href={`mailto:${collectionPlace?.email || STATS.emails.australia}`}
+                              href={`mailto:${collectionPlace?.email || supportEmailForCountry(marketCountry)}`}
                               className="hover:text-primary-700"
                             >
-                              {collectionPlace?.email || STATS.emails.australia}
+                              {collectionPlace?.email || supportEmailForCountry(marketCountry)}
                             </a>
                           </dd>
                         </div>
@@ -1062,11 +1115,11 @@ export default function QuickOrderWizard() {
                           </dd>
                           <dt className="text-gray-500">Rate</dt>
                           <dd className="font-semibold text-gray-900 m-0">
-                            1 {selectedCurrency.code} = {rateDisplay} {BASE_CURRENCY.code}
+                            1 {selectedCurrency.code} = {rateDisplay} {baseCurrency.code}
                           </dd>
                           <dt className="text-gray-500">Fee</dt>
                           <dd className="font-semibold text-gray-900 m-0">
-                            {BASE_CURRENCY.code} {feeAmount}
+                            {baseCurrency.code} {feeAmount}
                           </dd>
                           <dt className="text-gray-500">Collection</dt>
                           <dd className="font-semibold text-gray-900 m-0">
@@ -1083,7 +1136,7 @@ export default function QuickOrderWizard() {
                         </h3>
                         <p className="text-sm text-gray-500 mb-2">Amount due in store</p>
                         <p className="text-4xl sm:text-5xl font-bold text-primary-700 tracking-tight leading-none">
-                          {BASE_CURRENCY.code} {totalAmountDue}
+                          {baseCurrency.code} {totalAmountDue}
                         </p>
                       </section>
 
@@ -1237,17 +1290,17 @@ export default function QuickOrderWizard() {
                       </div>
 
                       <div className="mt-auto">
-                        <label className={labelClass}>{BASE_CURRENCY.code} amount</label>
+                        <label className={labelClass}>{baseCurrency.code} amount</label>
                         <div className="flex gap-3">
                           <div className="w-28 shrink-0 flex items-center justify-center h-14 px-3 border-2 border-gray-200 rounded-xl bg-gray-50 font-semibold text-gray-800">
-                            {BASE_CURRENCY.code}
+                            {baseCurrency.code}
                           </div>
                           <input
                             inputMode="decimal"
                             className={`${fieldClass} font-bold text-lg`}
                             value={foreignAmount}
                             onChange={(e) => onAudAmountChange(e.target.value)}
-                            aria-label={`${BASE_CURRENCY.code} amount`}
+                            aria-label={`${baseCurrency.code} amount`}
                           />
                         </div>
                       </div>
@@ -1453,7 +1506,7 @@ export default function QuickOrderWizard() {
                       </span>
                       <div>
                         <h3 className="text-base sm:text-lg font-bold text-gray-900">
-                          Account required for orders over {BASE_CURRENCY.code}{' '}
+                          Account required for orders over {baseCurrency.code}{' '}
                           {guestLimit.toLocaleString()}
                         </h3>
                         <p className="mt-1 text-sm text-gray-700 leading-relaxed">
@@ -1500,7 +1553,7 @@ export default function QuickOrderWizard() {
                           </a>
                         </div>
                         <a
-                          href={PORTAL_LOGIN_URL}
+                          href={portalLoginUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() =>
@@ -1518,7 +1571,7 @@ export default function QuickOrderWizard() {
                     ) : (
                       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                         <a
-                          href={PORTAL_LOGIN_URL}
+                          href={portalLoginUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() =>
@@ -1559,7 +1612,7 @@ export default function QuickOrderWizard() {
 
                 {activeStep !== 'payment' ? (
                 <p className="mt-6 pt-5 border-t border-gray-100 text-xs sm:text-sm text-gray-500 text-center">
-                  Guest limit {BASE_CURRENCY.code} {guestLimit.toLocaleString()}. Pay in store when
+                  Guest limit {baseCurrency.code} {guestLimit.toLocaleString()}. Pay in store when
                   you collect — no online payment.
                 </p>
                 ) : null}

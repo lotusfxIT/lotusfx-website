@@ -3,12 +3,13 @@ import { getQuickOrderConfig, quickOrderApiPost, unwrapResult } from '@/lib/quic
 
 export async function POST(request: NextRequest) {
   try {
-    const config = getQuickOrderConfig()
+    const body = await request.json()
+    const country = body?.country || 'AU'
+    const config = getQuickOrderConfig(country)
     if ('error' in config) {
       return NextResponse.json({ success: false, error: config.error }, { status: 500 })
     }
 
-    const body = await request.json()
     const purchase = body?.purchase
     const paymentMethod = body?.paymentMethod
 
@@ -28,6 +29,8 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[Quick Order] create attempt', {
+      country: config.country,
+      baseUrl: config.baseUrl,
       foreignCurrency: purchase.foreignCurrency,
       foreignAmount: purchase.foreignAmount,
       totalDebitAmount: purchase.totalDebitAmount,
@@ -37,13 +40,16 @@ export async function POST(request: NextRequest) {
       hasCustomerRef: !!purchase.customerReference,
     })
 
-    const response = await quickOrderApiPost('/rst/WebEWires/createPublicPurchaseOrder', [
-      payload,
-    ])
+    const response = await quickOrderApiPost(
+      '/rst/WebEWires/createPublicPurchaseOrder',
+      [payload],
+      country
+    )
     const result = unwrapResult(response)
 
     if (result.success === false || String(result.success).toLowerCase() === 'false') {
       console.error('[Quick Order] create failed', {
+        country: config.country,
         status: result.status,
         statusText: result.statusText,
       })
@@ -60,6 +66,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[Quick Order] create success', {
+      country: config.country,
       orderId:
         result.WebEwireID ||
         result.orderId ||
@@ -68,7 +75,7 @@ export async function POST(request: NextRequest) {
       statusText: result.statusText,
     })
 
-    return NextResponse.json({ success: true, result })
+    return NextResponse.json({ success: true, result, country: config.country })
   } catch (error) {
     console.error('[Quick Order] create error:', error)
     return NextResponse.json(

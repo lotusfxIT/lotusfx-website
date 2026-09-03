@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import {
   getQuickOrderConfig,
   quickOrderApiPost,
@@ -7,14 +7,22 @@ import {
 } from '@/lib/quick-order-api'
 import { enrichSoldCurrency } from '@/lib/currencies'
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    const config = getQuickOrderConfig()
+    let country = 'AU'
+    try {
+      const body = await request.json()
+      if (body?.country) country = String(body.country)
+    } catch {
+      /* empty body ok */
+    }
+
+    const config = getQuickOrderConfig(country)
     if ('error' in config) {
       return NextResponse.json({ success: false, error: config.error }, { status: 500 })
     }
 
-    const response = await quickOrderApiPost('/rst/Currencies/getCurrenciesSold', [{}])
+    const response = await quickOrderApiPost('/rst/Currencies/getCurrenciesSold', [{}], country)
     const payload = unwrapPayload(response)
     const result = unwrapResult(response)
 
@@ -54,7 +62,7 @@ export async function POST() {
       })
       .filter(Boolean)
 
-    return NextResponse.json({ success: true, currencies })
+    return NextResponse.json({ success: true, currencies, country: config.country })
   } catch (error) {
     console.error('[Quick Order] currencies error:', error)
     return NextResponse.json(
