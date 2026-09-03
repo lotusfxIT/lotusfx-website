@@ -88,7 +88,7 @@ export default function Hero() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-4 sm:space-y-6 relative min-w-0 overflow-hidden"
+            className="space-y-4 sm:space-y-6 relative min-w-0"
           >
             <div className="relative z-10 w-full max-w-full overflow-hidden" style={{ height: '520px' }}>
               <AnimatePresence mode="sync">
@@ -198,7 +198,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
-              className="flex flex-col sm:flex-row gap-3"
+              className="flex flex-col sm:flex-row gap-3 p-0.5"
             >
               <Link
                 href={buildQuickOrderUrl()}
@@ -210,7 +210,7 @@ export default function Hero() {
                     location: 'hero',
                   })
                 }
-                className="text-base lg:text-lg px-7 py-3 flex items-center justify-center space-x-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-white"
+                className="text-base lg:text-lg px-7 py-3 flex items-center justify-center space-x-2 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] shadow-lg hover:shadow-xl text-white"
                 style={{
                   background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
                 }}
@@ -227,7 +227,7 @@ export default function Hero() {
                     country: selectedCountry,
                   })
                 }
-                className="text-base lg:text-lg px-7 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-white flex items-center justify-center space-x-2"
+                className="text-base lg:text-lg px-7 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] shadow-lg hover:shadow-xl text-white flex items-center justify-center space-x-2"
                 style={{
                   background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
                 }}
@@ -423,7 +423,7 @@ export default function Hero() {
                   </p>
                 </div>
               )}
-              <div className="flex-1 min-h-0 min-w-0 flex flex-col overflow-y-auto overflow-x-hidden w-full">
+              <div className="flex-1 min-h-0 min-w-0 flex flex-col overflow-y-auto overflow-x-visible w-full px-1">
                 <CurrencyCalculator onOptionChosen={() => setShowQuoteHeading(false)} />
               </div>
             </div>

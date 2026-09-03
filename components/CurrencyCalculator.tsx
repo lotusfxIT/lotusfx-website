@@ -334,7 +334,9 @@ export default function CurrencyCalculator({
               type="button"
               onClick={() => chooseOption('cash')}
               className="flex items-center gap-4 p-4 sm:p-5 rounded-2xl border-2 border-primary-200 bg-gradient-to-br from-primary-50 to-white hover:from-primary-100 hover:to-primary-50 hover:border-primary-500 transition-all shadow-soft text-left min-w-0"
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.995 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               <div className="w-14 h-14 shrink-0 rounded-xl bg-primary-600/15 flex items-center justify-center ring-2 ring-primary-200">
                 <BanknotesIcon className="w-8 h-8 text-primary-600" />
@@ -349,7 +351,9 @@ export default function CurrencyCalculator({
               type="button"
               onClick={() => chooseOption('transfer')}
               className="flex items-center gap-4 p-4 sm:p-5 rounded-2xl border-2 border-primary-200 bg-gradient-to-br from-primary-50 to-white hover:from-primary-100 hover:to-primary-50 hover:border-primary-500 transition-all shadow-soft text-left min-w-0"
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.995 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               <div className="w-14 h-14 shrink-0 rounded-xl bg-primary-600/15 flex items-center justify-center ring-2 ring-primary-200">
                 <PaperAirplaneIcon className="w-8 h-8 text-primary-600" />
@@ -642,7 +646,7 @@ export default function CurrencyCalculator({
       ) : (
         /* Foreign Exchange: You Buy / You Sell, then From / Swap / To */
         <>
-          <div className="flex gap-2">
+          <div className="flex gap-2 px-0.5 py-0.5">
             <motion.button
               type="button"
               onClick={() => {
@@ -653,13 +657,14 @@ export default function CurrencyCalculator({
                 if (other) setToCurrency(other.code);
               }
             }}
-              className={`flex-1 text-xs md:text-sm font-semibold px-3 py-2 rounded-lg border ${
+              className={`flex-1 text-xs md:text-sm font-semibold px-3 py-2 rounded-lg border transition-colors ${
                 buyOrSell === 'buy'
                   ? 'bg-primary-600 text-white border-primary-600'
-                  : 'bg-white text-gray-700 border-gray-200'
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-primary-300'
               }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.99 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               You Buy
             </motion.button>
@@ -673,13 +678,14 @@ export default function CurrencyCalculator({
                 if (other) setFromCurrency(other.code);
               }
             }}
-              className={`flex-1 text-xs md:text-sm font-semibold px-3 py-2 rounded-lg border ${
+              className={`flex-1 text-xs md:text-sm font-semibold px-3 py-2 rounded-lg border transition-colors ${
                 buyOrSell === 'sell'
                   ? 'bg-primary-600 text-white border-primary-600'
-                  : 'bg-white text-gray-700 border-gray-200'
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-primary-300'
               }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.99 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               You Sell
             </motion.button>
