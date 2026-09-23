@@ -19,15 +19,15 @@ const statsTemplate = [
     href: '/customer-reviews',
   },
   {
-    label: 'Branches in {countryName}',
+    label: 'Branches',
     value: '{branchValue}',
-    subtext: '',
+    subtext: 'in {countryName}',
     href: '/locations',
   },
   {
-    label: 'Currencies available',
+    label: 'Currencies',
     valueKey: 'currenciesAvailable' as const,
-    subtext: '',
+    subtext: 'available',
     href: '/currency-exchange',
   },
   {
@@ -91,9 +91,7 @@ export default function Hero() {
         ? siteStats[stat.valueKey]
         : (stat as { value?: string }).value || ''
     return {
-      label: stat.label
-        .replace('{customers}', 'satisfied customers')
-        .replace('{countryName}', currentCountryName),
+      label: stat.label,
       href: stat.href,
       value: String(rawValue)
         .replace('{branches}', content?.branches || siteStats.branches.total)
@@ -295,7 +293,7 @@ export default function Hero() {
                     href={stat.href}
                     onClick={() =>
                       trackEvent('cta_click', {
-                        cta_name: `hero_stat_${stat.href.replace(/^\//, '').replace(/\//g, '_') || 'home'}`,
+                        cta_name: `hero_stat_${stat.label.toLowerCase().replace(/\s+/g, '_')}`,
                         location: 'hero',
                         country: selectedCountry,
                       })
@@ -305,11 +303,9 @@ export default function Hero() {
                     <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-600 mb-1">
                       {stat.value}
                     </div>
-                    {stat.label ? (
-                      <div className="text-xs sm:text-sm font-medium text-gray-900 mb-1">
-                        {stat.label}
-                      </div>
-                    ) : null}
+                    <div className="text-xs sm:text-sm font-medium text-gray-900 mb-1">
+                      {stat.label}
+                    </div>
                     {stat.subtext ? (
                       <div className="text-[10px] sm:text-xs text-gray-500">
                         {stat.subtext}
