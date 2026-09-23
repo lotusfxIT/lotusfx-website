@@ -6,8 +6,12 @@ export type PersistResult =
   | { ok: true; method: 'fs' | 'blob' }
   | { ok: false; error: string; data: unknown }
 
+function blobToken() {
+  return process.env.BLOB_READ_WRITE_TOKEN || undefined
+}
+
 function hasBlobToken() {
-  return !!(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID)
+  return !!blobToken()
 }
 
 function localPath(relativePath: string) {
@@ -29,16 +33,21 @@ async function streamToString(stream: ReadableStream<Uint8Array> | null): Promis
     merged.set(chunk, offset)
     offset += chunk.length
   }
-  return new TextDecoder().decode(merged)
+  return new TextDecoder('utf-8').decode(merged)
 }
 
 /** Read JSON from Vercel Blob (production) or local filesystem (dev). */
 export async function readAdminJson<T>(relativePath: string, fallback: T): Promise<T> {
   const blobPath = relativePath.replace(/^public\//, '')
+  const token = blobToken()
 
-  if (hasBlobToken()) {
+  if (token) {
     try {
-      const result = await get(blobPath, { access: 'private', useCache: false })
+      const result = await get(blobPath, {
+        access: 'private',
+        useCache: false,
+        token,
+      })
       if (result?.statusCode === 200 && result.stream) {
         const text = await streamToString(result.stream)
         if (text.trim()) return JSON.parse(text) as T
@@ -67,14 +76,16 @@ export async function writeAdminJson(
 ): Promise<PersistResult> {
   const blobPath = relativePath.replace(/^public\//, '')
   const body = JSON.stringify(data, null, 2)
+  const token = blobToken()
 
-  if (hasBlobToken()) {
+  if (token) {
     try {
       await put(blobPath, body, {
         access: 'private',
         addRandomSuffix: false,
         allowOverwrite: true,
-        contentType: 'application/json',
+        contentType: 'application/json; charset=utf-8',
+        token,
       })
       try {
         const file = localPath(relativePath)

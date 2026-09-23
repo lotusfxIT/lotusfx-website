@@ -61,7 +61,7 @@ export const DEFAULT_SITE_STATS: SiteStats = {
   branches: {
     fiji: '16',
     australia: '20',
-    newZealand: '18',
+    newZealand: '19',
     total: '54',
   },
   emails: {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { readSiteStatsFile } from '@/lib/site-stats-server'
+import { readSiteStats, readSiteStatsFile, writeSiteStats } from '@/lib/site-stats-server'
 import { readAdminJson, writeAdminJson } from '@/lib/admin-json-store'
 
 function isAuthed(request: NextRequest) {
@@ -13,6 +13,20 @@ function contentPath(country: string) {
   return `public/content/${country}.json`
 }
 
+function branchKeyForCountry(country: string): 'australia' | 'newZealand' | 'fiji' | null {
+  if (country === 'AU') return 'australia'
+  if (country === 'NZ') return 'newZealand'
+  if (country === 'FJ') return 'fiji'
+  return null
+}
+
+function normalizeCount(value: unknown): string | null {
+  if (value == null) return null
+  const raw = String(value).trim()
+  if (!raw) return null
+  return raw.replace(/\+$/, '')
+}
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: { country: string } }
@@ -20,7 +34,9 @@ export async function GET(
   try {
     const country = params.country.toUpperCase()
     const content = await readAdminJson(contentPath(country), getDefaultContent(country))
-    return NextResponse.json(content)
+    return NextResponse.json(content, {
+      headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' },
+    })
   } catch (error) {
     console.error('Error reading content:', error)
     return NextResponse.json({ error: 'Failed to read content' }, { status: 500 })
@@ -50,6 +66,21 @@ export async function POST(
         },
         { status: 500 }
       )
+    }
+
+    // Keep Site stats branch/customer counts in sync with Country Content
+    try {
+      const key = branchKeyForCountry(country)
+      if (key) {
+        const stats = await readSiteStats()
+        const branches = normalizeCount(content.branches)
+        const customers = normalizeCount(content.customers)
+        if (branches) stats.branches[key] = branches
+        if (customers) stats.customers[key] = customers
+        await writeSiteStats(stats)
+      }
+    } catch (syncError) {
+      console.error('[content] site-stats sync failed:', syncError)
     }
 
     return NextResponse.json({

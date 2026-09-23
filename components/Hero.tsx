@@ -68,7 +68,15 @@ export default function Hero() {
   }
 
   const currentCountryName = countryNames[selectedCountry] || 'Australia'
-  const currentBranchValue = branchValues[selectedCountry] || `${siteStats.branches.australia}+`
+  // Prefer country content (Admin → Country Content) when set; else site stats
+  const contentBranches = content?.branches != null && String(content.branches).trim() !== ''
+    ? String(content.branches).trim()
+    : ''
+  const currentBranchValue = contentBranches
+    ? contentBranches.endsWith('+')
+      ? contentBranches
+      : `${contentBranches}+`
+    : branchValues[selectedCountry] || `${siteStats.branches.australia}+`
 
   const features = [
     siteStats.hero.featureCompetitiveRates,

@@ -13,7 +13,9 @@ export function useCountryContent() {
     const fetchContent = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`/api/content/${selectedCountry}`)
+        const response = await fetch(`/api/content/${selectedCountry}?t=${Date.now()}`, {
+          cache: 'no-store',
+        })
         if (!response.ok) throw new Error('Failed to fetch content')
         const data = await response.json()
         setContent(data)
