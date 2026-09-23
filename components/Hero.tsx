@@ -6,15 +6,15 @@ import { ArrowRightIcon, CheckCircleIcon, StarIcon } from '@heroicons/react/24/o
 import CurrencyCalculator from './CurrencyCalculator'
 import { useCountryContent } from '@/hooks/useCountryContent'
 import { useState, useEffect } from 'react'
-import { STATS } from '@/config/stats'
 import { useCountry } from '@/context/CountryContext'
+import { useSiteStats } from '@/context/SiteStatsContext'
 import { trackEvent } from '@/lib/analytics'
 import { buildQuickOrderUrl, isQuickOrderEnabled } from '@/lib/quick-order-url'
 
 const statsTemplate = [
   {
     label: 'Customer Rating',
-    value: '4.9★',
+    valueKey: 'customerRating' as const,
     subtext: '{customers}',
     href: '/customer-reviews',
   },
@@ -26,7 +26,7 @@ const statsTemplate = [
   },
   {
     label: 'Currencies',
-    value: '40+',
+    valueKey: 'currenciesAvailable' as const,
     subtext: 'Currencies available',
     href: '/currency-exchange',
   },
@@ -38,16 +38,10 @@ const statsTemplate = [
   },
 ]
 
-const features = [
-  'The most competitive exchange rates',
-  'No commission on currency exchange',
-  '50+ locations across Australia, New Zealand & Fiji',
-  '40+ currencies available',
-]
-
 export default function Hero() {
   const { content, loading } = useCountryContent()
   const { selectedCountry } = useCountry()
+  const { stats: siteStats } = useSiteStats()
   const [showLogo, setShowLogo] = useState(true)
   const [showQuoteHeading, setShowQuoteHeading] = useState(true)
 
@@ -68,26 +62,40 @@ export default function Hero() {
   }
 
   const branchValues: Record<string, string> = {
-    AU: `${STATS.branches.australia}+`,
-    NZ: `${STATS.branches.newZealand}+`,
-    FJ: `${STATS.branches.fiji}+`,
+    AU: `${siteStats.branches.australia}+`,
+    NZ: `${siteStats.branches.newZealand}+`,
+    FJ: `${siteStats.branches.fiji}+`,
   }
 
   const currentCountryName = countryNames[selectedCountry] || 'Australia'
-  const currentBranchValue = branchValues[selectedCountry] || `${STATS.branches.australia}+`
+  const currentBranchValue = branchValues[selectedCountry] || `${siteStats.branches.australia}+`
+
+  const features = [
+    siteStats.hero.featureCompetitiveRates,
+    siteStats.hero.featureNoCommission,
+    siteStats.hero.featureLocations,
+    siteStats.hero.featureCurrencies,
+  ].filter(Boolean)
 
   // Build stats with country-specific data
-  const stats = statsTemplate.map(stat => ({
-    ...stat,
-    value: stat.value
-      .replace('{branches}', content?.branches || STATS.branches.total)
-      .replace('{branchValue}', currentBranchValue)
-      .replace('{customers}', content?.customers || STATS.customers.total)
-      .replace('{years}', STATS.yearsOfExcellence),
-    subtext: stat.subtext
-      .replace('{customers}', 'satisfied customers')
-      .replace('{countryName}', currentCountryName),
-  }))
+  const stats = statsTemplate.map((stat) => {
+    const rawValue =
+      'valueKey' in stat && stat.valueKey
+        ? siteStats[stat.valueKey]
+        : (stat as { value?: string }).value || ''
+    return {
+      label: stat.label,
+      href: stat.href,
+      value: String(rawValue)
+        .replace('{branches}', content?.branches || siteStats.branches.total)
+        .replace('{branchValue}', currentBranchValue)
+        .replace('{customers}', content?.customers || siteStats.customers.total)
+        .replace('{years}', siteStats.yearsOfExcellence),
+      subtext: stat.subtext
+        .replace('{customers}', 'satisfied customers')
+        .replace('{countryName}', currentCountryName),
+    }
+  })
 
   return (
     <section className="relative min-h-[calc(100vh-80px)] flex items-center overflow-hidden pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-12 w-full">
@@ -164,7 +172,8 @@ export default function Hero() {
                       >
                         <StarIcon className="w-4 h-4" />
                         <span>
-                          Trusted by {content?.customers || `${STATS.customers.total} customers`}
+                          {siteStats.hero.trustedPrefix}{' '}
+                          {content?.customers || `${siteStats.customers.total} customers`}
                         </span>
                       </motion.div>
 

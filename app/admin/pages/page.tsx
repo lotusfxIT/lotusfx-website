@@ -64,7 +64,8 @@ export default function PagesEditor() {
     if (editingSection == null) return
     setSaving(true)
     try {
-      const token = localStorage.getItem('adminToken')
+      const token =
+        localStorage.getItem('adminToken') || localStorage.getItem('admin_token') || ''
       const updatedPages = { ...pages }
       updatedPages[selectedPage] = {
         ...updatedPages[selectedPage],
@@ -75,7 +76,7 @@ export default function PagesEditor() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         credentials: 'include',
         body: JSON.stringify({
@@ -83,16 +84,35 @@ export default function PagesEditor() {
         }),
       })
 
+      const data = await response.json().catch(() => ({}))
+
+      if (response.status === 401) {
+        setMessage('❌ Session expired — please log in again')
+        router.push('/admin')
+        return
+      }
+
       if (response.ok) {
         setMessage('✅ Content saved successfully!')
         setEditingSection(null)
         setPages(updatedPages)
         setTimeout(() => setMessage(''), 3000)
       } else {
-        setMessage('❌ Failed to save content')
+        if (data.pages) {
+          const blob = new Blob([JSON.stringify(data.pages, null, 2)], {
+            type: 'application/json',
+          })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = data.filename || 'pages-content.json'
+          a.click()
+          URL.revokeObjectURL(url)
+        }
+        setMessage(`❌ ${data.error || 'Failed to save content'}`)
       }
     } catch (error) {
-      setMessage('❌ Error saving content')
+      setMessage('❌ Network error while saving — try again')
     } finally {
       setSaving(false)
     }

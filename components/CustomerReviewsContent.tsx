@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { StarIcon, MapPinIcon, ChatBubbleBottomCenterTextIcon } from '@heroicons/react/24/solid'
 import { useCountry } from '@/context/CountryContext'
-import { STATS } from '@/config/stats'
+import { useSiteStats } from '@/context/SiteStatsContext'
 import MotionWrapper from '@/components/MotionWrapper'
 
 type CountryFilter = 'ALL' | 'AU' | 'NZ' | 'FJ'
@@ -132,6 +132,7 @@ function SkeletonCard() {
 
 export default function CustomerReviewsContent() {
   const { selectedCountry } = useCountry()
+  const { stats: siteStats } = useSiteStats()
   const [filter, setFilter] = useState<CountryFilter>('ALL')
   const [reviews, setReviews] = useState<CustomerReview[]>([])
   const [loading, setLoading] = useState(true)
@@ -222,11 +223,11 @@ export default function CustomerReviewsContent() {
               <p className="text-sm text-gray-500 mt-1">Hand-picked Google reviews</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-primary-600">{STATS.branches.total}+</p>
+              <p className="text-2xl font-bold text-primary-600">{siteStats.branches.total}+</p>
               <p className="text-sm text-gray-500 mt-1">Branches across the Pacific</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-primary-600">{STATS.customers.total}</p>
+              <p className="text-2xl font-bold text-primary-600">{siteStats.customers.total}</p>
               <p className="text-sm text-gray-500 mt-1">Customers who trust LotusFX</p>
             </div>
           </div>

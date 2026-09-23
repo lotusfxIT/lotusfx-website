@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import fs from 'fs'
-import path from 'path'
+import { readAdminJson, writeAdminJson } from '@/lib/admin-json-store'
 
-const PAGES_FILE = path.join(process.cwd(), 'public', 'pages-content.json')
+const PAGES_RELATIVE = 'public/pages-content.json'
 
-// Default pages structure
 const DEFAULT_PAGES = {
   home: {
     title: 'Home',
@@ -45,70 +43,55 @@ const DEFAULT_PAGES = {
   },
 }
 
-function getPages() {
-  try {
-    if (fs.existsSync(PAGES_FILE)) {
-      const data = fs.readFileSync(PAGES_FILE, 'utf-8')
-      return JSON.parse(data)
-    }
-  } catch (error) {
-    console.error('Error reading pages file:', error)
-  }
-  return DEFAULT_PAGES
-}
-
-function savePages(pages: any) {
-  try {
-    fs.writeFileSync(PAGES_FILE, JSON.stringify(pages, null, 2))
-    return true
-  } catch (error) {
-    console.error('Error saving pages file:', error)
-    return false
-  }
+function isAuthed(request: NextRequest) {
+  const token = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '').trim()
+  const cookieToken =
+    request.cookies.get('admin_token')?.value || request.cookies.get('adminToken')?.value
+  return !!(token || cookieToken)
 }
 
 export async function GET() {
   try {
-    const pages = getPages()
+    const pages = await readAdminJson(PAGES_RELATIVE, DEFAULT_PAGES)
     return NextResponse.json(pages)
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch pages' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch pages' }, { status: 500 })
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '')
-    const cookieToken = request.cookies.get('admin_token')?.value
-
-    if (!token && !cookieToken) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!isAuthed(request)) {
+      return NextResponse.json({ error: 'Unauthorized — please log in again' }, { status: 401 })
     }
 
     const body = await request.json()
     const { pages: updatedPages } = body
 
-    if (updatedPages && typeof updatedPages === 'object') {
-      if (savePages(updatedPages)) {
-        return NextResponse.json({
-          success: true,
-          message: 'Pages updated successfully',
-        })
-      }
+    if (!updatedPages || typeof updatedPages !== 'object') {
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
     }
 
-    return NextResponse.json(
-      { error: 'Invalid request' },
-      { status: 400 }
-    )
+    const result = await writeAdminJson(PAGES_RELATIVE, updatedPages)
+    if (!result.ok) {
+      return NextResponse.json(
+        {
+          error: result.error,
+          persisted: false,
+          pages: result.data,
+          filename: 'pages-content.json',
+        },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Pages updated successfully',
+      persisted: true,
+      method: result.method,
+    })
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to update pages' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to update pages' }, { status: 500 })
   }
 }
-

@@ -1,7 +1,8 @@
 'use client'
 
 import MotionWrapper from '@/components/MotionWrapper'
-import { STATS } from '@/config/stats'
+import { fillStatsTemplate } from '@/config/stats'
+import { useSiteStats } from '@/context/SiteStatsContext'
 import { useCountry } from '@/context/CountryContext'
 import {
   EyeIcon,
@@ -36,6 +37,7 @@ function AboutVideo() {
 
 export default function AboutPage() {
   const { selectedCountry } = useCountry()
+  const { stats: siteStats } = useSiteStats()
   return (
     <>
       {/* Brand video - full width at top */}
@@ -55,7 +57,7 @@ export default function AboutPage() {
                 />
               </div>
               <div className="inline-block bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
-                Trusted by {STATS.customers.total} Customers
+                Trusted by {siteStats.customers.total} Customers
               </div>
               <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
                 Your Trusted Partner for Foreign Exchange Across the Pacific
@@ -94,12 +96,10 @@ export default function AboutPage() {
                   getting poor exchange rates, so we set out to change that.
                 </p>
                 <p className="text-base lg:text-lg leading-relaxed">
-                  Starting with a single branch, we&apos;ve grown to over 60 locations across Australia, 
-                  New Zealand, and Fiji. Our success comes from our commitment to competitive rates, 
-                  transparent pricing, and exceptional customer service.
+                  {fillStatsTemplate(siteStats.copy.aboutGrowth, siteStats)}
                 </p>
                 <p className="text-base lg:text-lg leading-relaxed">
-                  Today, we serve over {STATS.customers.total} customers and have facilitated over {STATS.totalTransferred} in
+                  Today, we serve over {siteStats.customers.total} customers and have facilitated over {siteStats.totalTransferred} in
                   currency exchanges and international transfers. We&apos;re proud to be the trusted choice
                   for travelers, families sending money home, and businesses making international payments.
                 </p>
@@ -237,7 +237,7 @@ export default function AboutPage() {
               Serving the Pacific Region
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              With {STATS.branches.total} branches across three countries, we&apos;re always nearby when you need us
+              {fillStatsTemplate(siteStats.copy.aboutPacificIntro, siteStats)}
             </p>
           </div>
 
@@ -246,25 +246,25 @@ export default function AboutPage() {
               {
                 code: 'au',
                 country: 'Australia',
-                branches: `${STATS.branches.australia} Branches`,
-                customers: `${STATS.customers.australia} Customers`,
-                email: STATS.emails.australia,
+                branches: `${siteStats.branches.australia} Branches`,
+                customers: `${siteStats.customers.australia} Customers`,
+                email: siteStats.emails.australia,
                 highlights: ['Major cities coverage', 'Extended trading hours', 'eWire to NZ & Fiji'],
               },
               {
                 code: 'nz',
                 country: 'New Zealand',
-                branches: `${STATS.branches.newZealand} Branches`,
-                customers: `${STATS.customers.newZealand} Customers`,
-                email: STATS.emails.newZealand,
+                branches: `${siteStats.branches.newZealand} Branches`,
+                customers: `${siteStats.customers.newZealand} Customers`,
+                email: siteStats.emails.newZealand,
                 highlights: ['Nationwide network', 'Expert FX advisors', 'Same-day transfers'],
               },
               {
                 code: 'fj',
                 country: 'Fiji',
-                branches: `${STATS.branches.fiji} Branches`,
-                customers: `${STATS.customers.fiji} Customers`,
-                email: STATS.emails.fiji,
+                branches: `${siteStats.branches.fiji} Branches`,
+                customers: `${siteStats.customers.fiji} Customers`,
+                email: siteStats.emails.fiji,
                 highlights: ['Island-wide service', 'Pacific specialist', 'Local currency expert'],
               },
             ].map((region, index) => (
@@ -635,10 +635,10 @@ export default function AboutPage() {
         <div className="container-custom">
           <div className="grid md:grid-cols-4 gap-8 text-center">
             {[
-              { number: STATS.yearsOfExcellence, label: 'Years of Excellence' },
-              { number: STATS.branches.total, label: 'Branches Across Pacific' },
-              { number: STATS.customers.total, label: 'Happy Customers' },
-              { number: STATS.totalTransferred, label: 'Safely Transferred' },
+              { number: siteStats.yearsOfExcellence, label: 'Years of Excellence' },
+              { number: siteStats.branches.total, label: 'Branches Across Pacific' },
+              { number: siteStats.customers.total, label: 'Happy Customers' },
+              { number: siteStats.totalTransferred, label: 'Safely Transferred' },
             ].map((stat, index) => (
               <MotionWrapper
                 key={stat.label}

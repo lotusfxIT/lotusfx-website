@@ -7,7 +7,8 @@ import {
   ClockIcon,
   ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline'
-import { STATS } from '@/config/stats'
+import { useSiteStats } from '@/context/SiteStatsContext'
+import { fillStatsTemplate } from '@/config/stats'
 
 type FijiBranchRatesCardProps = {
   /** cash = FX quote gap; transfer = money transfer calculator gap */
@@ -19,6 +20,7 @@ export default function FijiBranchRatesCard({
   variant = 'cash',
   className = '',
 }: FijiBranchRatesCardProps) {
+  const { stats: siteStats } = useSiteStats()
   const isTransfer = variant === 'transfer'
 
   return (
@@ -44,21 +46,21 @@ export default function FijiBranchRatesCard({
       <ul className="text-left max-w-sm mx-auto space-y-3 mb-8">
         <li className="flex gap-3 text-sm text-gray-700">
           <MapPinIcon className="h-5 w-5 text-primary-600 shrink-0 mt-0.5" />
-          <span>Branches across Fiji</span>
+          <span>{fillStatsTemplate(siteStats.copy.fijiBranchesLabel, siteStats)}</span>
         </li>
         <li className="flex gap-3 text-sm text-gray-700">
           <ClockIcon className="h-5 w-5 text-primary-600 shrink-0 mt-0.5" />
-          <span>{STATS.businessHours.fiji}</span>
+          <span>{siteStats.businessHours.fiji}</span>
         </li>
         <li className="flex gap-3 text-sm text-gray-700">
           <ChatBubbleLeftRightIcon className="h-5 w-5 text-primary-600 shrink-0 mt-0.5" />
           <span>
             Questions?{' '}
             <a
-              href={`mailto:${STATS.emails.fiji}`}
+              href={`mailto:${siteStats.emails.fiji}`}
               className="font-semibold text-primary-700 hover:text-primary-800 break-all"
             >
-              {STATS.emails.fiji}
+              {siteStats.emails.fiji}
             </a>
           </span>
         </li>

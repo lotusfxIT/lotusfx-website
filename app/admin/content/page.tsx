@@ -2,10 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { PencilSquareIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useRouter } from 'next/navigation'
 
 const countries = ['AU', 'NZ', 'FJ']
+
+function getAdminToken() {
+  if (typeof window === 'undefined') return ''
+  return localStorage.getItem('adminToken') || localStorage.getItem('admin_token') || ''
+}
 
 export default function AdminContentPage() {
   const router = useRouter()
@@ -17,8 +22,7 @@ export default function AdminContentPage() {
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    // Check if admin is logged in
-    const adminToken = localStorage.getItem('adminToken')
+    const adminToken = getAdminToken()
     if (!adminToken) {
       router.push('/admin')
       return
@@ -29,7 +33,7 @@ export default function AdminContentPage() {
   const fetchContent = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/content/${selectedCountry}`)
+      const response = await fetch(`/api/content/${selectedCountry}`, { credentials: 'include' })
       const data = await response.json()
       setContent(data)
       setEditingContent(data)
@@ -41,26 +45,63 @@ export default function AdminContentPage() {
     }
   }
 
+  const downloadJson = (payload: unknown, filename: string) => {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const handleSave = async () => {
     try {
       setSaving(true)
-      const token = localStorage.getItem('adminToken')
+      setMessage('')
+      const token = getAdminToken()
+      if (!token) {
+        setMessage('❌ Not logged in — please log in again')
+        router.push('/admin')
+        return
+      }
+
       const response = await fetch(`/api/content/${selectedCountry}`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(editingContent),
       })
 
-      if (!response.ok) throw new Error('Failed to save')
+      const data = await response.json().catch(() => ({}))
+
+      if (response.status === 401) {
+        setMessage('❌ Session expired — please log in again')
+        router.push('/admin')
+        return
+      }
+
+      if (!response.ok) {
+        if (data.content) {
+          downloadJson(data.content, data.filename || `${selectedCountry}.json`)
+          setMessage(
+            `❌ ${data.error || 'Could not save on server'}. JSON downloaded — commit it to public/content/.`
+          )
+        } else {
+          setMessage(`❌ ${data.error || 'Error saving content'}`)
+        }
+        return
+      }
+
       setContent(editingContent)
       setMessage('✅ Content saved successfully!')
       setTimeout(() => setMessage(''), 3000)
     } catch (error) {
       console.error('Error saving content:', error)
-      setMessage('❌ Error saving content')
+      setMessage('❌ Error saving content — check your connection and try again')
     } finally {
       setSaving(false)
     }
@@ -92,9 +133,12 @@ export default function AdminContentPage() {
         <motion.div className="mb-8 pb-6 border-b-2 border-primary-200">
           <h1 className="text-4xl font-bold text-primary-700 mb-2">Edit Country Content</h1>
           <p className="text-gray-600">Customize content for each country</p>
+          <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-3">
+            On Vercel, saves need a Blob store (Vercel → Storage → Blob → Create, connect to this
+            project, redeploy). Localhost saves work without that.
+          </p>
         </motion.div>
 
-        {/* Country Selector */}
         <div className="mb-8">
           <label className="block text-sm font-medium text-gray-700 mb-4">Select Country</label>
           <div className="grid grid-cols-3 gap-4">
@@ -114,7 +158,6 @@ export default function AdminContentPage() {
           </div>
         </div>
 
-        {/* Message */}
         {message && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -125,7 +168,6 @@ export default function AdminContentPage() {
           </motion.div>
         )}
 
-        {/* Content Editor */}
         <motion.div className="bg-white rounded-lg shadow-md border-l-4 border-primary-600 p-6 space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Hero Title</label>
@@ -150,7 +192,9 @@ export default function AdminContentPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Branches (e.g., 20 in AU, 18 in NZ, 16 in FJ)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Branches (e.g., 20 in AU, 18 in NZ, 16 in FJ)
+            </label>
             <input
               type="text"
               value={editingContent?.branches || ''}
@@ -182,7 +226,6 @@ export default function AdminContentPage() {
             />
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-4 pt-6 border-t border-gray-200">
             <button
               onClick={handleSave}
@@ -205,4 +248,3 @@ export default function AdminContentPage() {
     </div>
   )
 }
-

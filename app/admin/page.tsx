@@ -212,6 +212,14 @@ export default function AdminDashboard() {
     },
     {
       icon: ChartBarIcon,
+      title: 'Site stats & contact',
+      description: 'Edit homepage numbers, branches, emails, hours',
+      href: '/admin/stats',
+      color: 'from-primary-600 to-accent-700',
+      stat: 1,
+    },
+    {
+      icon: ChartBarIcon,
       title: 'Analytics',
       description: 'View website statistics',
       href: '/admin/analytics',

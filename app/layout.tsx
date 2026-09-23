@@ -5,6 +5,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Analytics from '@/components/Analytics'
 import { CountryProvider } from '@/context/CountryContext'
+import { SiteStatsProvider } from '@/context/SiteStatsContext'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 import { getSiteUrl } from '@/lib/site-url'
 
@@ -105,13 +106,15 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <body className="antialiased bg-white text-gray-900">
         <CountryProvider>
-          <Analytics />
-          <VercelAnalytics />
-          <Header />
-          <main className="min-h-screen overflow-x-hidden w-full">
-            {children}
-          </main>
-          <Footer />
+          <SiteStatsProvider>
+            <Analytics />
+            <VercelAnalytics />
+            <Header />
+            <main className="min-h-screen overflow-x-hidden w-full">
+              {children}
+            </main>
+            <Footer />
+          </SiteStatsProvider>
         </CountryProvider>
       </body>
     </html>

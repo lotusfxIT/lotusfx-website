@@ -1,0 +1,42 @@
+{
+  "customerRating": "4.9?",
+  "currenciesAvailable": "40+",
+  "yearsOfExcellence": "20+",
+  "totalTransferred": "$2.4B+",
+  "customers": {
+    "fiji": "260,000+",
+    "australia": "100,000+",
+    "newZealand": "200,000+",
+    "total": "560,000+"
+  },
+  "branches": {
+    "fiji": "16",
+    "australia": "20",
+    "newZealand": "18",
+    "total": "54"
+  },
+  "emails": {
+    "fiji": "fjcustomercare@lotusfx.com",
+    "australia": "aucustomercare@lotusfx.com",
+    "newZealand": "nzcustomercare@lotusfx.com"
+  },
+  "businessHours": {
+    "fiji": "Mon-Fri: 9am-5pm FJT",
+    "australia": "Mon-Fri: 9am-5pm AEST",
+    "newZealand": "Mon-Fri: 9am-5pm NZST"
+  },
+  "hero": {
+    "trustedPrefix": "Trusted by",
+    "featureCompetitiveRates": "The most competitive exchange rates",
+    "featureNoCommission": "No commission on currency exchange",
+    "featureLocations": "50+ locations across Australia, New Zealand & Fiji",
+    "featureCurrencies": "40+ currencies available"
+  },
+  "copy": {
+    "featuresLocationsDescription": "With {branches.total} branches across Australia, New Zealand and Fiji, it's easy to sort your travel money somewhere familiar, convenient and close to where you already are.",
+    "aboutGrowth": "Starting with a single branch, we've grown to over {branches.total} locations across Australia, New Zealand, and Fiji. Our success comes from our commitment to competitive rates, transparent pricing, and exceptional customer service.",
+    "aboutPacificIntro": "With {branches.total} branches across three countries, we're always nearby when you need us",
+    "contactVisitBranch": "Visit any of our {branches.total} branches across Australia, New Zealand, and Fiji for face-to-face service.",
+    "fijiBranchesLabel": "Branches across Fiji"
+  }
+}

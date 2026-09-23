@@ -9,9 +9,10 @@ import {
   PhoneIcon,
   GlobeAltIcon
 } from '@heroicons/react/24/outline'
-import { STATS } from '@/config/stats'
+import { useSiteStats } from '@/context/SiteStatsContext'
+import { fillStatsTemplate } from '@/config/stats'
 
-const features = [
+const featureDefs = [
   {
     icon: CurrencyDollarIcon,
     title: 'Market leading exchange rates',
@@ -62,14 +63,23 @@ const features = [
   },
 ]
 
-const stats = [
-  { label: 'Happy Customers', value: STATS.customers.total },
-  { label: 'Exchange Volume', value: STATS.totalTransferred },
-  { label: 'Branches', value: STATS.branches.total },
-  { label: 'Countries', value: '3' },
-]
-
 export default function Features() {
+  const { stats: siteStats } = useSiteStats()
+  const features = featureDefs.map((f) =>
+    f.title === 'Convenient locations'
+      ? {
+          ...f,
+          description: fillStatsTemplate(siteStats.copy.featuresLocationsDescription, siteStats),
+        }
+      : f
+  )
+  const stats = [
+    { label: 'Happy Customers', value: siteStats.customers.total },
+    { label: 'Exchange Volume', value: siteStats.totalTransferred },
+    { label: 'Branches', value: siteStats.branches.total },
+    { label: 'Countries', value: '3' },
+  ]
+
   return (
     <section className="relative section-padding bg-white overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">

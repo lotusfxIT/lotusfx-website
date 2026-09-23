@@ -17,7 +17,8 @@ import {
 import { trackEvent } from '@/lib/analytics'
 import { FLAG_CDN, getCurrencyFlagCode } from '@/lib/currencies'
 import { findStaticLocationByBranchName } from '@/data/locations-static'
-import { STATS } from '@/config/stats'
+import { useSiteStats } from '@/context/SiteStatsContext'
+import type { SiteStats } from '@/config/stats'
 import { useCountry } from '@/context/CountryContext'
 import { isQuickOrderEnabled } from '@/lib/quick-order-url'
 
@@ -65,10 +66,10 @@ function countryLabel(code: string) {
   return 'Australia'
 }
 
-function supportEmailForCountry(code: string) {
-  if (code === 'NZ') return STATS.emails.newZealand
-  if (code === 'FJ') return STATS.emails.fiji
-  return STATS.emails.australia
+function supportEmailForCountry(code: string, emails: SiteStats['emails']) {
+  if (code === 'NZ') return emails.newZealand
+  if (code === 'FJ') return emails.fiji
+  return emails.australia
 }
 
 function defaultBaseCurrency(code: string) {
@@ -167,6 +168,7 @@ function Toast({
 export default function QuickOrderWizard() {
   const searchParams = useSearchParams()
   const { selectedCountry, countryReady } = useCountry()
+  const { stats: siteStats } = useSiteStats()
   const marketCountry =
     selectedCountry === 'NZ' || selectedCountry === 'FJ' || selectedCountry === 'AU'
       ? selectedCountry
@@ -715,7 +717,7 @@ export default function QuickOrderWizard() {
         branchNameFromApi || selectedBranch?.BranchName,
         marketCountry === 'NZ' || marketCountry === 'FJ' ? marketCountry : 'AU'
       )
-      const supportEmail = supportEmailForCountry(marketCountry)
+      const supportEmail = supportEmailForCountry(marketCountry, siteStats.emails)
 
       const basePlace: CollectionPlace = {
         name:
@@ -1088,10 +1090,10 @@ export default function QuickOrderWizard() {
                           </dt>
                           <dd className="mt-0.5 font-semibold text-gray-900 m-0 break-all">
                             <a
-                              href={`mailto:${collectionPlace?.email || supportEmailForCountry(marketCountry)}`}
+                              href={`mailto:${collectionPlace?.email || supportEmailForCountry(marketCountry, siteStats.emails)}`}
                               className="hover:text-primary-700"
                             >
-                              {collectionPlace?.email || supportEmailForCountry(marketCountry)}
+                              {collectionPlace?.email || supportEmailForCountry(marketCountry, siteStats.emails)}
                             </a>
                           </dd>
                         </div>

@@ -11,9 +11,11 @@ import {
   DevicePhoneMobileIcon,
   GlobeAltIcon
 } from '@heroicons/react/24/outline'
-import { STATS } from '@/config/stats'
+import { fillStatsTemplate } from '@/config/stats'
+import { useSiteStats } from '@/context/SiteStatsContext'
 
 export default function ContactPage() {
+  const { stats: siteStats } = useSiteStats()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -93,7 +95,7 @@ export default function ContactPage() {
               {
                 icon: MapPinIcon,
                 title: 'Visit a Branch',
-                description: `Visit any of our ${STATS.branches.total} branches across Australia, New Zealand, and Fiji for face-to-face service.`,
+                description: fillStatsTemplate(siteStats.copy.contactVisitBranch, siteStats),
                 action: 'Find Branch',
                 href: '/locations',
               },
@@ -254,23 +256,23 @@ export default function ContactPage() {
                       {
                         flag: '🇦🇺',
                         country: 'Australia',
-                        email: STATS.emails.australia,
-                        branches: `${STATS.branches.australia} branches across major cities`,
-                        hours: STATS.businessHours.australia
+                        email: siteStats.emails.australia,
+                        branches: `${siteStats.branches.australia} branches across major cities`,
+                        hours: siteStats.businessHours.australia
                       },
                       {
                         flag: '🇳🇿',
                         country: 'New Zealand',
-                        email: STATS.emails.newZealand,
-                        branches: `${STATS.branches.newZealand} branches nationwide`,
-                        hours: STATS.businessHours.newZealand
+                        email: siteStats.emails.newZealand,
+                        branches: `${siteStats.branches.newZealand} branches nationwide`,
+                        hours: siteStats.businessHours.newZealand
                       },
                       {
                         flag: '🇫🇯',
                         country: 'Fiji',
-                        email: STATS.emails.fiji,
-                        branches: `${STATS.branches.fiji} branches across islands`,
-                        hours: STATS.businessHours.fiji
+                        email: siteStats.emails.fiji,
+                        branches: `${siteStats.branches.fiji} branches across islands`,
+                        hours: siteStats.businessHours.fiji
                       },
                     ].map((region) => (
                       <div key={region.country} className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-6 border border-primary-100">
