@@ -27,19 +27,22 @@ export function CountryProvider({ children }: { children: ReactNode }) {
   const [isClient, setIsClient] = useState(false)
   const [countryReady, setCountryReady] = useState(false)
 
-  // Priority: subdomain cookie (from middleware) → localStorage → IP detection. Default NZ (lotusfx.com).
+  // Priority: localStorage (user switcher) → subdomain cookie → IP. Default NZ.
+  // Do not overwrite an explicit header selection with the host cookie on every load —
+  // that made AU Quick Order briefly appear then bounce on NZ / apex hosts.
   useEffect(() => {
     setIsClient(true)
     const fromSubdomain = getCountryFromCookie()
     const savedCountry = localStorage.getItem('selectedCountry')
 
-    if (fromSubdomain) {
+    if (savedCountry && VALID_COUNTRIES.includes(savedCountry)) {
+      setSelectedCountry(savedCountry)
+      if (fromSubdomain) setDetectedCountry(fromSubdomain)
+      setCountryReady(true)
+    } else if (fromSubdomain) {
       setSelectedCountry(fromSubdomain)
       setDetectedCountry(fromSubdomain)
       localStorage.setItem('selectedCountry', fromSubdomain)
-      setCountryReady(true)
-    } else if (savedCountry && VALID_COUNTRIES.includes(savedCountry)) {
-      setSelectedCountry(savedCountry)
       setCountryReady(true)
     } else {
       detectCountryFromIP().finally(() => setCountryReady(true))

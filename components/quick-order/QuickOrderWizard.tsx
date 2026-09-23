@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import {
   CheckCircleIcon,
   ShoppingBagIcon,
@@ -166,18 +166,12 @@ function Toast({
 
 export default function QuickOrderWizard() {
   const searchParams = useSearchParams()
-  const router = useRouter()
   const { selectedCountry, countryReady } = useCountry()
   const marketCountry =
     selectedCountry === 'NZ' || selectedCountry === 'FJ' || selectedCountry === 'AU'
       ? selectedCountry
       : 'AU'
   const quickOrderAllowed = isQuickOrderEnabled(selectedCountry)
-
-  useEffect(() => {
-    if (!countryReady) return
-    if (!quickOrderAllowed) router.replace('/')
-  }, [countryReady, quickOrderAllowed, router])
 
   const lookupTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -877,10 +871,21 @@ export default function QuickOrderWizard() {
     </div>
   )
 
-  if (!countryReady || !quickOrderAllowed) {
+  if (!countryReady) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-primary-100">
-        Redirecting…
+        Loading Quick Order…
+      </div>
+    )
+  }
+
+  if (!quickOrderAllowed) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white px-4 text-center">
+        <p className="text-lg font-semibold">Quick Order is available for Australia only right now.</p>
+        <a href="/" className="btn-primary bg-white text-primary-700 hover:bg-primary-50">
+          Back to home
+        </a>
       </div>
     )
   }
