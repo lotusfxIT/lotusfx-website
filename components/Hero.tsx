@@ -12,10 +12,30 @@ import { trackEvent } from '@/lib/analytics'
 import { buildQuickOrderUrl, isQuickOrderEnabled } from '@/lib/quick-order-url'
 
 const statsTemplate = [
-  { label: 'Customer Rating', value: '4.9★', subtext: '{customers}' },
-  { label: 'Branches', value: '{branchValue}', subtext: 'Branches in {countryName}' },
-  { label: 'Currencies', value: '40+', subtext: 'Currencies available' },
-  { label: 'Years', value: '{years}', subtext: 'Experience' },
+  {
+    label: 'Customer Rating',
+    value: '4.9★',
+    subtext: '{customers}',
+    href: '/customer-reviews',
+  },
+  {
+    label: 'Branches',
+    value: '{branchValue}',
+    subtext: 'Branches in {countryName}',
+    href: '/locations',
+  },
+  {
+    label: 'Currencies',
+    value: '40+',
+    subtext: 'Currencies available',
+    href: '/currency-exchange',
+  },
+  {
+    label: 'Years',
+    value: '{years}',
+    subtext: 'Experience',
+    href: '/about',
+  },
 ]
 
 const features = [
@@ -252,17 +272,28 @@ export default function Hero() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.4, delay: 1.1 + index * 0.1 }}
-                  className="text-center p-3 sm:p-4 rounded-lg bg-white border border-gray-200"
                 >
-                  <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-600 mb-1">
-                    {stat.value}
-                  </div>
-                  <div className="text-xs sm:text-sm font-medium text-gray-900 mb-1">
-                    {stat.label}
-                  </div>
-                  <div className="text-[10px] sm:text-xs text-gray-500">
-                    {stat.subtext}
-                  </div>
+                  <Link
+                    href={stat.href}
+                    onClick={() =>
+                      trackEvent('cta_click', {
+                        cta_name: `hero_stat_${stat.label.toLowerCase().replace(/\s+/g, '_')}`,
+                        location: 'hero',
+                        country: selectedCountry,
+                      })
+                    }
+                    className="block text-center p-3 sm:p-4 rounded-lg bg-white border border-gray-200 h-full transition-all duration-200 hover:border-primary-300 hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+                  >
+                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-600 mb-1">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs sm:text-sm font-medium text-gray-900 mb-1">
+                      {stat.label}
+                    </div>
+                    <div className="text-[10px] sm:text-xs text-gray-500">
+                      {stat.subtext}
+                    </div>
+                  </Link>
                 </motion.div>
               ))}
             </motion.div>
