@@ -19,15 +19,15 @@ const statsTemplate = [
     href: '/customer-reviews',
   },
   {
-    label: 'Branches',
+    label: 'Branches in {countryName}',
     value: '{branchValue}',
-    subtext: 'Branches in {countryName}',
+    subtext: '',
     href: '/locations',
   },
   {
-    label: 'Currencies',
+    label: 'Currencies available',
     valueKey: 'currenciesAvailable' as const,
-    subtext: 'Currencies available',
+    subtext: '',
     href: '/currency-exchange',
   },
   {
@@ -91,7 +91,9 @@ export default function Hero() {
         ? siteStats[stat.valueKey]
         : (stat as { value?: string }).value || ''
     return {
-      label: stat.label,
+      label: stat.label
+        .replace('{customers}', 'satisfied customers')
+        .replace('{countryName}', currentCountryName),
       href: stat.href,
       value: String(rawValue)
         .replace('{branches}', content?.branches || siteStats.branches.total)
@@ -284,7 +286,7 @@ export default function Hero() {
             >
               {stats.map((stat, index) => (
                 <motion.div
-                  key={stat.label}
+                  key={stat.href}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.4, delay: 1.1 + index * 0.1 }}
@@ -293,7 +295,7 @@ export default function Hero() {
                     href={stat.href}
                     onClick={() =>
                       trackEvent('cta_click', {
-                        cta_name: `hero_stat_${stat.label.toLowerCase().replace(/\s+/g, '_')}`,
+                        cta_name: `hero_stat_${stat.href.replace(/^\//, '').replace(/\//g, '_') || 'home'}`,
                         location: 'hero',
                         country: selectedCountry,
                       })
@@ -303,12 +305,16 @@ export default function Hero() {
                     <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-600 mb-1">
                       {stat.value}
                     </div>
-                    <div className="text-xs sm:text-sm font-medium text-gray-900 mb-1">
-                      {stat.label}
-                    </div>
-                    <div className="text-[10px] sm:text-xs text-gray-500">
-                      {stat.subtext}
-                    </div>
+                    {stat.label ? (
+                      <div className="text-xs sm:text-sm font-medium text-gray-900 mb-1">
+                        {stat.label}
+                      </div>
+                    ) : null}
+                    {stat.subtext ? (
+                      <div className="text-[10px] sm:text-xs text-gray-500">
+                        {stat.subtext}
+                      </div>
+                    ) : null}
                   </Link>
                 </motion.div>
               ))}
