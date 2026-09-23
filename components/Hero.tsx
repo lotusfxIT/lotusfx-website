@@ -418,15 +418,19 @@ export default function Hero() {
               {showQuoteHeading && (
                 <div className="text-center mb-5 sm:mb-6 shrink-0">
                   <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
-                    Get Instant Quote
+                    {selectedCountry === 'FJ' ? 'Exchange in branch' : 'Get Instant Quote'}
                   </h3>
                   <p className="text-sm sm:text-base text-gray-600">
-                    Compare rates and get the best deal
+                    {selectedCountry === 'FJ'
+                      ? 'Live Fiji rates are available at our branches'
+                      : 'Compare rates and get the best deal'}
                   </p>
                 </div>
               )}
               <div className="flex-1 min-h-0 min-w-0 flex flex-col overflow-y-auto overflow-x-visible w-full px-1">
-                <CurrencyCalculator onOptionChosen={() => setShowQuoteHeading(false)} />
+                <CurrencyCalculator
+                  onOptionChosen={() => setShowQuoteHeading(false)}
+                />
               </div>
             </div>
           </motion.div>

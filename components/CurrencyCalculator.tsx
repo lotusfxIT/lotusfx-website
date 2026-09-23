@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowsRightLeftIcon, ArrowLeftIcon, BanknotesIcon, PaperAirplaneIcon, ChevronDownIcon, MagnifyingGlassIcon, PencilSquareIcon, MapPinIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { useCountry } from '@/context/CountryContext'
+import FijiBranchRatesCard from '@/components/FijiBranchRatesCard'
 import Link from 'next/link'
 import { trackEvent } from '@/lib/analytics'
 import { buildQuickOrderUrl, isQuickOrderEnabled } from '@/lib/quick-order-url'
@@ -117,7 +118,15 @@ type CurrencyCalculatorProps = {
   defaultToCurrency?: string
 }
 
-export default function CurrencyCalculator({
+export default function CurrencyCalculator(props: CurrencyCalculatorProps) {
+  const { selectedCountry } = useCountry()
+  if (selectedCountry === 'FJ') {
+    return <FijiBranchRatesCard variant="cash" />
+  }
+  return <CurrencyCalculatorActive {...props} />
+}
+
+function CurrencyCalculatorActive({
   onOptionChosen,
   forceCashOnly = false,
   defaultToCurrency,

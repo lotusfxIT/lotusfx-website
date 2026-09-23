@@ -8,7 +8,7 @@ import {
   ShieldCheckIcon,
   CurrencyDollarIcon,
 } from '@heroicons/react/24/outline'
-import TransferCalculator from '@/components/TransferCalculator'
+import TransferCalculatorSection from '@/components/TransferCalculatorSection'
 import CurrencySymbolsBg from '@/components/CurrencySymbolsBg'
 import Locations from '@/components/Locations'
 import {
@@ -113,11 +113,7 @@ export default function MoneyTransferPage() {
               </div>
             </div>
             <div className="bg-white rounded-2xl shadow-strong p-6 sm:p-8 border border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900 mb-2 text-center">Transfer calculator</h2>
-              <p className="text-gray-600 text-sm text-center mb-4">
-                See how much your recipient will receive
-              </p>
-              <TransferCalculator />
+              <TransferCalculatorSection />
             </div>
           </div>
         </div>

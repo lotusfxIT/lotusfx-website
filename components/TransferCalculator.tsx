@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useCountry } from '@/context/CountryContext'
+import FijiBranchRatesCard from '@/components/FijiBranchRatesCard'
 
 // To country: display name + currency for API
 const toCountries = [
@@ -32,6 +33,14 @@ function getBaseCurrency(country: string): string {
 }
 
 export default function TransferCalculator() {
+  const { selectedCountry } = useCountry()
+  if (selectedCountry === 'FJ') {
+    return <FijiBranchRatesCard variant="transfer" />
+  }
+  return <TransferCalculatorActive />
+}
+
+function TransferCalculatorActive() {
   const { selectedCountry } = useCountry()
   const [amount, setAmount] = useState('500')
   const [toCurrency, setToCurrency] = useState('USD')
