@@ -6,7 +6,7 @@ import { ArrowsRightLeftIcon, ArrowLeftIcon, BanknotesIcon, PaperAirplaneIcon, C
 import { useCountry } from '@/context/CountryContext'
 import Link from 'next/link'
 import { trackEvent } from '@/lib/analytics'
-import { buildQuickOrderUrl } from '@/lib/quick-order-url'
+import { buildQuickOrderUrl, isQuickOrderEnabled } from '@/lib/quick-order-url'
 
 // Currency code → ISO country code for flag images (flagcdn.com)
 const currencyToCountry: Record<string, string> = {
@@ -903,7 +903,7 @@ export default function CurrencyCalculator({
       {/* CTA + footer — transfer pins to bottom; FX spaces evenly with the form */}
       <div className={`space-y-3 shrink-0 ${quoteType === 'transfer' ? 'mt-auto pt-4 sm:pt-6' : 'pt-1'}`}>
         <div className="space-y-2.5">
-          {quoteType === 'cash' && (
+          {quoteType === 'cash' && isQuickOrderEnabled(selectedCountry) && (
             <Link
               href={buildQuickOrderUrl({
                 to: buyOrSell === 'buy' ? toCurrency : fromCurrency,

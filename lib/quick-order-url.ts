@@ -4,6 +4,11 @@ export type QuickOrderParams = {
   isBuy?: boolean
 }
 
+/** Guest Quick Order is AU-only for now (NZ/FJ hidden until go-live). */
+export function isQuickOrderEnabled(country?: string | null): boolean {
+  return String(country || '').toUpperCase() === 'AU'
+}
+
 /** Build in-site Quick Order URL with optional calculator prefill. */
 export function buildQuickOrderUrl(params: QuickOrderParams = {}): string {
   const q = new URLSearchParams()

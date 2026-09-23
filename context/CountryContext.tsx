@@ -15,6 +15,8 @@ interface CountryContextType {
   selectedCountry: string
   setSelectedCountry: (country: string) => void
   detectedCountry: string | null
+  /** True after cookie / localStorage / IP init has run (client only). */
+  countryReady: boolean
 }
 
 const CountryContext = createContext<CountryContextType | undefined>(undefined)
@@ -23,6 +25,7 @@ export function CountryProvider({ children }: { children: ReactNode }) {
   const [selectedCountry, setSelectedCountry] = useState('NZ')
   const [detectedCountry, setDetectedCountry] = useState<string | null>(null)
   const [isClient, setIsClient] = useState(false)
+  const [countryReady, setCountryReady] = useState(false)
 
   // Priority: subdomain cookie (from middleware) → localStorage → IP detection. Default NZ (lotusfx.com).
   useEffect(() => {
@@ -34,10 +37,12 @@ export function CountryProvider({ children }: { children: ReactNode }) {
       setSelectedCountry(fromSubdomain)
       setDetectedCountry(fromSubdomain)
       localStorage.setItem('selectedCountry', fromSubdomain)
+      setCountryReady(true)
     } else if (savedCountry && VALID_COUNTRIES.includes(savedCountry)) {
       setSelectedCountry(savedCountry)
+      setCountryReady(true)
     } else {
-      detectCountryFromIP()
+      detectCountryFromIP().finally(() => setCountryReady(true))
     }
   }, [])
 
@@ -66,7 +71,9 @@ export function CountryProvider({ children }: { children: ReactNode }) {
   }, [selectedCountry, isClient])
 
   return (
-    <CountryContext.Provider value={{ selectedCountry, setSelectedCountry, detectedCountry }}>
+    <CountryContext.Provider
+      value={{ selectedCountry, setSelectedCountry, detectedCountry, countryReady }}
+    >
       {children}
     </CountryContext.Provider>
   )

@@ -60,4 +60,5 @@ NZ create/rate/currencies/branches will fail until NZ keys are set (same as exch
 ## Notes
 
 - Pay in store only for v1 (Monoova/PayTo not exposed)
+- **Quick Order is AU-only for now** — NZ/FJ CTAs are hidden; `/quick-order` redirects on NZ/FJ hosts
 - API keys stay server-side via `/api/quick-order/*`

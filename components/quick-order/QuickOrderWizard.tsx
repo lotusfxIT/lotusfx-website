@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   CheckCircleIcon,
   ShoppingBagIcon,
@@ -19,6 +19,7 @@ import { FLAG_CDN, getCurrencyFlagCode } from '@/lib/currencies'
 import { findStaticLocationByBranchName } from '@/data/locations-static'
 import { STATS } from '@/config/stats'
 import { useCountry } from '@/context/CountryContext'
+import { isQuickOrderEnabled } from '@/lib/quick-order-url'
 
 type StepId = 'purchase' | 'fulfillment' | 'details' | 'payment'
 
@@ -165,11 +166,19 @@ function Toast({
 
 export default function QuickOrderWizard() {
   const searchParams = useSearchParams()
-  const { selectedCountry } = useCountry()
+  const router = useRouter()
+  const { selectedCountry, countryReady } = useCountry()
   const marketCountry =
     selectedCountry === 'NZ' || selectedCountry === 'FJ' || selectedCountry === 'AU'
       ? selectedCountry
       : 'AU'
+  const quickOrderAllowed = isQuickOrderEnabled(selectedCountry)
+
+  useEffect(() => {
+    if (!countryReady) return
+    if (!quickOrderAllowed) router.replace('/')
+  }, [countryReady, quickOrderAllowed, router])
+
   const lookupTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const [activeStep, setActiveStep] = useState<StepId>('purchase')
@@ -375,6 +384,7 @@ export default function QuickOrderWizard() {
   }, [searchParams])
 
   useEffect(() => {
+    if (!countryReady || !isQuickOrderEnabled(marketCountry)) return
     const load = async () => {
       setLoadingMeta(true)
       setPaymentResult(null)
@@ -448,7 +458,7 @@ export default function QuickOrderWizard() {
     }
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [marketCountry])
+  }, [marketCountry, countryReady])
 
   const lookupRate = useCallback(
     async (amountOverride?: number) => {
@@ -866,6 +876,14 @@ export default function QuickOrderWizard() {
       </div>
     </div>
   )
+
+  if (!countryReady || !quickOrderAllowed) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-primary-100">
+        Redirecting…
+      </div>
+    )
+  }
 
   return (
     <div className="relative min-h-screen flex flex-col">

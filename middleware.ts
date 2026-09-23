@@ -27,6 +27,16 @@ export function middleware(request: NextRequest) {
   const hostname = request.nextUrl.hostname
   const country = getCountryFromHost(hostname)
 
+  // Quick Order is AU-only for now — NZ/FJ hosts should not serve the page.
+  if (
+    request.nextUrl.pathname === '/quick-order' ||
+    request.nextUrl.pathname.startsWith('/quick-order/')
+  ) {
+    if (country && country !== 'AU') {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+  }
+
   const response = NextResponse.next()
 
   if (country && VALID_COUNTRIES.includes(country)) {

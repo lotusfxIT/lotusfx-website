@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react'
 import { STATS } from '@/config/stats'
 import { useCountry } from '@/context/CountryContext'
 import { trackEvent } from '@/lib/analytics'
-import { buildQuickOrderUrl } from '@/lib/quick-order-url'
+import { buildQuickOrderUrl, isQuickOrderEnabled } from '@/lib/quick-order-url'
 
 const statsTemplate = [
   { label: 'Customer Rating', value: '4.9★', subtext: '{customers}' },
@@ -200,24 +200,26 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.8 }}
               className="flex flex-col sm:flex-row gap-3 p-0.5"
             >
-              <Link
-                href={buildQuickOrderUrl()}
-                onClick={() =>
-                  trackEvent('order_initiation', {
-                    cta_name: 'quick_order',
-                    quote_type: 'cash',
-                    country: selectedCountry,
-                    location: 'hero',
-                  })
-                }
-                className="text-base lg:text-lg px-7 py-3 flex items-center justify-center space-x-2 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] shadow-lg hover:shadow-xl text-white"
-                style={{
-                  background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
-                }}
-              >
-                <span>Quick Order</span>
-                <ArrowRightIcon className="w-5 h-5" />
-              </Link>
+              {isQuickOrderEnabled(selectedCountry) ? (
+                <Link
+                  href={buildQuickOrderUrl()}
+                  onClick={() =>
+                    trackEvent('order_initiation', {
+                      cta_name: 'quick_order',
+                      quote_type: 'cash',
+                      country: selectedCountry,
+                      location: 'hero',
+                    })
+                  }
+                  className="text-base lg:text-lg px-7 py-3 flex items-center justify-center space-x-2 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] shadow-lg hover:shadow-xl text-white"
+                  style={{
+                    background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
+                  }}
+                >
+                  <span>Quick Order</span>
+                  <ArrowRightIcon className="w-5 h-5" />
+                </Link>
+              ) : null}
               <Link
                 href="/locations"
                 onClick={() =>
