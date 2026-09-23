@@ -144,6 +144,11 @@ function CurrencyCalculatorActive({
   const [rate, setRate] = useState(0)
   const [isCalculating, setIsCalculating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  /** Which side the user last edited: foreign (You Buy/Sell / recipient) or base (You Pay/Get / you send) */
+  const amountSideRef = useRef<'foreign' | 'base'>('foreign')
+  /** base = foreign * conversionRate (cash buy/sell) OR receive = send * conversionRate (transfer) */
+  const conversionRateRef = useRef(0)
+  const baseLookupTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     const base = getBaseCurrency(selectedCountry)
@@ -151,6 +156,8 @@ function CurrencyCalculatorActive({
     if (defaultToCurrency) {
       setToCurrency(defaultToCurrency)
     }
+    conversionRateRef.current = 0
+    amountSideRef.current = 'foreign'
   }, [selectedCountry, defaultToCurrency])
 
   const toCountryOptions = toCountries.filter((c) => c.currency !== baseCurrency)
@@ -219,6 +226,7 @@ function CurrencyCalculatorActive({
         // Money Transfer: display 1 AUD = 0.699 USD (inverse value in the rate slot); amount = send * inverse
         const inverseRate = result.inverse != null ? Number(result.inverse) : 1 / Number(result.rate)
         displayRate = inverseRate // show inverse in line: "1 AUD = 0.699 USD"
+        conversionRateRef.current = inverseRate
         converted = fromAmount * inverseRate
         setConvertedAmount(Number(converted).toFixed(2))
         setRate(displayRate)
@@ -226,6 +234,7 @@ function CurrencyCalculatorActive({
         // Flipped (FROM USD TO AUD): use other rate 1 USD = 1.45 AUD, amount = 1000 * 1.45 = 1450 AUD
         const rateFromTo = result.inverse != null ? Number(result.inverse) : 1 / Number(result.rate)
         displayRate = rateFromTo
+        conversionRateRef.current = rateFromTo
         converted = fromAmount * rateFromTo
         setConvertedAmount(Number(converted).toFixed(2))
         setRate(displayRate)
@@ -233,6 +242,7 @@ function CurrencyCalculatorActive({
         // Sell: use normal rate for amount and for exchange rate line (1 USD = rate AUD)
         const normalRate = Number(result.rate)
         displayRate = normalRate
+        conversionRateRef.current = normalRate
         converted = fromAmount * normalRate
         setConvertedAmount(Number(converted).toFixed(2))
         setRate(displayRate)
@@ -241,6 +251,7 @@ function CurrencyCalculatorActive({
         const normalRate = Number(result.rate)
         const inverseRate = result.inverse != null ? Number(result.inverse) : 1 / normalRate
         displayRate = inverseRate
+        conversionRateRef.current = normalRate
         converted = fromAmount * normalRate
         setConvertedAmount(Number(converted).toFixed(2))
         setRate(displayRate)
@@ -265,8 +276,47 @@ function CurrencyCalculatorActive({
 
   useEffect(() => {
     if (!chosen && !forceCashOnly) return
+    // When user edits base/pay side, that handler drives the quote
+    if (amountSideRef.current === 'base') return
     calculateConversion()
   }, [fromCurrency, toCurrency, amount, selectedCountry, quoteType, transferMode, buyOrSell, chosen, forceCashOnly])
+
+  const onForeignAmountChange = (value: string) => {
+    amountSideRef.current = 'foreign'
+    setAmount(value)
+  }
+
+  const onBaseAmountChange = (value: string) => {
+    amountSideRef.current = 'base'
+    setConvertedAmount(value)
+
+    if (baseLookupTimer.current) clearTimeout(baseLookupTimer.current)
+    baseLookupTimer.current = setTimeout(() => {
+      const baseAmt = parseFloat(value)
+      const conv = conversionRateRef.current
+      if (!value || isNaN(baseAmt) || baseAmt <= 0) {
+        setAmount('')
+        return
+      }
+      if (conv <= 0) {
+        // No rate yet — seed with a foreign amount then reverse once rate loads
+        amountSideRef.current = 'foreign'
+        setAmount('100')
+        return
+      }
+      // transfer: receive = send * rate → send = receive / rate
+      // cash: base = foreign * rate → foreign = base / rate
+      const foreign = baseAmt / conv
+      amountSideRef.current = 'foreign'
+      setAmount(foreign.toFixed(2))
+    }, 400)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (baseLookupTimer.current) clearTimeout(baseLookupTimer.current)
+    }
+  }, [])
 
   // Money Transfer: keep transfer mode valid when "to country" changes
   useEffect(() => {
@@ -479,7 +529,7 @@ function CurrencyCalculatorActive({
                 <input
                   type="number"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) => onForeignAmountChange(e.target.value)}
                   placeholder="Amount"
                   className="amount-input w-full h-14 pl-4 pr-10 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg text-center hover:border-primary-300"
                 />
@@ -568,34 +618,42 @@ function CurrencyCalculatorActive({
             </div>
           </motion.div>
 
-          {/* Recipient gets — fixed height to avoid hero layout shift */}
-          <div className="rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 px-4 py-3 text-center text-white shadow-md h-[5.75rem] flex flex-col items-center justify-center shrink-0">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-white/80 leading-none mb-1">
+          {/* Recipient gets — editable so either side can drive the quote */}
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center sm:text-left">
               Recipient gets
-            </div>
-            <div className="text-2xl font-bold tabular-nums leading-tight min-h-[1.75rem] flex items-center justify-center">
-              {(transferMode === 'Wire' || transferMode === 'eWire' || transferMode === 'Wallet') ? (
-                isCalculating ? (
-                  <span className="text-white/70">…</span>
+            </label>
+            <div className="flex gap-3">
+              <div className="flex-1 flex items-center justify-center h-14 px-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-semibold text-gray-800 text-lg">
+                {toCurrency}
+              </div>
+              <div className="flex-1 relative">
+                {(transferMode === 'Wire' || transferMode === 'eWire' || transferMode === 'Wallet') ? (
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    value={isCalculating ? '' : convertedAmount}
+                    placeholder={isCalculating ? '…' : 'Amount'}
+                    onChange={(e) => onBaseAmountChange(e.target.value)}
+                    className="amount-input w-full h-14 pl-4 pr-10 border-2 border-primary-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg text-center hover:border-primary-400"
+                  />
                 ) : (
-                  <>
-                    {convertedAmount || '—'}{' '}
-                    <span className="text-lg font-semibold text-white/90">{toCurrency}</span>
-                  </>
-                )
-              ) : transferMode === 'Moneygram' ? (
-                <span className="text-sm font-semibold leading-snug">Login to get the rate</span>
-              ) : (
-                <span className="text-sm font-semibold leading-snug">Please visit us in store</span>
-              )}
+                  <div className="w-full h-14 flex items-center justify-center px-3 border-2 border-gray-200 rounded-xl bg-primary-50 text-sm font-semibold text-primary-800 text-center">
+                    {transferMode === 'Moneygram' ? 'Login to get the rate' : 'Please visit us in store'}
+                  </div>
+                )}
+                {(transferMode === 'Wire' || transferMode === 'eWire' || transferMode === 'Wallet') && (
+                  <PencilSquareIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden />
+                )}
+              </div>
             </div>
-            <div className="mt-1 text-xs text-white/75 min-h-[1rem] leading-none">
-              {rate > 0 &&
+            {rate > 0 &&
               (transferMode === 'Wire' || transferMode === 'eWire' || transferMode === 'Wallet') &&
-              !isCalculating
-                ? `1 ${baseCurrency} = ${rate.toFixed(4)} ${toCurrency}`
-                : '\u00A0'}
-            </div>
+              !isCalculating && (
+                <p className="text-xs text-gray-500 text-center sm:text-left">
+                  1 {baseCurrency} = {rate.toFixed(4)} {toCurrency}
+                </p>
+              )}
           </div>
 
           <motion.div
@@ -767,7 +825,7 @@ function CurrencyCalculatorActive({
                     <input
                       type="number"
                       value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
+                      onChange={(e) => onForeignAmountChange(e.target.value)}
                       placeholder="Amount"
                       className="amount-input w-full h-14 pl-3 pr-9 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg hover:border-primary-300"
                     />
@@ -781,18 +839,22 @@ function CurrencyCalculatorActive({
                   <div className="flex-1 flex items-center justify-center h-14 px-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-medium text-gray-700">
                     {baseCurrency}
                   </div>
-                  <div className="w-32">
-                    <motion.div className="w-full h-14 flex items-center justify-center px-4 bg-gradient-to-br from-primary-600 to-primary-700 border-2 border-primary-700 rounded-xl text-white font-bold text-lg text-center">
-                      {isCalculating ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="inline-block">⏳</motion.div> : (
-                        <motion.span key={convertedAmount} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3 }}>{convertedAmount}</motion.span>
-                      )}
-                    </motion.div>
+                  <div className="w-32 relative">
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      value={convertedAmount}
+                      onChange={(e) => onBaseAmountChange(e.target.value)}
+                      placeholder={isCalculating ? '…' : 'Amount'}
+                      className="amount-input w-full h-14 pl-3 pr-9 border-2 border-primary-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg hover:border-primary-400"
+                    />
+                    <PencilSquareIcon className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden />
                   </div>
                 </div>
               </motion.div>
             </>
           ) : (
-            /* Sell: You Sell = dropdown + amount. You Get = fixed AUD + converted (can't change You Get currency) */
+            /* Sell: You Sell = dropdown + amount. You Get = editable AUD */
             <>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-2">
                 <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">You Sell</label>
@@ -858,7 +920,7 @@ function CurrencyCalculatorActive({
                     <input
                       type="number"
                       value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
+                      onChange={(e) => onForeignAmountChange(e.target.value)}
                       placeholder="Amount"
                       className="amount-input w-full h-14 pl-3 pr-9 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg hover:border-primary-300"
                     />
@@ -872,12 +934,16 @@ function CurrencyCalculatorActive({
                   <div className="flex-1 flex items-center justify-center h-14 px-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-medium text-gray-700">
                     {baseCurrency}
                   </div>
-                  <div className="w-32">
-                    <motion.div className="w-full h-14 flex items-center justify-center px-4 bg-gradient-to-br from-primary-600 to-primary-700 border-2 border-primary-700 rounded-xl text-white font-bold text-lg text-center">
-                      {isCalculating ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="inline-block">⏳</motion.div> : (
-                        <motion.span key={convertedAmount} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3 }}>{convertedAmount}</motion.span>
-                      )}
-                    </motion.div>
+                  <div className="w-32 relative">
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      value={convertedAmount}
+                      onChange={(e) => onBaseAmountChange(e.target.value)}
+                      placeholder={isCalculating ? '…' : 'Amount'}
+                      className="amount-input w-full h-14 pl-3 pr-9 border-2 border-primary-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg hover:border-primary-400"
+                    />
+                    <PencilSquareIcon className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden />
                   </div>
                 </div>
               </motion.div>
