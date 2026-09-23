@@ -1,17 +1,35 @@
 import fs from 'fs'
 import path from 'path'
-import { head, put } from '@vercel/blob'
+import { get, put } from '@vercel/blob'
 
 export type PersistResult =
   | { ok: true; method: 'fs' | 'blob' }
   | { ok: false; error: string; data: unknown }
 
 function hasBlobToken() {
-  return !!process.env.BLOB_READ_WRITE_TOKEN
+  return !!(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID)
 }
 
 function localPath(relativePath: string) {
   return path.join(process.cwd(), relativePath)
+}
+
+async function streamToString(stream: ReadableStream<Uint8Array> | null): Promise<string> {
+  if (!stream) return ''
+  const reader = stream.getReader()
+  const chunks: Uint8Array[] = []
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    if (value) chunks.push(value)
+  }
+  const merged = new Uint8Array(chunks.reduce((n, c) => n + c.length, 0))
+  let offset = 0
+  for (const chunk of chunks) {
+    merged.set(chunk, offset)
+    offset += chunk.length
+  }
+  return new TextDecoder().decode(merged)
 }
 
 /** Read JSON from Vercel Blob (production) or local filesystem (dev). */
@@ -20,13 +38,13 @@ export async function readAdminJson<T>(relativePath: string, fallback: T): Promi
 
   if (hasBlobToken()) {
     try {
-      const meta = await head(blobPath)
-      const res = await fetch(meta.url, { cache: 'no-store' })
-      if (res.ok) {
-        return (await res.json()) as T
+      const result = await get(blobPath, { access: 'private', useCache: false })
+      if (result?.statusCode === 200 && result.stream) {
+        const text = await streamToString(result.stream)
+        if (text.trim()) return JSON.parse(text) as T
       }
-    } catch {
-      // Fall through to filesystem / defaults
+    } catch (error) {
+      console.error(`[admin-json] blob read ${relativePath}:`, error)
     }
   }
 
@@ -53,12 +71,11 @@ export async function writeAdminJson(
   if (hasBlobToken()) {
     try {
       await put(blobPath, body, {
-        access: 'public',
+        access: 'private',
         addRandomSuffix: false,
         allowOverwrite: true,
         contentType: 'application/json',
       })
-      // Best-effort local mirror for builds / downloads
       try {
         const file = localPath(relativePath)
         fs.mkdirSync(path.dirname(file), { recursive: true })
