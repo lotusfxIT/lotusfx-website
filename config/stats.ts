@@ -97,7 +97,7 @@ export const DEFAULT_SITE_STATS: SiteStats = {
 /** Deep-merge partial stats onto defaults (safe for admin saves / missing keys). */
 export function mergeSiteStats(partial?: Partial<SiteStats> | null): SiteStats {
   const p = partial || {}
-  return {
+  const merged = {
     ...DEFAULT_SITE_STATS,
     ...p,
     customers: { ...DEFAULT_SITE_STATS.customers, ...(p.customers || {}) },
@@ -107,6 +107,11 @@ export function mergeSiteStats(partial?: Partial<SiteStats> | null): SiteStats {
     hero: { ...DEFAULT_SITE_STATS.hero, ...(p.hero || {}) },
     copy: { ...DEFAULT_SITE_STATS.copy, ...(p.copy || {}) },
   }
+  // Repair encoding corruption (★ → ?) from older saves / non-UTF pipelines
+  if (typeof merged.customerRating === 'string') {
+    merged.customerRating = merged.customerRating.replace(/\?/g, '★')
+  }
+  return merged
 }
 
 /** Replace {branches.total}, {customers.total}, etc. in admin-editable copy. */

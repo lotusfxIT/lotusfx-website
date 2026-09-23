@@ -17,7 +17,7 @@ export function SiteStatsProvider({ children }: { children: ReactNode }) {
 
   const refresh = async () => {
     try {
-      const res = await fetch('/api/site-stats', { cache: 'no-store' })
+      const res = await fetch(`/api/site-stats?t=${Date.now()}`, { cache: 'no-store' })
       if (res.ok) {
         const data = await res.json()
         setStats(mergeSiteStats(data))
@@ -31,6 +31,11 @@ export function SiteStatsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     void refresh()
+    const onFocus = () => {
+      void refresh()
+    }
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
   }, [])
 
   return (

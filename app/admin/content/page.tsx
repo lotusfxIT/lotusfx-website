@@ -134,8 +134,8 @@ export default function AdminContentPage() {
           <h1 className="text-4xl font-bold text-primary-700 mb-2">Edit Country Content</h1>
           <p className="text-gray-600">Customize content for each country</p>
           <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-3">
-            Production saves use Vercel Blob (already connected). Localhost still writes to files
-            under <code className="font-mono">public/content/</code>.
+            These fields feed country-specific copy. Homepage hero numbers (rating, branches, etc.)
+            are edited under <strong>Site stats &amp; contact</strong>.
           </p>
         </motion.div>
 

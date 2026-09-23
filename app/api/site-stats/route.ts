@@ -7,7 +7,7 @@ export async function GET() {
   try {
     return NextResponse.json(await readSiteStats(), {
       headers: {
-        'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=120',
+        'Cache-Control': 'no-store, max-age=0, must-revalidate',
       },
     })
   } catch (error) {

@@ -266,7 +266,7 @@ export default function AdminSiteStatsPage() {
           <div className="grid sm:grid-cols-2 gap-4">
             <Field
               label="Customer rating"
-              hint="Shown on the first hero card"
+              hint='Shown on the first hero card — use 4.9★ (star character). Avoid plain "?"'
               value={stats.customerRating}
               onChange={(v) => patch({ customerRating: v })}
             />
