@@ -44,7 +44,7 @@ export default function FijiBranchRatesCard({
       <ul className="text-left max-w-sm mx-auto space-y-3 mb-8">
         <li className="flex gap-3 text-sm text-gray-700">
           <MapPinIcon className="h-5 w-5 text-primary-600 shrink-0 mt-0.5" />
-          <span>Branches across Fiji — walk in for a same-day quote</span>
+          <span>Branches across Fiji</span>
         </li>
         <li className="flex gap-3 text-sm text-gray-700">
           <ClockIcon className="h-5 w-5 text-primary-600 shrink-0 mt-0.5" />
