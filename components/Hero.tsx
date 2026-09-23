@@ -62,21 +62,20 @@ export default function Hero() {
   }
 
   const branchValues: Record<string, string> = {
-    AU: `${siteStats.branches.australia}+`,
-    NZ: `${siteStats.branches.newZealand}+`,
-    FJ: `${siteStats.branches.fiji}+`,
+    AU: siteStats.branches.australia,
+    NZ: siteStats.branches.newZealand,
+    FJ: siteStats.branches.fiji,
   }
 
   const currentCountryName = countryNames[selectedCountry] || 'Australia'
   // Prefer country content (Admin → Country Content) when set; else site stats
   const contentBranches = content?.branches != null && String(content.branches).trim() !== ''
-    ? String(content.branches).trim()
+    ? String(content.branches).trim().replace(/\+$/, '')
     : ''
-  const currentBranchValue = contentBranches
-    ? contentBranches.endsWith('+')
-      ? contentBranches
-      : `${contentBranches}+`
-    : branchValues[selectedCountry] || `${siteStats.branches.australia}+`
+  const currentBranchValue =
+    contentBranches ||
+    branchValues[selectedCountry] ||
+    siteStats.branches.australia
 
   const features = [
     siteStats.hero.featureCompetitiveRates,
