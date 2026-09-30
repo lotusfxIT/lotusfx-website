@@ -45,18 +45,37 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+
+  ::selection {
+    background: #d71939;
+    color: #ffffff;
+  }
+
+  :focus-visible {
+    outline: 3px solid rgba(215, 25, 57, 0.42);
+    outline-offset: 3px;
+  }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', system-ui, sans-serif;
-    line-height: 1.35;
+    line-height: 1.18;
     padding-bottom: 0.15em;
     overflow: visible;
+    letter-spacing: -0.025em;
   }
 
   p {
-    line-height: 1.7;
+    line-height: 1.65;
     overflow: visible;
     padding-bottom: 0.05em;
+  }
+
+  a, button, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button, a {
+    touch-action: manipulation;
   }
 }
 
@@ -111,6 +130,14 @@
   .section-padding {
     padding-top: 3.25rem;
     padding-bottom: 3.25rem;
+  }
+
+  main > section:first-child {
+    scroll-margin-top: 4.5rem;
+  }
+
+  .container-custom {
+    max-width: 100%;
   }
 
   .container-custom {
