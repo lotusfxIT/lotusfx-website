@@ -86,12 +86,13 @@ export function getQuickOrderConfig(
     return { country: selected, baseUrl, xKey, xClient, timeoutMs }
   }
 
-  // AU → new AU app server on :8080 (same public keys as 4dDev standalone).
+  // AU Quick Order stays on the public-purchase test host for now.
+  // Do NOT fall back to EXCHANGE_RATE_API_* — those point at the AU app server
+  // (139…:8080 / au.app) which currently 408s getBranches with a broken 127.0.0.1 base.
   const baseUrl = (
     process.env.QUICK_ORDER_API_URL_AU ||
     process.env.QUICK_ORDER_API_URL ||
-    process.env.EXCHANGE_RATE_API_BASE_AU ||
-    'http://139.180.183.4:8080'
+    'https://test.lotusfx.com'
   ).replace(/\/$/, '')
   const xKey =
     process.env.QUICK_ORDER_X_KEY_AU ||
