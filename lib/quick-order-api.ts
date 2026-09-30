@@ -86,13 +86,12 @@ export function getQuickOrderConfig(
     return { country: selected, baseUrl, xKey, xClient, timeoutMs }
   }
 
-  // AU Quick Order stays on the public-purchase test host for now.
-  // Do NOT fall back to EXCHANGE_RATE_API_* — those point at the AU app server
-  // (139…:8080 / au.app) which currently 408s getBranches with a broken 127.0.0.1 base.
+  // AU → app server on :8080 (public-purchase keys abc123 / LotusFX).
+  // If getBranches 408s with 127.0.0.1, that is a 4D host-base misconfig on 139 — not the website.
   const baseUrl = (
     process.env.QUICK_ORDER_API_URL_AU ||
     process.env.QUICK_ORDER_API_URL ||
-    'https://test.lotusfx.com'
+    'http://139.180.183.4:8080'
   ).replace(/\/$/, '')
   const xKey =
     process.env.QUICK_ORDER_X_KEY_AU ||
