@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Bars3Icon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
@@ -29,6 +30,7 @@ export default function Header() {
   const [logoText, setLogoText] = useState('LotusFX')
   const [loading, setLoading] = useState(true)
   const [partnerMenuOpen, setPartnerMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const { selectedCountry, setSelectedCountry } = useCountry()
   const pathname = usePathname()
 
@@ -39,6 +41,7 @@ export default function Header() {
   ]
 
   useEffect(() => {
+    setMounted(true)
     fetchHeaderConfig()
   }, [])
 
@@ -78,17 +81,19 @@ export default function Header() {
   const portal = getCountryPortalLinks(selectedCountry)
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-gray-200/70 bg-white/90 shadow-[0_8px_30px_rgba(23,33,38,0.06)] backdrop-blur-xl">
+    <>
+    {/* Solid header — avoid backdrop-filter here; it traps position:fixed children. */}
+    <header className="fixed inset-x-0 top-0 z-50 bg-white shadow-lg border-b border-gray-100">
       <nav className="container-custom min-w-0" aria-label="Main navigation">
-        <div className="flex items-center justify-between h-[4.25rem] lg:h-20 gap-3 min-w-0">
+        <div className="flex items-center justify-between h-16 lg:h-20 gap-3 min-w-0">
           {/* Left: Logo + Navigation */}
           <div className="flex items-center space-x-8 min-w-0">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity flex-shrink-0 min-w-0 max-w-[70vw]">
+            <Link href="/" className="flex shrink-0 items-center hover:opacity-80 transition-opacity">
               <img
                 src="/images/lotus-logo-horizontal.jpg"
                 alt="LotusFX Logo"
-                className="h-8 sm:h-10 lg:h-12 w-auto max-w-full object-contain"
+                className="h-9 sm:h-10 lg:h-12 w-auto object-contain"
               />
             </Link>
 
@@ -255,12 +260,13 @@ export default function Header() {
             </div>
             <button
               type="button"
-              className="inline-flex size-11 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors duration-200 hover:border-primary-200 hover:text-primary-600"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-primary-600"
               onClick={() => {
                 setCountryMenuOpen(false)
                 setMobileMenuOpen(true)
               }}
               aria-label="Open main menu"
+              aria-expanded={mobileMenuOpen}
             >
               <span className="sr-only">Open main menu</span>
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
@@ -268,120 +274,135 @@ export default function Header() {
           </div>
         </div>
       </nav>
+    </header>
 
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="lg:hidden"
-          >
-              <div className="fixed inset-0 z-50">
-              <div className="fixed inset-0 bg-gray-950/35 backdrop-blur-[2px]" onClick={() => setMobileMenuOpen(false)} />
-              <div className="fixed inset-y-0 right-0 flex w-full max-w-sm flex-col overflow-y-auto bg-white shadow-2xl">
-                <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                  <Link
-                    href="/"
-                    className="flex items-center min-w-0"
+      {/* Portal to body so drawer is never clipped by header stacking/filters */}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="lg:hidden"
+              >
+                <div className="fixed inset-0 z-[100]">
+                  <div
+                    className="absolute inset-0 bg-black/40"
                     onClick={() => setMobileMenuOpen(false)}
+                    aria-hidden="true"
+                  />
+                  <div
+                    className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col overflow-y-auto bg-white shadow-2xl"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Mobile navigation"
                   >
-                    <img
-                      src="/images/lotus-logo-horizontal.jpg"
-                      alt="LotusFX Logo"
-                      className="h-9 w-auto max-w-[200px] object-contain"
-                    />
-                  </Link>
-                  <button
-                    type="button"
-                    className="text-gray-700 hover:text-primary-600 transition-colors duration-200 flex-shrink-0"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <span className="sr-only">Close menu</span>
-                    <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
-                </div>
-                <div className="px-4 py-6 space-y-4">
-                  <div className="pb-4 border-b border-gray-200">
-                    <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">
-                      Country
-                    </p>
-                    <div className="space-y-1">
-                      {countries.map((country) => (
-                        <button
-                          key={country.code}
-                          type="button"
-                          onClick={() => {
-                            setSelectedCountry(country.code)
-                            setMobileMenuOpen(false)
-                          }}
-                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-200 ${
-                            selectedCountry === country.code
-                              ? 'bg-primary-50 text-primary-700'
-                              : 'text-gray-800 hover:bg-gray-50'
-                          }`}
-                        >
-                          <CountryFlag code={country.code} />
-                          <span>{country.name}</span>
-                        </button>
-                      ))}
+                    <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                      <Link
+                        href="/"
+                        className="flex shrink-0 items-center"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <img
+                          src="/images/lotus-logo-horizontal.jpg"
+                          alt="LotusFX Logo"
+                          className="h-9 w-auto object-contain"
+                        />
+                      </Link>
+                      <button
+                        type="button"
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-primary-600"
+                        onClick={() => setMobileMenuOpen(false)}
+                        aria-label="Close menu"
+                      >
+                        <span className="sr-only">Close menu</span>
+                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                      </button>
                     </div>
-                  </div>
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={`block text-base font-medium transition-colors duration-200 ${
-                        pathname === item.href
-                          ? 'text-primary-600'
-                          : 'text-gray-700 hover:text-primary-600'
-                      }`}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                  <div className="border-t border-gray-200 pt-4">
-                    <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">
-                      Our Partners
-                    </p>
-                    <div className="space-y-2">
-                      {partnerLinks.map((partner) => (
+                    <div className="px-4 py-6 space-y-4">
+                      <div className="pb-4 border-b border-gray-200">
+                        <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">
+                          Country
+                        </p>
+                        <div className="space-y-1">
+                          {countries.map((country) => (
+                            <button
+                              key={country.code}
+                              type="button"
+                              onClick={() => {
+                                setSelectedCountry(country.code)
+                                setMobileMenuOpen(false)
+                              }}
+                              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-200 ${
+                                selectedCountry === country.code
+                                  ? 'bg-primary-50 text-primary-700'
+                                  : 'text-gray-800 hover:bg-gray-50'
+                              }`}
+                            >
+                              <CountryFlag code={country.code} />
+                              <span>{country.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      {navigation.map((item) => (
                         <Link
-                          key={partner.name}
-                          href={partner.href}
+                          key={item.name}
+                          href={item.href}
                           className={`block text-base font-medium transition-colors duration-200 ${
-                            pathname === partner.href
+                            pathname === item.href
                               ? 'text-primary-600'
                               : 'text-gray-700 hover:text-primary-600'
                           }`}
                           onClick={() => setMobileMenuOpen(false)}
                         >
-                          {partner.name}
+                          {item.name}
                         </Link>
                       ))}
+                      <div className="border-t border-gray-200 pt-4">
+                        <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">
+                          Our Partners
+                        </p>
+                        <div className="space-y-2">
+                          {partnerLinks.map((partner) => (
+                            <Link
+                              key={partner.name}
+                              href={partner.href}
+                              className={`block text-base font-medium transition-colors duration-200 ${
+                                pathname === partner.href
+                                  ? 'text-primary-600'
+                                  : 'text-gray-700 hover:text-primary-600'
+                              }`}
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              {partner.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                      {portal.showLogin && portal.web ? (
+                        <div className="pt-4 border-t border-gray-200">
+                          <a
+                            href={portal.web}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn-primary w-full text-center block"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Login / Sign Up
+                          </a>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
-                  {portal.showLogin && portal.web ? (
-                    <div className="pt-4 border-t border-gray-200">
-                      <a
-                        href={portal.web}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-primary w-full text-center block"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Login / Sign Up
-                      </a>
-                    </div>
-                  ) : null}
                 </div>
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
-    </header>
+    </>
   )
 }

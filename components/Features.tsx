@@ -81,7 +81,7 @@ export default function Features() {
   ]
 
   return (
-    <section className="relative section-padding bg-[#f7f5f0] overflow-hidden">
+    <section className="relative section-padding bg-white overflow-hidden">
       <div className="absolute inset-0 pointer-events-none hidden md:block" aria-hidden>
         {/* Currency symbols decorations - light red/pink color */}
         <span className="absolute -top-8 left-4 text-red-200 text-7xl font-extrabold opacity-30">
