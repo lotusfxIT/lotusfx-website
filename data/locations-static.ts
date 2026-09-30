@@ -474,6 +474,12 @@ export const STATIC_LOCATIONS: StaticLocation[] = RAW_LOCATIONS.map((loc) => {
   return { ...loc, slug }
 })
 
+/** Listed branch counts — keep country cards / marketing stats aligned with the map. */
+export function countStaticLocations(country?: StaticLocation['country']): number {
+  if (!country) return STATIC_LOCATIONS.length
+  return STATIC_LOCATIONS.filter((loc) => loc.country === country).length
+}
+
 /** Normalize branch names for fuzzy match (4D ↔ Google / locations page). */
 export function normalizeBranchMatchKey(value: string): string {
   return value

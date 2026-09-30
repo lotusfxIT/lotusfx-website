@@ -110,7 +110,7 @@ export default function Hero() {
   })
 
   return (
-    <section className="relative min-h-0 lg:min-h-[100svh] lg:h-[100svh] flex flex-col overflow-x-clip w-full pt-[calc(4rem+1rem)] pb-5 sm:pt-[calc(4rem+1.75rem)] sm:pb-7 lg:pt-[calc(5rem+2rem)] lg:pb-8">
+    <section className="relative min-h-0 lg:min-h-[100svh] flex flex-col overflow-x-clip w-full pt-[calc(4rem+1rem)] pb-5 sm:pt-[calc(4rem+1.75rem)] sm:pb-7 lg:pt-[calc(5rem+2rem)] lg:pb-8">
       {/* Background with red gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800"></div>
 
@@ -148,7 +148,7 @@ export default function Hero() {
               </p>
 
               {/* 2. Slogan — wraps on mobile; one line on tablet+ */}
-              <h1 className="text-[2.05rem] sm:text-[2.2rem] md:text-[2.35rem] lg:text-[2.5rem] xl:text-[2.75rem] font-bold text-white !leading-[1.12] pb-[0.15em] tracking-tight md:whitespace-nowrap">
+              <h1 className="text-[2.05rem] sm:text-[2.2rem] md:text-[2.35rem] lg:text-[2.5rem] xl:text-[2.75rem] font-bold text-white !leading-[1.2] pb-[0.15em] tracking-tight">
                 {heroTitle}
               </h1>
 

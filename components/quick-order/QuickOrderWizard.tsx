@@ -1117,13 +1117,15 @@ export default function QuickOrderWizard() {
                     </span>
                     <span className="min-w-0 flex-1 overflow-hidden">
                       <span
-                        className={`block text-[10px] font-bold uppercase tracking-wider truncate ${
+                        className={`hidden sm:block text-[10px] font-bold uppercase tracking-wider truncate ${
                           isActive ? 'text-gray-400' : 'text-primary-200'
                         }`}
                       >
                         Step {idx + 1}
                       </span>
-                      <span className="block text-sm font-semibold truncate">{step.label}</span>
+                      <span className="block text-xs sm:text-sm font-semibold truncate leading-tight">
+                        {step.label}
+                      </span>
                     </span>
                   </button>
                 )

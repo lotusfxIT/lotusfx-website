@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowsRightLeftIcon, ArrowLeftIcon, BanknotesIcon, PaperAirplaneIcon, ChevronDownIcon, MagnifyingGlassIcon, PencilSquareIcon, MapPinIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { useCountry } from '@/context/CountryContext'
+import { useSiteStats } from '@/context/SiteStatsContext'
 import FijiBranchRatesCard from '@/components/FijiBranchRatesCard'
 import Link from 'next/link'
 import { trackEvent } from '@/lib/analytics'
@@ -137,6 +138,18 @@ function CurrencyCalculatorActive({
   lockForeignCurrency = false,
 }: CurrencyCalculatorProps) {
   const { selectedCountry } = useCountry()
+  const { stats: siteStats } = useSiteStats()
+  const branchCountLabel = (() => {
+    const n =
+      selectedCountry === 'NZ'
+        ? siteStats.branches.newZealand
+        : selectedCountry === 'FJ'
+          ? siteStats.branches.fiji
+          : siteStats.branches.australia
+    const countryName =
+      selectedCountry === 'NZ' ? 'New Zealand' : selectedCountry === 'FJ' ? 'Fiji' : 'Australia'
+    return `${String(n).replace(/\+$/, '')} branches in ${countryName}`
+  })()
   const [chosen, setChosen] = useState<boolean>(forceCashOnly ? true : false)
   const [quoteType, setQuoteType] = useState<'cash' | 'transfer'>('cash')
   const [buyOrSell, setBuyOrSell] = useState<'buy' | 'sell'>('buy') // Foreign Exchange: You Buy / You Sell → isBuy in API
@@ -417,7 +430,7 @@ function CurrencyCalculatorActive({
               <div className="flex-1 min-w-0 text-left">
                 <span className="block text-lg font-bold text-gray-900">Foreign Exchange</span>
                 <span className="block text-sm text-gray-500 mt-1">Get Cash Exchange Rates</span>
-                <span className="inline-block mt-2.5 text-xs font-medium text-primary-600 bg-primary-100 px-2 py-1 rounded">20 branches in Australia</span>
+                <span className="inline-block mt-2.5 text-xs font-medium text-primary-600 bg-primary-100 px-2 py-1 rounded">{branchCountLabel}</span>
               </div>
             </motion.button>
             <motion.button
@@ -777,7 +790,12 @@ function CurrencyCalculatorActive({
                           return (
                             <>
                               <FlagImg code={currency.code} />
-                              <span>{currency.code} - {currency.name}</span>
+                              <span className="min-w-0 truncate">
+                                <span className="sm:hidden">{currency.code}</span>
+                                <span className="hidden sm:inline">
+                                  {currency.code} - {currency.name}
+                                </span>
+                              </span>
                             </>
                           )
                         })()}
@@ -794,7 +812,12 @@ function CurrencyCalculatorActive({
                         return (
                           <>
                             <FlagImg code={currency.code} />
-                            <span>{currency.code} - {currency.name}</span>
+                            <span className="min-w-0 truncate">
+                              <span className="sm:hidden">{currency.code}</span>
+                              <span className="hidden sm:inline">
+                                {currency.code} - {currency.name}
+                              </span>
+                            </span>
                           </>
                         )
                       })()}
@@ -888,7 +911,12 @@ function CurrencyCalculatorActive({
                           return (
                             <>
                               <FlagImg code={currency.code} />
-                              <span>{currency.code} - {currency.name}</span>
+                              <span className="min-w-0 truncate">
+                                <span className="sm:hidden">{currency.code}</span>
+                                <span className="hidden sm:inline">
+                                  {currency.code} - {currency.name}
+                                </span>
+                              </span>
                             </>
                           )
                         })()}
@@ -905,7 +933,12 @@ function CurrencyCalculatorActive({
                         return (
                           <>
                             <FlagImg code={currency.code} />
-                            <span>{currency.code} - {currency.name}</span>
+                            <span className="min-w-0 truncate">
+                              <span className="sm:hidden">{currency.code}</span>
+                              <span className="hidden sm:inline">
+                                {currency.code} - {currency.name}
+                              </span>
+                            </span>
                           </>
                         )
                       })()}

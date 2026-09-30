@@ -4,7 +4,7 @@ import Link from 'next/link'
 import GoogleMyBusiness from '@/components/GoogleMyBusiness'
 import CurrencySymbolsBg from '@/components/CurrencySymbolsBg'
 import { useCountry } from '@/context/CountryContext'
-import { useSiteStats } from '@/context/SiteStatsContext'
+import { countStaticLocations } from '@/data/locations-static'
 
 const FLAG_CDN = 'https://flagcdn.com'
 
@@ -27,9 +27,6 @@ function CountryFlag({
 
 export default function LocationsPage() {
   const { selectedCountry, setSelectedCountry } = useCountry()
-  const { stats } = useSiteStats()
-
-  const count = (value: string) => String(value || '').replace(/\+$/, '')
 
   return (
     <>
@@ -44,9 +41,9 @@ export default function LocationsPage() {
 
           <div className="mx-auto grid max-w-3xl grid-cols-3 gap-3 sm:gap-4">
             {[
-              { code: 'AU', label: 'Australia', n: count(stats.branches.australia) },
-              { code: 'NZ', label: 'New Zealand', n: count(stats.branches.newZealand) },
-              { code: 'FJ', label: 'Fiji', n: count(stats.branches.fiji) },
+              { code: 'AU' as const, label: 'Australia', n: countStaticLocations('AU') },
+              { code: 'NZ' as const, label: 'New Zealand', n: countStaticLocations('NZ') },
+              { code: 'FJ' as const, label: 'Fiji', n: countStaticLocations('FJ') },
             ].map((c) => {
               const active = selectedCountry === c.code
               return (

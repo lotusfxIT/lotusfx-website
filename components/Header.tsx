@@ -8,6 +8,7 @@ import { Bars3Icon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outli
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCountry } from '@/context/CountryContext'
 import { getCountryPortalLinks } from '@/lib/country-portals'
+import { isQuickOrderEnabled } from '@/lib/quick-order-url'
 
 const countries = [
   { name: 'Australia', code: 'AU' },
@@ -371,21 +372,34 @@ export default function Header() {
                           ))}
                         </div>
                       </div>
-                      {navigation.map((item) => (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          className={`block text-base font-medium transition-colors duration-200 ${
-                            pathname === item.href
-                              ? 'text-primary-600'
-                              : 'text-gray-700 hover:text-primary-600'
-                          }`}
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
-                      <div className="border-t border-gray-200 pt-4">
+                  {navigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`block text-base font-medium transition-colors duration-200 ${
+                        pathname === item.href
+                          ? 'text-primary-600'
+                          : 'text-gray-700 hover:text-primary-600'
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                  {isQuickOrderEnabled(selectedCountry) ? (
+                    <Link
+                      href="/quick-order"
+                      className={`block text-base font-medium transition-colors duration-200 ${
+                        pathname === '/quick-order'
+                          ? 'text-primary-600'
+                          : 'text-gray-700 hover:text-primary-600'
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Quick Order
+                    </Link>
+                  ) : null}
+                  <div className="border-t border-gray-200 pt-4">
                         <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">
                           Our Partners
                         </p>

@@ -60,9 +60,9 @@ export const DEFAULT_SITE_STATS: SiteStats = {
   },
   branches: {
     fiji: '16',
-    australia: '20',
-    newZealand: '19',
-    total: '54',
+    australia: '21',
+    newZealand: '18',
+    total: '55',
   },
   emails: {
     fiji: 'fjcustomercare@lotusfx.com',
