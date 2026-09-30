@@ -206,8 +206,11 @@ export function isCurrencyVisibleInCountry(
     const notes = currency.byCountry[country]?.notes ?? []
     return notes.length > 0
   }
-  // For AU: only show currencies that declare AU stock (or have no byCountry at all)
-  if (country === 'AU' && currency.byCountry) {
+  // Markets with byCountry stock: only show currencies that declare stock for that market
+  if (
+    currency.byCountry &&
+    (country === 'AU' || country === 'NZ' || country === 'FJ')
+  ) {
     return false
   }
   return true

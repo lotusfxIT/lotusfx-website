@@ -4,344 +4,1010 @@
       "code": "AUD",
       "name": "Australian Dollar",
       "symbol": "$",
-      "notes": [100, 50, 20, 10, 5],
-      "coins": [0.05, 0.1, 0.2, 0.5, 1, 2],
+      "notes": [
+        100,
+        50,
+        20,
+        10,
+        5
+      ],
+      "coins": [
+        0.05,
+        0.1,
+        0.2,
+        0.5,
+        1,
+        2
+      ],
       "byCountry": {
-        "AU": { "notes": [100, 50, 20, 10, 5], "coins": [] }
+        "AU": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "AED",
       "name": "UAE Dirham",
       "symbol": "د.إ",
-      "notes": [500, 100, 50, 20, 10],
+      "notes": [
+        500,
+        100,
+        50,
+        20,
+        10
+      ],
       "byCountry": {
-        "AU": { "notes": [500, 100, 50, 20, 10], "coins": [] }
+        "AU": {
+          "notes": [
+            500,
+            100,
+            50,
+            20,
+            10
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            500,
+            100,
+            50,
+            20,
+            10
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "CAD",
       "name": "Canadian Dollar",
       "symbol": "$",
-      "notes": [100, 50, 20, 10, 5],
+      "notes": [
+        100,
+        50,
+        20,
+        10,
+        5
+      ],
       "byCountry": {
-        "AU": { "notes": [100, 50, 20, 10, 5], "coins": [] }
+        "AU": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "CHF",
       "name": "Swiss Franc",
       "symbol": "CHF",
-      "notes": [1000, 200, 100, 50, 20, 10, 5],
+      "notes": [
+        1000,
+        200,
+        100,
+        50,
+        20,
+        10,
+        5
+      ],
       "byCountry": {
-        "AU": { "notes": [1000, 200, 100, 50, 20, 10, 5], "coins": [] }
+        "AU": {
+          "notes": [
+            1000,
+            200,
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            1000,
+            200,
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "CNY",
       "name": "Chinese Yuan",
       "symbol": "¥",
-      "notes": [100],
+      "notes": [
+        100
+      ],
       "byCountry": {
-        "AU": { "notes": [100], "coins": [] }
+        "AU": {
+          "notes": [
+            100
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "EGP",
       "name": "Egyptian Pound",
       "symbol": "E£",
-      "notes": [200, 100],
+      "notes": [
+        200,
+        100
+      ],
       "byCountry": {
-        "AU": { "notes": [200, 100], "coins": [] }
+        "AU": {
+          "notes": [
+            200,
+            100
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "EUR",
       "name": "Euro",
       "symbol": "€",
-      "notes": [100, 50, 20, 10, 5],
+      "notes": [
+        100,
+        50,
+        20,
+        10,
+        5
+      ],
       "byCountry": {
-        "AU": { "notes": [100, 50, 20, 10, 5], "coins": [] }
+        "AU": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "FJD",
       "name": "Fijian Dollar",
       "symbol": "$",
-      "notes": [100, 50, 20, 10, 5],
+      "notes": [
+        100,
+        50,
+        20,
+        10,
+        5
+      ],
       "byCountry": {
-        "AU": { "notes": [100, 50, 20, 10, 5], "coins": [] }
+        "AU": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "GBP",
       "name": "British Pound",
       "symbol": "£",
-      "notes": [50, 20, 10, 5],
+      "notes": [
+        50,
+        20,
+        10,
+        5
+      ],
       "byCountry": {
-        "AU": { "notes": [50, 20, 10, 5], "coins": [] }
+        "AU": {
+          "notes": [
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "HKD",
       "name": "Hong Kong Dollar",
       "symbol": "$",
-      "notes": [500, 100, 50],
+      "notes": [
+        500,
+        100,
+        50
+      ],
       "byCountry": {
-        "AU": { "notes": [500, 100, 50], "coins": [] }
+        "AU": {
+          "notes": [
+            500,
+            100,
+            50
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            1000,
+            500,
+            100,
+            50,
+            20,
+            10
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "IDR",
       "name": "Indonesian Rupiah",
       "symbol": "Rp",
-      "notes": [100000, 50000],
+      "notes": [
+        100000,
+        50000
+      ],
       "byCountry": {
-        "AU": { "notes": [100000, 50000], "coins": [] }
+        "AU": {
+          "notes": [
+            100000,
+            50000
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100000,
+            50000
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "INR",
       "name": "Indian Rupee",
       "symbol": "₹",
-      "notes": [500],
+      "notes": [
+        500
+      ],
       "byCountry": {
-        "AU": { "notes": [500], "coins": [] }
+        "AU": {
+          "notes": [
+            500
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            500
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "ISK",
       "name": "Icelandic Króna",
       "symbol": "kr",
-      "notes": [1000],
+      "notes": [
+        1000
+      ],
       "byCountry": {
-        "AU": { "notes": [1000], "coins": [] }
+        "AU": {
+          "notes": [
+            1000
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "JPY",
       "name": "Japanese Yen",
       "symbol": "¥",
-      "notes": [10000, 5000, 1000],
+      "notes": [
+        10000,
+        5000,
+        1000
+      ],
       "byCountry": {
-        "AU": { "notes": [10000, 5000, 1000], "coins": [] }
+        "AU": {
+          "notes": [
+            10000,
+            5000,
+            1000
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            10000,
+            5000,
+            1000
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "KRW",
       "name": "South Korean Won",
       "symbol": "₩",
-      "notes": [50000, 10000],
+      "notes": [
+        50000,
+        10000
+      ],
       "byCountry": {
-        "AU": { "notes": [50000, 10000], "coins": [] }
+        "AU": {
+          "notes": [
+            50000,
+            10000
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            50000,
+            10000
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "LKR",
       "name": "Sri Lankan Rupee",
       "symbol": "Rs",
-      "notes": [5000],
+      "notes": [
+        5000
+      ],
       "byCountry": {
-        "AU": { "notes": [5000], "coins": [] }
+        "AU": {
+          "notes": [
+            5000
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            5000
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "MXN",
       "name": "Mexican Peso",
       "symbol": "$",
-      "notes": [200, 100],
+      "notes": [
+        200,
+        100
+      ],
       "byCountry": {
-        "AU": { "notes": [200, 100], "coins": [] }
+        "AU": {
+          "notes": [
+            200,
+            100
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "MYR",
       "name": "Malaysian Ringgit",
       "symbol": "RM",
-      "notes": [100, 50],
+      "notes": [
+        100,
+        50
+      ],
       "byCountry": {
-        "AU": { "notes": [100, 50], "coins": [] }
+        "AU": {
+          "notes": [
+            100,
+            50
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100,
+            50,
+            20
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "NOK",
       "name": "Norwegian Krone",
       "symbol": "kr",
-      "notes": [50],
+      "notes": [
+        50
+      ],
       "byCountry": {
-        "AU": { "notes": [50], "coins": [] }
+        "AU": {
+          "notes": [
+            50
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "NPR",
       "name": "Nepalese Rupee",
       "symbol": "रू",
-      "notes": [1000],
+      "notes": [
+        1000
+      ],
       "byCountry": {
-        "AU": { "notes": [1000], "coins": [] }
+        "AU": {
+          "notes": [
+            1000
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "NZD",
       "name": "New Zealand Dollar",
       "symbol": "$",
-      "notes": [100, 50, 20, 10, 5],
+      "notes": [
+        100,
+        50,
+        20,
+        10,
+        5
+      ],
       "byCountry": {
-        "AU": { "notes": [100, 50, 20, 10, 5], "coins": [] }
+        "AU": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "PGK",
       "name": "Papua New Guinean Kina",
       "symbol": "K",
-      "notes": [100, 50],
+      "notes": [
+        100,
+        50
+      ],
       "byCountry": {
-        "AU": { "notes": [100, 50], "coins": [] }
+        "AU": {
+          "notes": [
+            100,
+            50
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100,
+            50,
+            20
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "PHP",
       "name": "Philippine Peso",
       "symbol": "₱",
-      "notes": [1000, 500],
+      "notes": [
+        1000,
+        500
+      ],
       "byCountry": {
-        "AU": { "notes": [1000, 500], "coins": [] }
+        "AU": {
+          "notes": [
+            1000,
+            500
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            1000,
+            500
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "PKR",
       "name": "Pakistani Rupee",
       "symbol": "₨",
-      "notes": [5000, 1000],
+      "notes": [
+        5000,
+        1000
+      ],
       "byCountry": {
-        "AU": { "notes": [5000, 1000], "coins": [] }
+        "AU": {
+          "notes": [
+            5000,
+            1000
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            5000,
+            1000
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "QAR",
       "name": "Qatari Riyal",
       "symbol": "ر.ق",
-      "notes": [100],
+      "notes": [
+        100
+      ],
       "byCountry": {
-        "AU": { "notes": [100], "coins": [] }
+        "AU": {
+          "notes": [
+            100
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "SAR",
       "name": "Saudi Riyal",
       "symbol": "﷼",
-      "notes": [500, 100],
+      "notes": [
+        500,
+        100
+      ],
       "byCountry": {
-        "AU": { "notes": [500, 100], "coins": [] }
+        "AU": {
+          "notes": [
+            500,
+            100
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            500,
+            200,
+            100
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "SGD",
       "name": "Singapore Dollar",
       "symbol": "$",
-      "notes": [100, 50, 10],
+      "notes": [
+        100,
+        50,
+        10
+      ],
       "byCountry": {
-        "AU": { "notes": [100, 50, 10], "coins": [] }
+        "AU": {
+          "notes": [
+            100,
+            50,
+            10
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100,
+            50,
+            10,
+            2
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "THB",
       "name": "Thai Baht",
       "symbol": "฿",
-      "notes": [500, 100],
+      "notes": [
+        500,
+        100
+      ],
       "byCountry": {
-        "AU": { "notes": [500, 100], "coins": [] }
+        "AU": {
+          "notes": [
+            500,
+            100
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            500,
+            100
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "TOP",
       "name": "Tongan Paʻanga",
       "symbol": "T$",
-      "notes": [100, 50],
+      "notes": [
+        100,
+        50
+      ],
       "byCountry": {
-        "AU": { "notes": [100, 50], "coins": [] }
+        "AU": {
+          "notes": [
+            100,
+            50
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100,
+            50
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "TRY",
       "name": "Turkish Lira",
       "symbol": "₺",
-      "notes": [200, 100],
+      "notes": [
+        200,
+        100
+      ],
       "byCountry": {
-        "AU": { "notes": [200, 100], "coins": [] }
+        "AU": {
+          "notes": [
+            200,
+            100
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            200,
+            100
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "TWD",
       "name": "New Taiwan Dollar",
       "symbol": "NT$",
-      "notes": [1000],
+      "notes": [
+        1000
+      ],
       "byCountry": {
-        "AU": { "notes": [1000], "coins": [] }
+        "AU": {
+          "notes": [
+            1000
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            1000,
+            500
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "USD",
       "name": "US Dollar",
       "symbol": "$",
-      "notes": [100, 50, 20, 10, 5, 2, 1],
+      "notes": [
+        100,
+        50,
+        20,
+        10,
+        5,
+        2,
+        1
+      ],
       "byCountry": {
-        "AU": { "notes": [100, 50, 20, 10, 5, 2, 1], "coins": [] }
+        "AU": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5,
+            2,
+            1
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100,
+            50,
+            20,
+            10,
+            5,
+            2,
+            1
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "VND",
       "name": "Vietnamese Dong",
       "symbol": "₫",
-      "notes": [500000, 200000],
+      "notes": [
+        500000,
+        200000
+      ],
       "byCountry": {
-        "AU": { "notes": [500000, 200000], "coins": [] }
+        "AU": {
+          "notes": [
+            500000,
+            200000
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            500000,
+            200000
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "VUV",
       "name": "Vanuatu Vatu",
       "symbol": "VT",
-      "notes": [5000, 2000, 1000],
+      "notes": [
+        5000,
+        2000,
+        1000
+      ],
       "byCountry": {
-        "AU": { "notes": [5000, 2000, 1000], "coins": [] }
+        "AU": {
+          "notes": [
+            5000,
+            2000,
+            1000
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            5000,
+            2000,
+            1000
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "WST",
       "name": "Samoan Tala",
       "symbol": "WS$",
-      "notes": [100, 50, 20],
+      "notes": [
+        100,
+        50,
+        20
+      ],
       "byCountry": {
-        "AU": { "notes": [100, 50, 20], "coins": [] }
+        "AU": {
+          "notes": [
+            100,
+            50,
+            20
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            100,
+            50,
+            20
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "XPF",
       "name": "CFP Franc",
       "symbol": "₣",
-      "notes": [5000, 1000],
+      "notes": [
+        5000,
+        1000
+      ],
       "byCountry": {
-        "AU": { "notes": [5000, 1000], "coins": [] }
+        "AU": {
+          "notes": [
+            5000,
+            1000
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            10000,
+            5000,
+            1000
+          ],
+          "coins": []
+        }
       }
     },
     {
       "code": "ZAR",
       "name": "South African Rand",
       "symbol": "R",
-      "notes": [200, 100],
+      "notes": [
+        200,
+        100
+      ],
       "byCountry": {
-        "AU": { "notes": [200, 100], "coins": [] },
-        "NZ": { "notes": [10, 20, 50, 100, 200] },
-        "FJ": { "notes": [10, 20, 50] }
+        "AU": {
+          "notes": [
+            200,
+            100
+          ],
+          "coins": []
+        },
+        "NZ": {
+          "notes": [
+            200,
+            100
+          ],
+          "coins": []
+        },
+        "FJ": {
+          "notes": [
+            10,
+            20,
+            50
+          ]
+        }
       }
     },
     {
       "code": "BDT",
       "name": "Bangladeshi Taka",
       "symbol": "৳",
-      "notes": [10, 20, 50, 100, 200, 500, 1000],
-      "countries": ["NZ", "FJ"]
+      "notes": [
+        10,
+        20,
+        50,
+        100,
+        200,
+        500,
+        1000
+      ],
+      "countries": [
+        "FJ"
+      ]
     }
   ]
 }
