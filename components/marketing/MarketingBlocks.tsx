@@ -85,7 +85,7 @@ export function SectionHeading({
 
 export function LeadParagraphs({ paragraphs }: { paragraphs: string[] }) {
   return (
-    <div className="space-y-5">
+    <div className="flex flex-col gap-4 sm:gap-5">
       {paragraphs.map((p, i) => (
         <p
           key={i}
@@ -176,7 +176,7 @@ export function SplitBand({
     >
       <div className="container-custom">
         <div
-          className={`grid lg:grid-cols-2 gap-10 lg:gap-16 items-stretch ${
+          className={`grid lg:grid-cols-2 gap-7 sm:gap-10 lg:gap-16 items-stretch ${
             reverse ? 'lg:[&>*:first-child]:order-2' : ''
           }`}
         >
@@ -188,7 +188,7 @@ export function SplitBand({
             className="h-full flex flex-col justify-center"
           >
             <SectionEyebrow>{eyebrow}</SectionEyebrow>
-            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 tracking-tight leading-tight mb-6">
+            <h2 className="text-[2rem] sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-5 sm:mb-6">
               {title}
             </h2>
             <LeadParagraphs paragraphs={paragraphs} />

@@ -110,7 +110,7 @@ export default function Hero() {
   })
 
   return (
-    <section className="relative min-h-[100svh] lg:h-[100svh] flex flex-col overflow-x-clip w-full pt-[calc(4rem+1.5rem)] pb-6 sm:pt-[calc(4rem+1.75rem)] sm:pb-7 lg:pt-[calc(5rem+2rem)] lg:pb-8">
+    <section className="relative min-h-0 lg:min-h-[100svh] lg:h-[100svh] flex flex-col overflow-x-clip w-full pt-[calc(4rem+1rem)] pb-5 sm:pt-[calc(4rem+1.75rem)] sm:pb-7 lg:pt-[calc(5rem+2rem)] lg:pb-8">
       {/* Background with red gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800"></div>
 
@@ -131,7 +131,7 @@ export default function Hero() {
             className="relative min-w-0 h-full flex flex-col overflow-visible"
           >
             {/* Text block — even gaps, room for descenders */}
-            <div className="relative z-10 w-full min-w-0 overflow-visible space-y-5 sm:space-y-6 lg:space-y-7">
+            <div className="relative z-10 w-full min-w-0 overflow-visible space-y-4 sm:space-y-6 lg:space-y-7">
               {/* 1. Company name */}
               <p
                 className="font-museo uppercase text-white !leading-[1.15] pb-1"
@@ -148,7 +148,7 @@ export default function Hero() {
               </p>
 
               {/* 2. Slogan — wraps on mobile; one line on tablet+ */}
-              <h1 className="text-[1.65rem] sm:text-[2.2rem] md:text-[2.35rem] lg:text-[2.5rem] xl:text-[2.75rem] font-bold text-white !leading-[1.35] pb-[0.15em] tracking-tight md:whitespace-nowrap">
+              <h1 className="text-[2.05rem] sm:text-[2.2rem] md:text-[2.35rem] lg:text-[2.5rem] xl:text-[2.75rem] font-bold text-white !leading-[1.12] pb-[0.15em] tracking-tight md:whitespace-nowrap">
                 {heroTitle}
               </h1>
 
@@ -165,7 +165,7 @@ export default function Hero() {
               </p>
 
               {/* 4. Checklist */}
-              <ul className="space-y-4 list-none p-0 m-0 max-w-[48rem]">
+              <ul className="space-y-3 sm:space-y-4 list-none p-0 m-0 max-w-[48rem]">
                 {features.map((feature, index) => (
                   <motion.li
                     key={feature}
@@ -174,8 +174,8 @@ export default function Hero() {
                     transition={{ duration: 0.45, delay: 0.35 + index * 0.08, ease: 'easeOut' }}
                     className="flex items-start gap-3 min-w-0"
                   >
-                    <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-white/90 flex-shrink-0 mt-0.5" />
-                    <span className="text-white font-medium text-lg sm:text-xl !leading-[1.5] pb-0.5">
+                    <CheckCircleIcon className="w-5 h-5 sm:w-7 sm:h-7 text-white/90 flex-shrink-0 mt-0.5" />
+                    <span className="text-white font-medium text-base sm:text-xl !leading-[1.4] pb-0.5">
                       {feature}
                     </span>
                   </motion.li>
@@ -183,7 +183,7 @@ export default function Hero() {
               </ul>
             </div>
 
-            <div className="mt-auto pt-7 sm:pt-8 space-y-3 sm:space-y-4">
+            <div className="mt-7 lg:mt-auto pt-2 sm:pt-8 space-y-3 sm:space-y-4">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 {isQuickOrderEnabled(selectedCountry) && (
                   <Link

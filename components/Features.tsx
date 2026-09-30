@@ -81,7 +81,7 @@ export default function Features() {
   ]
 
   return (
-    <section className="relative section-padding bg-white overflow-hidden">
+    <section className="relative section-padding bg-[#f7f5f0] overflow-hidden">
       <div className="absolute inset-0 pointer-events-none hidden md:block" aria-hidden>
         {/* Currency symbols decorations - light red/pink color */}
         <span className="absolute -top-8 left-4 text-red-200 text-7xl font-extrabold opacity-30">
@@ -112,7 +112,7 @@ export default function Features() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-10"
+          className="text-left sm:text-center max-w-3xl mx-auto mb-8 sm:mb-10"
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Why Choose LotusFX?
@@ -124,7 +124,7 @@ export default function Features() {
         </motion.div>
 
         {/* Features Grid with red icon styling */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-14">
+        <div className="mobile-card-scroll gap-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 mb-10 sm:mb-14">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}

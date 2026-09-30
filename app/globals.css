@@ -21,6 +21,13 @@
 }
 
 @layer base {
+  :root {
+    --mobile-ink: #172126;
+    --mobile-paper: #f7f5f0;
+    --mobile-lime: #d7f36b;
+    --mobile-coral: #ff765c;
+  }
+
   html {
     scroll-behavior: smooth;
     /* clip avoids the overflow-x:hidden → overflow-y:auto trap that chops descenders */
@@ -85,7 +92,53 @@
   .container-custom {
     @apply w-full max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-12 min-w-0 box-border;
   }
+
+  .mobile-section-label {
+    @apply inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/[0.03] px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-gray-600;
+  }
+
+  .mobile-section-label::before {
+    content: '';
+    @apply block size-1.5 rounded-full bg-primary-500;
+  }
 }
+
+@media (max-width: 639px) {
+  .section-padding {
+    padding-top: 3.75rem;
+    padding-bottom: 3.75rem;
+  }
+
+  .container-custom {
+    padding-left: 1.125rem;
+    padding-right: 1.125rem;
+  }
+
+  .mobile-compact-copy {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .mobile-card-scroll {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin-right: -1.125rem;
+    padding-right: 1.125rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .mobile-card-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-card-scroll > * {
+    min-width: min(82vw, 20rem);
+    scroll-snap-align: start;
+  }
+}
+
 
 @layer utilities {
   .animate-fade-in {
