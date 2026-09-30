@@ -255,11 +255,12 @@ export default function Header() {
             </div>
             <button
               type="button"
-              className="text-gray-700 hover:text-primary-600 transition-colors duration-200"
+              className="inline-flex size-11 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors duration-200 hover:border-primary-200 hover:text-primary-600"
               onClick={() => {
                 setCountryMenuOpen(false)
                 setMobileMenuOpen(true)
               }}
+              aria-label="Open main menu"
             >
               <span className="sr-only">Open main menu</span>
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
@@ -277,9 +278,9 @@ export default function Header() {
             exit={{ opacity: 0 }}
             className="lg:hidden"
           >
-            <div className="fixed inset-0 z-50">
-              <div className="fixed inset-0 bg-black/20" onClick={() => setMobileMenuOpen(false)} />
-              <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-xl">
+              <div className="fixed inset-0 z-50">
+              <div className="fixed inset-0 bg-gray-950/35 backdrop-blur-[2px]" onClick={() => setMobileMenuOpen(false)} />
+              <div className="fixed inset-y-0 right-0 flex w-full max-w-sm flex-col overflow-y-auto bg-white shadow-2xl">
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
                   <Link
                     href="/"

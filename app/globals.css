@@ -40,6 +40,10 @@
     overflow-x: clip;
     width: 100%;
     overscroll-behavior-x: none;
+    background: #ffffff;
+    color: #172126;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
   
   h1, h2, h3, h4, h5, h6 {

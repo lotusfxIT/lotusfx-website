@@ -99,7 +99,7 @@ export default function Footer() {
   <footer className="bg-primary-600 text-white w-full">
       <div className="container-custom min-w-0">
         {/* Main Footer Content — left / right columns; right stack shares width + right-aligned */}
-        <div className="py-12 sm:py-16 space-y-10 sm:space-y-12">
+        <div className="py-10 sm:py-16 space-y-8 sm:space-y-12">
           {/* Row 1: Logo | Tagline */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-center min-w-0 w-full">
             <div className="lg:col-span-4 min-w-0">
@@ -175,7 +175,7 @@ export default function Footer() {
             </div>
 
             <div className="lg:col-span-8 min-w-0 w-full flex lg:justify-end">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 w-full max-w-4xl items-start">
+              <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:gap-6 md:grid-cols-4 w-full max-w-4xl items-start">
                 {Object.entries(sections).map(([sectionName, items], idx) => (
                   <motion.div
                     key={sectionName}

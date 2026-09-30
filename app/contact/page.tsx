@@ -35,7 +35,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <section className="pt-28 sm:pt-32 pb-12 sm:pb-14 bg-gradient-to-br from-primary-50 via-white to-white">
+      <section className="pt-24 sm:pt-32 pb-10 sm:pb-14 bg-gradient-to-br from-primary-50 via-white to-white">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
             <MotionWrapper
@@ -64,7 +64,7 @@ export default function ContactPage() {
               viewport={{ once: true }}
               className="h-full"
             >
-              <div className="bg-white rounded-2xl shadow-strong border border-gray-100 p-7 sm:p-8 h-full flex flex-col">
+              <div className="bg-white rounded-[1.5rem] shadow-strong border border-gray-100 p-5 sm:p-8 h-full flex flex-col">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
                 <form onSubmit={handleSubmit} className="space-y-5 flex-1 flex flex-col">
                   <div>
