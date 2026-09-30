@@ -129,7 +129,7 @@ export function IconFeatureCard({
       className="h-full"
     >
       <div
-        className={`h-full flex flex-col bg-white rounded-2xl border p-7 shadow-soft hover:shadow-lg transition-all duration-300 ${t.cardBorder}`}
+        className={`mobile-safe-card h-full flex flex-col bg-white rounded-2xl border p-7 shadow-soft hover:shadow-lg transition-all duration-300 ${t.cardBorder}`}
       >
         <div
           className={`w-12 h-12 rounded-xl ${t.iconBg} flex items-center justify-center mb-5 shadow-md`}
@@ -296,7 +296,7 @@ export function StepCard({
       className="h-full"
     >
       <div
-        className={`h-full rounded-2xl border bg-white p-6 shadow-soft hover:shadow-lg transition-all duration-300 ${t.cardBorder}`}
+        className={`mobile-safe-card h-full rounded-2xl border bg-white p-6 shadow-soft hover:shadow-lg transition-all duration-300 ${t.cardBorder}`}
       >
         <div className={`text-3xl font-black mb-4 tabular-nums tracking-tight ${t.number}`}>
           {number}

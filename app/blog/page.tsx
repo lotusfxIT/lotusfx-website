@@ -49,7 +49,7 @@ export default function BlogPage() {
     <div className="min-h-screen bg-gradient-to-b from-primary-50/40 via-white to-white">
       {/* Header */}
       <div className="bg-white border-b border-primary-100">
-        <div className="container-custom py-14 sm:py-16">
+        <div className="container-custom py-10 sm:py-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -114,6 +114,9 @@ export default function BlogPage() {
                           alt={post.title}
                           fill
                           className="object-cover"
+                          onError={(event) => {
+                            event.currentTarget.style.display = 'none'
+                          }}
                         />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">

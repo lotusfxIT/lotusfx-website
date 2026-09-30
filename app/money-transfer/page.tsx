@@ -135,7 +135,7 @@ export default function MoneyTransferPage() {
             />
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-10">
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-8 lg:gap-10">
             {transferMethods.map((method, index) => (
               <MotionWrapper
                 key={method.title}
@@ -145,7 +145,7 @@ export default function MoneyTransferPage() {
                 viewport={{ once: true }}
                 className="h-full"
               >
-                <article className="h-full flex flex-col rounded-2xl border border-primary-100 bg-white p-8 lg:p-10 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all duration-300">
+                <article className="mobile-safe-card h-full flex flex-col rounded-2xl border border-primary-100 bg-white p-8 lg:p-10 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all duration-300">
                   <div className="flex items-start justify-between gap-4 mb-6">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center shadow-md shrink-0">
                       {method.icon}
