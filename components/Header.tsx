@@ -25,10 +25,7 @@ function CountryFlag({ code, className = 'w-9 h-6 rounded-sm object-cover shadow
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [countryMenuOpen, setCountryMenuOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
   const [navigation, setNavigation] = useState<Array<{ name: string; href: string }>>([])
-  const [logoText, setLogoText] = useState('LotusFX')
-  const [loading, setLoading] = useState(true)
   const [partnerMenuOpen, setPartnerMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { selectedCountry, setSelectedCountry } = useCountry()
@@ -44,6 +41,36 @@ export default function Header() {
     setMounted(true)
     fetchHeaderConfig()
   }, [])
+
+  // Close overlays on navigation
+  useEffect(() => {
+    setMobileMenuOpen(false)
+    setCountryMenuOpen(false)
+    setPartnerMenuOpen(false)
+  }, [pathname])
+
+  // Lock body scroll while the mobile drawer is open
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [mobileMenuOpen])
+
+  useEffect(() => {
+    if (!mobileMenuOpen && !countryMenuOpen && !partnerMenuOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false)
+        setCountryMenuOpen(false)
+        setPartnerMenuOpen(false)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [mobileMenuOpen, countryMenuOpen, partnerMenuOpen])
 
   const fetchHeaderConfig = async () => {
     try {
@@ -62,7 +89,6 @@ export default function Header() {
             return item
           })
         setNavigation(items)
-        setLogoText(data.header.logo_text || 'LotusFX')
       }
     } catch (error) {
       console.error('Failed to load header config:', error)
@@ -73,8 +99,6 @@ export default function Header() {
         { name: 'About Us', href: '/about' },
         { name: 'Contact Us', href: '/contact' },
       ])
-    } finally {
-      setLoading(false)
     }
   }
 

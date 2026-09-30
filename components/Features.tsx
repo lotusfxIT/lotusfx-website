@@ -133,13 +133,13 @@ export default function Features() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -8 }}
-              className="group relative h-full"
+              className="group relative h-full shrink-0 md:shrink"
             >
               {/* Gradient Background on Hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
 
               {/* Card Content */}
-              <div className="relative h-full flex flex-col p-8 rounded-2xl border-2 border-primary-100 bg-white shadow-md group-hover:border-primary-400 transition-all duration-300 hover:shadow-lg">
+              <div className="relative h-full flex flex-col p-5 sm:p-8 rounded-2xl border-2 border-primary-100 bg-white shadow-md group-hover:border-primary-400 transition-all duration-300 hover:shadow-lg">
                 {/* Icon Container - red circular style */}
                 <motion.div
                   whileHover={{ scale: 1.15, rotate: 8 }}

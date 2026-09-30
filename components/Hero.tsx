@@ -213,7 +213,9 @@ export default function Hero() {
                       country: selectedCountry,
                     })
                   }
-                  className="col-span-1 lg:col-span-2 w-full text-base lg:text-lg px-5 py-3.5 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] border-2 border-white text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center gap-2"
+                  className={`${
+                    isQuickOrderEnabled(selectedCountry) ? 'col-span-1' : 'col-span-2'
+                  } lg:col-span-2 w-full text-base lg:text-lg px-5 py-3.5 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] border-2 border-white text-white bg-white/10 hover:bg-white/20 flex items-center justify-center gap-2`}
                 >
                   <span>Find a local branch</span>
                 </Link>

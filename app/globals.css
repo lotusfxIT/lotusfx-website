@@ -23,9 +23,7 @@
 @layer base {
   :root {
     --mobile-ink: #172126;
-    --mobile-paper: #f7f5f0;
-    --mobile-lime: #d7f36b;
-    --mobile-coral: #ff765c;
+    --mobile-paper: #ffffff;
   }
 
   html {
@@ -187,7 +185,9 @@
   }
 
   .mobile-card-scroll > * {
+    flex: 0 0 auto;
     min-width: min(82vw, 20rem);
+    max-width: min(82vw, 20rem);
     scroll-snap-align: start;
   }
 
