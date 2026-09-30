@@ -18,10 +18,10 @@ export default function PopupModal() {
     // Check if user has already seen the popup in this session
     const hasSeenPopup = sessionStorage.getItem('lotusfx-popup-seen')
     if (!hasSeenPopup) {
-      // Show popup after a short delay for better UX
+      // Give visitors time to understand the page before showing the promotion.
       const timer = setTimeout(() => {
         setIsOpen(true)
-      }, 1000)
+      }, 4500)
       return () => clearTimeout(timer)
     }
   }, [])

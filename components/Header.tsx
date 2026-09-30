@@ -78,8 +78,8 @@ export default function Header() {
   const portal = getCountryPortalLinks(selectedCountry)
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-white/95 backdrop-blur-xl shadow-[0_1px_0_rgba(23,33,38,0.08)] border-b border-gray-100/80">
-      <nav className="container-custom min-w-0">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-gray-200/70 bg-white/90 shadow-[0_8px_30px_rgba(23,33,38,0.06)] backdrop-blur-xl">
+      <nav className="container-custom min-w-0" aria-label="Main navigation">
         <div className="flex items-center justify-between h-[4.25rem] lg:h-20 gap-3 min-w-0">
           {/* Left: Logo + Navigation */}
           <div className="flex items-center space-x-8 min-w-0">
