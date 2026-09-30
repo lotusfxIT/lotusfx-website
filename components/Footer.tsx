@@ -96,109 +96,115 @@ export default function Footer() {
 
   const sections = config.sections || defaultSections
   return (
-  <footer className="bg-primary-600 text-white overflow-x-hidden w-full">
+  <footer className="bg-primary-600 text-white w-full">
       <div className="container-custom min-w-0">
-        {/* Main Footer Content */}
-        <div className="py-12 sm:py-16">
-          <div className="flex flex-col lg:flex-row gap-10 sm:gap-12 lg:gap-16 min-w-0">
-            {/* Brand Section */}
-            <div className="lg:w-1/3 flex-shrink-0 min-w-0">
+        {/* Main Footer Content — left / right columns; right stack shares width + right-aligned */}
+        <div className="py-12 sm:py-16 space-y-10 sm:space-y-12">
+          {/* Row 1: Logo | Tagline */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-center min-w-0 w-full">
+            <div className="lg:col-span-4 min-w-0">
+              <Link href="/" className="inline-flex items-center shrink-0 max-w-full">
+                <img
+                  src="/images/lotus-logo-horizontal-white.png"
+                  alt="Lotus Foreign Exchange"
+                  className="h-14 sm:h-16 lg:h-20 xl:h-24 w-auto max-w-full object-contain object-left"
+                />
+              </Link>
+            </div>
+            <div className="lg:col-span-8 min-w-0 w-full flex lg:justify-end">
+              <p className="text-white/90 text-sm sm:text-[0.9375rem] leading-relaxed w-full max-w-4xl lg:text-right lg:whitespace-nowrap">
+                {config.description ||
+                  'Your trusted partner for currency exchange and money transfers across Australia, New Zealand, and Fiji.'}
+              </p>
+            </div>
+          </div>
+
+          {/* Row 2: Australia contact | 4 nav sections */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-10 items-start min-w-0 w-full">
+            <div className="lg:col-span-4 min-w-0">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+                transition={{ duration: 0.6, delay: 0.05 }}
                 viewport={{ once: true }}
+                className="space-y-4"
               >
-                <Link href="/" className="inline-flex items-center mb-6 max-w-full">
-                  <img
-                    src="/images/lotus-logo-white-red-bg.jpg"
-                    alt="LotusFX Logo"
-                    className="h-16 sm:h-20 lg:h-24 w-auto max-w-full object-contain"
-                  />
-                </Link>
-
-                <p className="text-white/90 mb-6 leading-relaxed break-words">
-                  {config.description || 'Your trusted partner for currency exchange and money transfers across Australia, New Zealand, and Fiji. Get the best rates with no hidden fees.'}
-                </p>
-
-                {/* Office Location - Current Country */}
-                <div className="space-y-4">
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4 }}
-                    viewport={{ once: true }}
-                    className="space-y-3"
-                  >
-                    <h4 className="text-white font-semibold text-lg">{currentOffice.country}</h4>
-                    <div className="flex items-start space-x-3">
-                      <MapPinIcon className="w-5 h-5 text-white flex-shrink-0 mt-1" />
-                      <p className="text-white/90 text-sm leading-relaxed break-words min-w-0">
-                        {currentOffice.address}
-                      </p>
-                    </div>
-                    <div className="flex items-start space-x-3 min-w-0">
-                      <PhoneIcon className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                      <a
-                        href={`tel:${currentOffice.phone.replace(/\s/g, '').replace(/\//g, '')}`}
-                        className="text-white/90 hover:text-white transition-colors duration-200 text-sm break-words min-w-0"
-                      >
-                        {currentOffice.phone}
-                      </a>
-                    </div>
-                  </motion.div>
-
-                  {/* Email */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.1 }}
-                    viewport={{ once: true }}
-                    className="flex items-center space-x-3 pt-2"
-                  >
-                    <EnvelopeIcon className="w-5 h-5 text-white flex-shrink-0" />
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4 }}
+                  viewport={{ once: true }}
+                  className="space-y-3"
+                >
+                  <h4 className="text-white font-semibold text-lg leading-none">
+                    {currentOffice.country}
+                  </h4>
+                  <div className="flex items-start space-x-3">
+                    <MapPinIcon className="w-5 h-5 text-white flex-shrink-0 mt-1" />
+                    <p className="text-white/90 text-sm leading-relaxed break-words min-w-0">
+                      {currentOffice.address}
+                    </p>
+                  </div>
+                  <div className="flex items-start space-x-3 min-w-0">
+                    <PhoneIcon className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                     <a
-                      href={`mailto:${config.contact_email || 'info@lotusfx.com'}`}
-                      className="text-white/90 hover:text-white transition-colors duration-200"
+                      href={`tel:${currentOffice.phone.replace(/\s/g, '').replace(/\//g, '')}`}
+                      className="text-white/90 hover:text-white transition-colors duration-200 text-sm break-words min-w-0"
                     >
-                      {config.contact_email || 'info@lotusfx.com'}
+                      {currentOffice.phone}
                     </a>
-                  </motion.div>
-                </div>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                  viewport={{ once: true }}
+                  className="flex items-center space-x-3 pt-1"
+                >
+                  <EnvelopeIcon className="w-5 h-5 text-white flex-shrink-0" />
+                  <a
+                    href={`mailto:${config.contact_email || 'info@lotusfx.com'}`}
+                    className="text-white/90 hover:text-white transition-colors duration-200"
+                  >
+                    {config.contact_email || 'info@lotusfx.com'}
+                  </a>
+                </motion.div>
               </motion.div>
             </div>
 
-            {/* Navigation Sections */}
-            <div className="lg:flex-1 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 lg:gap-12 lg:ml-16 xl:ml-32 min-w-0">
-              {Object.entries(sections).map(([sectionName, items], idx) => (
-                <motion.div
-                  key={sectionName}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 + idx * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex flex-col"
-                >
-                  <h3 className="text-lg font-semibold mb-4 text-white">{sectionName}</h3>
-                  <ul className="space-y-3 list-none pl-0">
-                    {items.map((item) => (
-                      <li key={item.name} className="pl-0">
-                        <motion.div
-                          whileHover={{ x: 4 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <Link
-                            href={item.href}
-                            className="text-white/80 hover:text-white transition-colors duration-200 inline-flex items-center"
-                          >
-                            {item.name}
-                          </Link>
-                        </motion.div>
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              ))}
+            <div className="lg:col-span-8 min-w-0 w-full flex lg:justify-end">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 w-full max-w-4xl items-start">
+                {Object.entries(sections).map(([sectionName, items], idx) => (
+                  <motion.div
+                    key={sectionName}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1 + idx * 0.1 }}
+                    viewport={{ once: true }}
+                    className="flex flex-col min-w-0"
+                  >
+                    <h3 className="text-lg font-semibold mb-4 text-white leading-none">
+                      {sectionName}
+                    </h3>
+                    <ul className="space-y-3 list-none pl-0 m-0">
+                      {items.map((item) => (
+                        <li key={item.name} className="pl-0">
+                          <motion.div whileHover={{ x: 4 }} transition={{ duration: 0.2 }}>
+                            <Link
+                              href={item.href}
+                              className="text-white/80 hover:text-white transition-colors duration-200 inline-flex items-center"
+                            >
+                              {item.name}
+                            </Link>
+                          </motion.div>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -209,24 +215,26 @@ export default function Footer() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="border-t border-white/20 py-8"
+          className="border-t border-white/20 py-8 overflow-visible"
         >
-          <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-stretch lg:items-center min-w-0">
-            <div className="lg:w-1/3 min-w-0">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-center min-w-0 w-full">
+            <div className="lg:col-span-4 min-w-0 w-full">
               <h3 className="text-xl font-semibold mb-2">Stay Updated</h3>
-              <p className="text-white/90">
+              <p className="text-white/90 text-sm sm:text-[0.9375rem] leading-relaxed">
                 Get the latest exchange rates and exclusive offers delivered to your inbox.
               </p>
             </div>
-            <div className="lg:flex-1 flex flex-col sm:flex-row gap-3 sm:gap-4 w-full min-w-0 lg:ml-16 xl:ml-32">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full min-w-0 flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:ring-2 focus:ring-white focus:border-white transition-colors duration-200"
-              />
-              <button className="bg-white text-primary-600 hover:bg-white/90 font-bold py-3 px-6 rounded-lg transition-all duration-200 whitespace-nowrap w-full sm:w-auto flex-shrink-0">
-                Subscribe
-              </button>
+            <div className="lg:col-span-8 min-w-0 w-full flex lg:justify-end">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full max-w-4xl min-w-0">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full min-w-0 flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:ring-2 focus:ring-white focus:border-white transition-colors duration-200"
+                />
+                <button className="bg-white text-primary-600 hover:bg-white/90 font-bold py-3 px-6 rounded-lg transition-all duration-200 whitespace-nowrap w-full sm:w-auto flex-shrink-0">
+                  Subscribe
+                </button>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -302,33 +310,38 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {/* Bottom Bar — copyright left, compliance right */}
         <div className="border-t border-white/20 py-6">
-          <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
-            <p className="text-white/80 text-sm">
-              © 2025 LotusFX. All rights reserved. ABN: 12 345 678 901
-            </p>
-            <div className="flex items-center flex-wrap justify-center gap-4 text-sm text-white/80">
-              <span>Licensed by ASIC</span>
-              {selectedCountry === 'AU' && (
-                <>
-                  <span>•</span>
-                  <span>AUSTRAC Registered</span>
-                </>
-              )}
-              {selectedCountry === 'NZ' && (
-                <>
-                  <span>•</span>
-                  <span>FMA Licensed</span>
-                </>
-              )}
-              {selectedCountry === 'FJ' && (
-                <>
-                  <span>•</span>
-                  <span>RBF Licensed</span>
-                </>
-              )}
-            </div>
+          <div className="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between xl:gap-8">
+            {selectedCountry === 'NZ' ? (
+              <>
+                <p className="text-white/80 text-sm text-center xl:text-left shrink-0">
+                  © 2026 Lotus Foreign Exchange Limited. All rights reserved.
+                </p>
+                <p className="text-white/65 text-xs sm:text-sm text-center xl:text-right leading-relaxed xl:max-w-[36rem]">
+                  NZBN 9429036619870 · NZ Financial Service Providers Register · FSCL member
+                </p>
+              </>
+            ) : selectedCountry === 'FJ' ? (
+              <>
+                <p className="text-white/80 text-sm text-center xl:text-left shrink-0">
+                  © 2026 Lotus Foreign Exchange Limited (Fiji). All rights reserved.
+                </p>
+                <p className="text-white/65 text-xs sm:text-sm text-center xl:text-right leading-relaxed xl:max-w-[38rem]">
+                  RBF licensed Restricted Foreign Exchange Dealer under the
+                  Exchange&nbsp;Control&nbsp;Act&nbsp;1950
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-white/80 text-sm text-center xl:text-left shrink-0">
+                  © 2026 Lotus Foreign Exchange Limited. All rights reserved.
+                </p>
+                <p className="text-white/65 text-xs sm:text-sm text-center xl:text-right leading-relaxed">
+                  ABN 71 108 877 050 · AUSTRAC Registered
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>

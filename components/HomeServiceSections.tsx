@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRightIcon, BanknotesIcon } from '@heroicons/react/24/outline'
+import { BanknotesIcon } from '@heroicons/react/24/outline'
 import { AccentPanel, SplitBand } from '@/components/marketing/MarketingBlocks'
 
 export default function HomeServiceSections() {
@@ -7,7 +7,7 @@ export default function HomeServiceSections() {
     <>
       <SplitBand
         tone="soft"
-        eyebrow="Foreign exchange"
+        eyebrow="Currency exchange"
         title="Currency exchange that makes travel easier"
         paragraphs={[
           'From taxis and tips to markets and everyday spending, having the right cash on hand makes the trip smoother from the moment you arrive.',
@@ -18,34 +18,32 @@ export default function HomeServiceSections() {
           <>
             <Link href="/currency-exchange" className="btn-primary inline-flex items-center justify-center gap-2">
               Explore Currency Exchange
-              <ArrowRightIcon className="w-5 h-5" />
             </Link>
             <Link href="/locations" className="btn-secondary inline-flex items-center justify-center gap-2">
               Find a Local Branch
-              <ArrowRightIcon className="w-5 h-5" />
             </Link>
           </>
         }
         accent={
-          <div className="relative">
+          <div className="relative h-full">
             <div className="absolute -inset-4 bg-primary-100/60 rounded-[2rem] blur-2xl" aria-hidden />
-            <div className="relative rounded-3xl border border-primary-100 bg-white p-8 shadow-strong">
+            <div className="relative h-full flex flex-col justify-center rounded-3xl border border-primary-100 bg-white p-8 lg:p-10 shadow-strong">
               <div className="w-14 h-14 rounded-2xl bg-primary-600 text-white flex items-center justify-center mb-6 shadow-md">
                 <BanknotesIcon className="w-7 h-7" />
               </div>
-              <p className="text-sm font-semibold uppercase tracking-wider text-primary-600 mb-3">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-5">
                 Why travellers choose us
               </p>
-              <ul className="space-y-4 text-gray-700">
+              <ul className="space-y-5 text-gray-700 flex-1 flex flex-col justify-center">
                 {[
                   'Market-leading rates with no commission fees',
                   'Practical denominations for real travel spending',
                   'Friendly help before you board',
                   'Branches across AU, NZ & Fiji',
                 ].map((item) => (
-                  <li key={item} className="flex gap-3 items-start">
-                    <span className="mt-1.5 h-2 w-2 rounded-full bg-primary-600 shrink-0" />
-                    <span className="leading-snug">{item}</span>
+                  <li key={item} className="flex gap-3.5 items-start">
+                    <span className="mt-2.5 h-2.5 w-2.5 rounded-full bg-primary-600 shrink-0" />
+                    <span className="text-base lg:text-lg leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -67,7 +65,6 @@ export default function HomeServiceSections() {
         ctas={
           <Link href="/money-transfer" className="btn-primary inline-flex items-center gap-2">
             Learn About Money Transfers
-            <ArrowRightIcon className="w-5 h-5" />
           </Link>
         }
         accent={
@@ -75,16 +72,20 @@ export default function HomeServiceSections() {
             title="Transfer options"
             items={[
               {
-                label: 'eWire',
+                label: 'Lotus Special eWire',
                 detail: 'Fast regional transfers across Australia, New Zealand and Fiji.',
               },
               {
-                label: 'Western Union & MoneyGram',
-                detail: 'Worldwide cash pickup through trusted global networks.',
+                label: 'Lotus International Wire',
+                detail: 'Secure bank-to-bank transfers for larger or business payments.',
               },
               {
-                label: 'International wire',
-                detail: 'Secure bank-to-bank transfers for larger or business payments.',
+                label: 'MoneyGram',
+                detail: 'Worldwide cash pickup and bank deposit across 200+ countries.',
+              },
+              {
+                label: 'Western Union',
+                detail: 'Fast global cash pickup through a trusted worldwide network.',
               },
             ]}
           />

@@ -4,22 +4,48 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Museo Sans';
+  src: url('/fonts/MuseoSans_500.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Museo Sans';
+  src: url('/fonts/MuseoSans_700.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
-    overflow-x: hidden;
+    /* clip avoids the overflow-x:hidden → overflow-y:auto trap that chops descenders */
+    overflow-x: clip;
     width: 100%;
   }
   
   body {
     font-family: 'Inter', system-ui, sans-serif;
-    overflow-x: hidden;
+    overflow-x: clip;
     width: 100%;
     overscroll-behavior-x: none;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', system-ui, sans-serif;
+    line-height: 1.35;
+    padding-bottom: 0.15em;
+    overflow: visible;
+  }
+
+  p {
+    line-height: 1.7;
+    overflow: visible;
+    padding-bottom: 0.05em;
   }
 }
 
@@ -224,3 +250,47 @@
     transform: translateX(0);
   }
 }
+
+/* Quick Order footer — gentle attention pulse on primary action */
+@keyframes qo-next-nudge {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18), 0 0 0 0 rgba(255, 255, 255, 0.55);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22), 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+}
+
+.qo-next-nudge {
+  animation: qo-next-nudge 1.6s ease-in-out 3;
+}
+
+/* Homepage hero — Quick Order CTA stands out as a new feature */
+@keyframes hero-qo-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 10px 25px rgba(0, 0, 0, 0.18),
+      0 0 0 0 rgba(255, 255, 255, 0.55);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow:
+      0 14px 32px rgba(0, 0, 0, 0.22),
+      0 0 0 12px rgba(255, 255, 255, 0);
+  }
+}
+
+.hero-qo-pulse {
+  animation: hero-qo-pulse 2s ease-in-out infinite;
+}
+
+.hero-qo-pulse:hover,
+.hero-qo-pulse:focus-visible {
+  animation: none;
+}
+

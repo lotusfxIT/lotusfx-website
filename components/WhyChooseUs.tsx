@@ -64,7 +64,7 @@ const testimonials = [
 export default function WhyChooseUs() {
   return (
     <section className="relative pt-28 lg:pt-32 pb-24 lg:pb-32 bg-white overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none hidden md:block" aria-hidden>
         <div
           className="absolute top-16 right-[-40px] w-64 h-64 opacity-15"
           style={{

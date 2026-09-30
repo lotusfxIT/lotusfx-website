@@ -1,9 +1,10 @@
 'use client'
 
+import Link from 'next/link'
+import { motion } from 'framer-motion'
 import MotionWrapper from '@/components/MotionWrapper'
 import { fillStatsTemplate } from '@/config/stats'
 import { useSiteStats } from '@/context/SiteStatsContext'
-import { useCountry } from '@/context/CountryContext'
 import {
   EyeIcon,
   HeartIcon,
@@ -13,650 +14,530 @@ import {
   CheckBadgeIcon,
   UserGroupIcon,
   DevicePhoneMobileIcon,
+  MapPinIcon,
 } from '@heroicons/react/24/outline'
 
-function AboutVideo() {
-  return (
-    <section className="w-full bg-black">
-      <div className="w-full">
-        <div className="relative w-full pt-[56.25%] overflow-hidden">
-          <iframe
-            className="absolute inset-0 w-full h-full scale-[1.08] origin-center"
-            src="https://www.youtube.com/embed/7z2zFF3z_9s?autoplay=1&mute=1&controls=0&loop=1&playlist=7z2zFF3z_9s&modestbranding=1"
-            title="Welcome to Lotus Foreign Exchange | Trusted Currency &amp; Money Transfer Services"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
-        </div>
-      </div>
-    </section>
-  )
-}
+const milestones = [
+  {
+    year: '2002',
+    event:
+      'Lotus FX was established in New Zealand, opening its first branch in St Lukes, Auckland. In the same year, the business expanded into Fiji and became a Super Agent for MoneyGram.',
+  },
+  {
+    year: '2004',
+    event:
+      'Opened the first Lotus FX branch in Australia, marking an important step in the company’s regional expansion.',
+  },
+  {
+    year: '2014',
+    event:
+      'Launched the 4D system and mobile app, enhancing operational efficiency and customer convenience.',
+  },
+  {
+    year: '2020',
+    event:
+      'Launched the Lotus FX website across New Zealand, Australia, and Fiji, strengthening the Group’s digital presence.',
+  },
+  {
+    year: '2023',
+    event:
+      'Introduced onboard currency exchange services for cruise ship passengers in Auckland.',
+  },
+  {
+    year: '2024',
+    event:
+      'Became a title sponsor of Auckland Rugby League, supporting community activities and championing the spirit of sport.',
+  },
+  {
+    year: '2025',
+    event:
+      'Began working with Mastercard and Western Union, further strengthening payment and remittance capabilities.',
+  },
+  {
+    year: '2026',
+    event:
+      'Surpassed 30,000 positive customer reviews across the Group, reflecting strong customer trust and service excellence.',
+  },
+]
+
+const values = [
+  {
+    icon: EyeIcon,
+    title: 'Transparency',
+    description: 'No hidden fees, no surprises. What you see is what you pay.',
+  },
+  {
+    icon: HeartIcon,
+    title: 'Customer first',
+    description: 'Your needs come first. We’re here to serve you, not the other way around.',
+  },
+  {
+    icon: BoltIcon,
+    title: 'Speed & efficiency',
+    description: 'Fast processing, quick transfers, and minimal wait times.',
+  },
+  {
+    icon: ShieldCheckIcon,
+    title: 'Trust & integrity',
+    description: 'We earn your trust through consistent, reliable, and honest service.',
+  },
+]
+
+const reasons = [
+  {
+    title: 'Better rates than banks',
+    description:
+      'Our rates are typically 2–3% better than major banks. As specialists in foreign exchange, we offer value banks struggle to match.',
+    icon: BanknotesIcon,
+  },
+  {
+    title: 'No commission fees',
+    description:
+      'We don’t charge commission on currency exchange. Complete transparency with no hidden charges.',
+    icon: CheckBadgeIcon,
+  },
+  {
+    title: 'Expert FX team',
+    description:
+      'Our staff are trained foreign exchange specialists who understand the markets and can give practical advice.',
+    icon: UserGroupIcon,
+  },
+  {
+    title: 'Multiple channels',
+    description:
+      'Exchange in-branch, online, or via our mobile app — with consistent rates across every channel.',
+    icon: DevicePhoneMobileIcon,
+  },
+  {
+    title: 'Fast processing',
+    description:
+      'Most transfers complete within 24 hours. eWire between Australia, New Zealand and Fiji is instant with zero fees.',
+    icon: BoltIcon,
+  },
+  {
+    title: 'Licensed & regulated',
+    description:
+      'Licensed and regulated in all three countries, with bank-grade protection for your money and data.',
+    icon: ShieldCheckIcon,
+  },
+]
 
 export default function AboutPage() {
-  const { selectedCountry } = useCountry()
   const { stats: siteStats } = useSiteStats()
+
+  const regions = [
+    {
+      code: 'au',
+      country: 'Australia',
+      branches: `${siteStats.branches.australia} branches`,
+      customers: `${siteStats.customers.australia} customers`,
+      email: siteStats.emails.australia,
+      highlights: ['Major city coverage', 'Extended trading hours', 'eWire to NZ & Fiji'],
+    },
+    {
+      code: 'nz',
+      country: 'New Zealand',
+      branches: `${siteStats.branches.newZealand} branches`,
+      customers: `${siteStats.customers.newZealand} customers`,
+      email: siteStats.emails.newZealand,
+      highlights: ['Nationwide network', 'Expert FX advisors', 'Same-day transfers'],
+    },
+    {
+      code: 'fj',
+      country: 'Fiji',
+      branches: `${siteStats.branches.fiji} branches`,
+      customers: `${siteStats.customers.fiji} customers`,
+      email: siteStats.emails.fiji,
+      highlights: ['Island-wide service', 'Pacific specialist', 'Local currency expertise'],
+    },
+  ]
+
   return (
     <>
-      {/* Brand video - full width at top */}
-      <AboutVideo />
+      {/* Brand hero — copy + video side by side */}
+      <section className="relative overflow-x-clip bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 pt-28 sm:pt-32 lg:pt-36 pb-16 sm:pb-20 lg:pb-24 text-white">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden>
+          <div className="absolute -top-24 left-10 w-72 h-72 bg-primary-500 rounded-full blur-3xl opacity-30" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent-500/20 rounded-full blur-3xl" />
+          <span className="absolute top-[18%] right-[8%] text-7xl font-bold text-white/10">$</span>
+          <span className="absolute bottom-[28%] left-[6%] text-6xl font-bold text-white/10">€</span>
+          <span className="absolute top-[62%] right-[42%] text-5xl font-bold text-white/10">¥</span>
+        </div>
 
-      {/* Hero Section */}
-      <section className="pt-16 pb-16 bg-gradient-to-br from-primary-50 via-white to-accent-50">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto text-center">
-            <MotionWrapper initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-              <div className="mb-8">
-                <img
-                  src="/images/lotus-logo-white.png"
-                  alt="LotusFX Logo"
-                  className="h-24 lg:h-32 w-auto mx-auto mb-6"
-                  style={{ filter: 'brightness(0) saturate(100%)' }}
+        <div className="container-custom relative z-10">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 xl:gap-16 items-center min-w-0">
+            <div className="min-w-0">
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="font-museo uppercase text-white leading-none mb-5 sm:mb-6"
+                aria-label="Lotus Foreign Exchange"
+              >
+                <span className="inline-flex flex-wrap items-baseline gap-x-[0.38em]">
+                  <span className="font-bold text-[2rem] sm:text-[2.5rem] lg:text-[2.85rem] tracking-[0.02em]">
+                    Lotus
+                  </span>
+                  <span className="font-medium text-[1.15rem] sm:text-[1.45rem] lg:text-[1.7rem] tracking-[0.14em] text-white/90">
+                    Foreign Exchange
+                  </span>
+                </span>
+              </motion.p>
+
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.08 }}
+                className="text-sm font-semibold uppercase tracking-[0.2em] text-white/70 mb-4"
+              >
+                Since 2002 · Australia · New Zealand · Fiji
+              </motion.p>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.12 }}
+                className="text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-5xl font-bold !leading-[1.35] pb-[0.15em] tracking-tight mb-5"
+              >
+                Your trusted partner for currency exchange across the Pacific
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.18 }}
+                className="text-base sm:text-lg text-white/85 !leading-[1.75] mb-8 max-w-xl"
+              >
+                Helping travellers, families and businesses exchange currency and send money overseas
+                with competitive rates, clear pricing, and friendly local service.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.24 }}
+                className="flex flex-wrap gap-3 sm:gap-4"
+              >
+                <Link
+                  href="/locations"
+                  className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-base font-semibold text-primary-700 shadow-lg hover:bg-gray-50 transition"
+                >
+                  Find a branch
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2 rounded-lg border-2 border-white/80 px-5 py-3 text-base font-semibold text-white hover:bg-white/10 transition"
+                >
+                  Contact us
+                </Link>
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="min-w-0 w-full"
+            >
+              <div className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl bg-black/40 ring-1 ring-white/20 shadow-2xl pt-[56.25%]">
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src="https://www.youtube.com/embed/7z2zFF3z_9s?rel=0&modestbranding=1"
+                  title="Welcome to Lotus Foreign Exchange"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
                 />
               </div>
-              <div className="inline-block bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
-                Trusted by {siteStats.customers.total} Customers
+              <p className="mt-3 text-sm text-white/70">
+                A quick look at who we are and how we help customers across the Pacific.
+              </p>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 border-t border-white/20 pt-8 sm:pt-10 min-w-0"
+          >
+            {[
+              { value: siteStats.yearsOfExcellence, label: 'Years of excellence' },
+              { value: siteStats.branches.total, label: 'Branches across the Pacific' },
+              { value: siteStats.customers.total, label: 'Customers served' },
+              { value: siteStats.totalTransferred, label: 'Safely transferred' },
+            ].map((stat) => (
+              <div key={stat.label} className="min-w-0">
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight !leading-none break-words">
+                  {stat.value}
+                </div>
+                <div className="mt-1 text-sm text-white/75 leading-snug">{stat.label}</div>
               </div>
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                Your Trusted Partner for Foreign Exchange Across the Pacific
-              </h1>
-              <p className="text-xl text-gray-600 mb-8">
-                Since 2002, LotusFX has been helping individuals and businesses exchange currency 
-                and transfer money internationally with competitive rates, fast service, and expert support.
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Our story — full-width editorial */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-white">
+        <div className="container-custom">
+          <div className="mb-10 lg:mb-12">
+            <MotionWrapper
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55 }}
+              viewport={{ once: true }}
+              className="max-w-4xl"
+            >
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
+                Our story
+              </p>
+              <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 tracking-tight !leading-[1.35] pb-[0.15em] text-balance">
+                Built for better exchange — not bank fees
+              </h2>
+              <p className="mt-5 text-lg sm:text-xl text-gray-600 !leading-[1.75] max-w-3xl">
+                Founded in 2002 with one mission: fairer rates, clearer pricing, and genuine help —
+                the opposite of bank foreign exchange.
               </p>
             </MotionWrapper>
           </div>
+
+          <MotionWrapper
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="grid md:grid-cols-2 gap-8 lg:gap-14 border-t border-gray-200 pt-10"
+          >
+            <p className="text-gray-700 text-base sm:text-lg !leading-[1.75] min-w-0">
+              {fillStatsTemplate(siteStats.copy.aboutGrowth, siteStats)}
+            </p>
+            <p className="text-gray-700 text-base sm:text-lg !leading-[1.75] min-w-0">
+              Today we serve over {siteStats.customers.total} customers and have facilitated over{' '}
+              {siteStats.totalTransferred} in currency exchanges and international transfers — across
+              Australia, New Zealand and Fiji.
+            </p>
+          </MotionWrapper>
         </div>
       </section>
 
-
-      {/* Our Story */}
-      <section className="pt-6 pb-16 bg-white">
+      {/* Timeline */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-primary-50/40">
         <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <MotionWrapper
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-                <span className="h-px w-8 bg-primary-500" aria-hidden />
-                Since 2002
-              </span>
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 tracking-tight">
-                Our Story
-              </h2>
-              <div className="space-y-5 text-gray-600">
-                <p className="text-lg lg:text-xl text-gray-700 leading-relaxed border-l-4 border-primary-500 pl-5">
-                  LotusFX was founded in 2002 with a simple mission: to provide better foreign exchange 
-                  services than traditional banks. We saw that customers were paying too much in fees and 
-                  getting poor exchange rates, so we set out to change that.
-                </p>
-                <p className="text-base lg:text-lg leading-relaxed">
-                  {fillStatsTemplate(siteStats.copy.aboutGrowth, siteStats)}
-                </p>
-                <p className="text-base lg:text-lg leading-relaxed">
-                  Today, we serve over {siteStats.customers.total} customers and have facilitated over {siteStats.totalTransferred} in
-                  currency exchanges and international transfers. We&apos;re proud to be the trusted choice
-                  for travelers, families sending money home, and businesses making international payments.
-                </p>
-              </div>
-            </MotionWrapper>
+          <div className="max-w-2xl mb-10 sm:mb-14">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
+              Milestones
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight !leading-[1.35] pb-[0.15em]">
+              Growing with the Pacific since 2002
+            </h2>
+          </div>
 
-            <MotionWrapper
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="bg-gradient-to-br from-primary-600 to-accent-500 rounded-2xl p-8 text-white"
-            >
-              <h3 className="text-2xl font-bold mb-6">Our Milestones</h3>
-              <div className="space-y-6">
-                {[
-                  {
-                    year: '2002',
-                    event:
-                      'Lotus FX was established in New Zealand, opening its first branch in St Lukes, Auckland. In the same year, the business expanded into Fiji and became a Super Agent for MoneyGram, laying the foundation for its growth across the South Pacific.',
-                  },
-                  {
-                    year: '2004',
-                    event:
-                      'Opened the first Lotus FX branch in Australia, marking an important step in the company’s regional expansion.',
-                  },
-                  {
-                    year: '2014',
-                    event:
-                      'Launched the 4D system and mobile app, enhancing operational efficiency and customer convenience.',
-                  },
-                  {
-                    year: '2020',
-                    event:
-                      'Launched the Lotus FX website across New Zealand, Australia, and Fiji, strengthening the Group’s digital presence.',
-                  },
-                  {
-                    year: '2023',
-                    event:
-                      'Introduced onboard currency exchange services for cruise ship passengers in Auckland, offering greater convenience to international visitors.',
-                  },
-                  {
-                    year: '2024',
-                    event:
-                      'Became a title sponsor of Auckland Rugby League, supporting community activities and championing the spirit of sport.',
-                  },
-                  {
-                    year: '2025',
-                    event:
-                      'Began working with Mastercard and Western Union, further strengthening payment and remittance capabilities while reaching a major branch growth milestone across New Zealand, Australia, and Fiji.',
-                  },
-                  {
-                    year: '2026',
-                    event:
-                      'Surpassed 30,000 positive customer reviews across the Group, reflecting strong customer trust and service excellence.',
-                  },
-                ].map((milestone) => (
-                  <div key={milestone.year} className="flex gap-4">
-                    <div className="flex-shrink-0 w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center font-bold">
+          <div className="relative max-w-4xl">
+            <div
+              className="absolute left-[2.15rem] sm:left-[2.4rem] top-3 bottom-3 w-px bg-primary-200"
+              aria-hidden
+            />
+            <ol className="space-y-8 sm:space-y-10">
+              {milestones.map((milestone, index) => (
+                <MotionWrapper
+                  key={milestone.year}
+                  initial={{ opacity: 0, x: -12 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: Math.min(index * 0.04, 0.28) }}
+                  viewport={{ once: true }}
+                  className="relative grid grid-cols-[4.5rem_1fr] sm:grid-cols-[5rem_1fr] gap-4 sm:gap-6"
+                >
+                  <div className="relative z-10">
+                    <span className="inline-flex h-10 w-[4.3rem] sm:w-[4.8rem] items-center justify-center rounded-full bg-primary-600 text-sm font-bold text-white shadow-md">
                       {milestone.year}
-                    </div>
-                    <div className="flex items-center">
-                      <p>{milestone.event}</p>
-                    </div>
+                    </span>
                   </div>
-                ))}
-              </div>
-            </MotionWrapper>
+                  <p className="pt-1.5 text-gray-700 !leading-[1.75] text-base sm:text-lg">
+                    {milestone.event}
+                  </p>
+                </MotionWrapper>
+              ))}
+            </ol>
           </div>
         </div>
       </section>
 
-      {/* Our Values */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      {/* Values */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-white">
         <div className="container-custom">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
+          <div className="max-w-3xl mb-10 sm:mb-14">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
               What we stand for
-            </span>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-              Our Core Values
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight !leading-[1.35] pb-[0.15em] mb-4">
+              Our core values
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              These principles guide everything we do at LotusFX
+            <p className="text-lg text-gray-600 !leading-[1.75]">
+              These principles guide every rate, every transfer, and every conversation in branch.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: <EyeIcon className="w-6 h-6" />,
-                title: 'Transparency',
-                description: 'No hidden fees, no surprises. What you see is what you pay.',
-              },
-              {
-                icon: <HeartIcon className="w-6 h-6" />,
-                title: 'Customer First',
-                description: "Your needs come first. We're here to serve you, not the other way around.",
-              },
-              {
-                icon: <BoltIcon className="w-6 h-6" />,
-                title: 'Speed & Efficiency',
-                description: 'Fast processing, quick transfers, and minimal wait times.',
-              },
-              {
-                icon: <ShieldCheckIcon className="w-6 h-6" />,
-                title: 'Trust & Integrity',
-                description: 'We earn your trust through consistent, reliable, and honest service.',
-              },
-            ].map((value, index) => (
-              <div key={value.title} className="h-full">
-                <div className="h-full flex flex-col bg-white rounded-2xl border border-primary-100 p-7 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all duration-300 text-left">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center mb-5 shadow-md">
-                    {value.icon}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+            {values.map((value, index) => {
+              const Icon = value.icon
+              return (
+                <MotionWrapper
+                  key={value.title}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, delay: index * 0.06 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="w-11 h-11 rounded-full bg-primary-600 text-white flex items-center justify-center mb-4">
+                    <Icon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-3">{value.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{value.description}</p>
-                </div>
-              </div>
-            ))}
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{value.title}</h3>
+                  <p className="text-gray-600 !leading-[1.75]">{value.description}</p>
+                </MotionWrapper>
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* Our Presence */}
-      <section className="py-16 lg:py-20 bg-white">
+      {/* Presence */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="container-custom">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
+          <div className="max-w-3xl mb-10 sm:mb-14">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
               Across the Pacific
-            </span>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-              Serving the Pacific Region
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight !leading-[1.35] pb-[0.15em] mb-4">
+              Local branches. Regional reach.
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 !leading-[1.75]">
               {fillStatsTemplate(siteStats.copy.aboutPacificIntro, siteStats)}
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                code: 'au',
-                country: 'Australia',
-                branches: `${siteStats.branches.australia} Branches`,
-                customers: `${siteStats.customers.australia} Customers`,
-                email: siteStats.emails.australia,
-                highlights: ['Major cities coverage', 'Extended trading hours', 'eWire to NZ & Fiji'],
-              },
-              {
-                code: 'nz',
-                country: 'New Zealand',
-                branches: `${siteStats.branches.newZealand} Branches`,
-                customers: `${siteStats.customers.newZealand} Customers`,
-                email: siteStats.emails.newZealand,
-                highlights: ['Nationwide network', 'Expert FX advisors', 'Same-day transfers'],
-              },
-              {
-                code: 'fj',
-                country: 'Fiji',
-                branches: `${siteStats.branches.fiji} Branches`,
-                customers: `${siteStats.customers.fiji} Customers`,
-                email: siteStats.emails.fiji,
-                highlights: ['Island-wide service', 'Pacific specialist', 'Local currency expert'],
-              },
-            ].map((region, index) => (
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
+            {regions.map((region, index) => (
               <MotionWrapper
                 key={region.country}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.45, delay: index * 0.08 }}
                 viewport={{ once: true }}
-                className="rounded-2xl border border-primary-100 bg-white p-8 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all"
+                className="border-t-2 border-primary-600 pt-6"
               >
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-4">
                   <img
                     src={`https://flagcdn.com/w80/${region.code}.png`}
                     alt=""
-                    className="h-8 w-12 object-cover rounded shadow-sm"
+                    className="h-7 w-10 object-cover rounded-sm shadow-sm"
                   />
                   <h3 className="text-2xl font-bold text-gray-900">{region.country}</h3>
                 </div>
-                <div className="space-y-3 mb-6 text-gray-700">
-                  <p className="font-semibold text-primary-700">{region.branches}</p>
-                  <p className="text-sm">{region.customers}</p>
-                  <p className="text-sm break-all text-gray-500">{region.email}</p>
-                </div>
-                <div className="border-t border-primary-100 pt-4">
-                  <ul className="space-y-2">
-                    {region.highlights.map((highlight) => (
-                      <li key={highlight} className="flex items-start gap-2 text-sm text-gray-600">
-                        <span className="text-primary-600 font-bold">✓</span>
-                        <span>{highlight}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <p className="text-primary-700 font-semibold mb-1">{region.branches}</p>
+                <p className="text-sm text-gray-600 mb-1">{region.customers}</p>
+                <a
+                  href={`mailto:${region.email}`}
+                  className="text-sm text-gray-500 hover:text-primary-700 break-all transition"
+                >
+                  {region.email}
+                </a>
+                <ul className="mt-5 space-y-2">
+                  {region.highlights.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
+                      <MapPinIcon className="w-4 h-4 text-primary-600 mt-0.5 shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </MotionWrapper>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* Why Choose Us */}
-      <section className="py-16 lg:py-20 bg-gray-50">
-        <div className="container-custom">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
-              The Lotus difference
-            </span>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-              Why Customers Choose LotusFX
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              We&apos;re not just another currency exchange — we&apos;re your trusted financial partner
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'Better Rates Than Banks',
-                description:
-                  "Our rates are typically 2-3% better than major banks. As specialists in foreign exchange, we can offer superior rates that banks simply can't match.",
-                icon: <BanknotesIcon className="w-6 h-6" />,
-              },
-              {
-                title: 'No Commission Fees',
-                description:
-                  "We don't charge commission on currency exchange. What you see is what you pay — complete transparency with no hidden charges.",
-                icon: <CheckBadgeIcon className="w-6 h-6" />,
-              },
-              {
-                title: 'Expert FX Team',
-                description:
-                  'Our staff are trained foreign exchange specialists, not general banking staff. We understand the markets and can provide expert advice.',
-                icon: <UserGroupIcon className="w-6 h-6" />,
-              },
-              {
-                title: 'Multiple Service Channels',
-                description:
-                  'Exchange in-branch, online, or via our mobile app. Choose the method that works best for you with consistent rates across all channels.',
-                icon: <DevicePhoneMobileIcon className="w-6 h-6" />,
-              },
-              {
-                title: 'Fast Processing',
-                description:
-                  'Most transfers complete within 24 hours. eWire transfers between AU, NZ & Fiji are instant with zero fees.',
-                icon: <BoltIcon className="w-6 h-6" />,
-              },
-              {
-                title: 'Fully Licensed & Regulated',
-                description:
-                  "We're licensed and regulated by financial authorities in all three countries. Your money and data are protected with bank-grade security.",
-                icon: <ShieldCheckIcon className="w-6 h-6" />,
-              },
-            ].map((reason) => (
-              <div
-                key={reason.title}
-                className="h-full flex flex-col bg-white rounded-2xl border border-primary-100 p-7 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all duration-300"
-              >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center mb-5 shadow-md">
-                  {reason.icon}
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">{reason.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{reason.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Leadership Team Profile */}
-      <section className="py-16 bg-white">
-        <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Leadership Team Profile
-            </h2>
-            <p className="text-lg text-gray-600">
-              Meet the experienced team leading LotusFX across Australia, New Zealand, and Fiji
-            </p>
-          </div>
-
-          <div className="space-y-12">
-            {/* Group Leadership */}
-            <MotionWrapper
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
+          <div className="mt-10">
+            <Link
+              href="/locations"
+              className="inline-flex items-center gap-2 font-semibold text-primary-700 hover:text-primary-800 transition"
             >
-              <h3 className="text-2xl font-bold text-gray-900 mb-8 border-b-2 border-primary-600 pb-2">
-                Group Leadership
-              </h3>
-              
-              {/* Level 1: Top Leadership - Pravin and Kashmin side by side */}
-              <div className="flex justify-center gap-6 mb-8">
-                <MotionWrapper
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  viewport={{ once: true }}
-                  className="bg-gradient-to-br from-primary-600 to-primary-700 rounded-2xl p-8 border-2 border-primary-800 shadow-xl max-w-sm w-full"
-                >
-                  <div className="text-center">
-                    <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                      <span className="text-primary-600 text-3xl font-bold">
-                        PK
-                      </span>
-                    </div>
-                    <h4 className="text-xl font-bold text-white mb-2">Pravin Kumar QSM JP</h4>
-                    <p className="text-primary-100 font-semibold text-lg">Managing Director</p>
-                  </div>
-                </MotionWrapper>
-                
-                <MotionWrapper
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  viewport={{ once: true }}
-                  className="bg-gradient-to-br from-primary-600 to-primary-700 rounded-2xl p-8 border-2 border-primary-800 shadow-xl max-w-sm w-full"
-                >
-                  <div className="text-center">
-                    <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                      <span className="text-primary-600 text-3xl font-bold">
-                        KK
-                      </span>
-                    </div>
-                    <h4 className="text-xl font-bold text-white mb-2">Kashmin Kumar</h4>
-                    <p className="text-primary-100 font-semibold text-lg">Director</p>
-                  </div>
-                </MotionWrapper>
-              </div>
-
-              {/* Connecting Lines */}
-              <div className="flex justify-center mb-8">
-                <div className="w-1 h-12 bg-primary-300"></div>
-              </div>
-
-              {/* Level 2: Murray - Group Manager */}
-              <div className="flex justify-center mb-8">
-                <MotionWrapper
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  viewport={{ once: true }}
-                  className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl p-6 border-2 border-primary-700 shadow-lg max-w-xs"
-                >
-                  <div className="text-center">
-                    <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                      <span className="text-primary-600 text-2xl font-bold">
-                        MB
-                      </span>
-                    </div>
-                    <h4 className="text-lg font-bold text-white mb-1">Murray Broadmore</h4>
-                    <p className="text-primary-100 font-semibold">Group Manager</p>
-                  </div>
-                </MotionWrapper>
-              </div>
-
-              {/* Connecting Lines to Level 3 */}
-              <div className="flex justify-center mb-8">
-                <div className="w-1 h-12 bg-primary-300"></div>
-              </div>
-
-              {/* Level 3: The Rest 4 - All at same level */}
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { name: 'Prashant Kumar', role: 'Legal Counsel' },
-                  { name: 'Bhavishna Dutt', role: 'Group Accountant' },
-                  { name: 'Anthony Wu', role: 'Marketing Manager' },
-                  { name: 'Ash Singh', role: 'IT Manager' },
-                ].map((member, index) => (
-                  <MotionWrapper
-                    key={member.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-6 border-2 border-primary-300 hover:border-primary-500 hover:shadow-lg transition-all"
-                  >
-                    <div className="text-center">
-                      <div className="w-18 h-18 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-white text-xl font-bold">
-                          {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                        </span>
-                      </div>
-                      <h4 className="text-base font-bold text-gray-900 mb-1">{member.name}</h4>
-                      <p className="text-primary-600 font-semibold text-sm">{member.role}</p>
-                    </div>
-                  </MotionWrapper>
-                ))}
-              </div>
-            </MotionWrapper>
-
-            {/* New Zealand Team - Only show if NZ is selected */}
-            {selectedCountry === 'NZ' && (
-              <MotionWrapper
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-              >
-                <h3 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-primary-600 pb-2 flex items-center gap-2">
-                  <span>🇳🇿</span>
-                  <span>New Zealand Team</span>
-                </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { name: 'Shaveen Lata', role: 'Treasury Manager' },
-                  { name: 'Krishneel Kusal Ram', role: 'Customer Relationship Manager' },
-                  { name: 'Rachana Patel', role: 'Compliance Manager' },
-                  { name: 'Visha Dutt', role: 'Online Manager' },
-                ].map((member, index) => (
-                  <MotionWrapper
-                    key={member.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.05 }}
-                    viewport={{ once: true }}
-                    className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-6 border border-primary-100 hover:shadow-lg transition-shadow"
-                  >
-                    <div className="text-center">
-                      <div className="w-20 h-20 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-white text-2xl font-bold">
-                          {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                        </span>
-                      </div>
-                      <h4 className="text-lg font-bold text-gray-900 mb-1">{member.name}</h4>
-                      <p className="text-primary-600 font-semibold text-sm">{member.role}</p>
-                    </div>
-                  </MotionWrapper>
-                ))}
-              </div>
-            </MotionWrapper>
-            )}
-
-            {/* Australia Team - Only show if AU is selected */}
-            {selectedCountry === 'AU' && (
-              <MotionWrapper
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-              >
-                <h3 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-primary-600 pb-2 flex items-center gap-2">
-                  <span>🇦🇺</span>
-                  <span>Australia Team</span>
-                </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
-                {[
-                  { name: 'Subhasish Mukhopadhyay', role: 'General Manager' },
-                  { name: 'Rishi Dhingra', role: 'Customer Relationship Manager' },
-                  { name: 'Priyanga Nair', role: 'Treasury Manager' },
-                  { name: 'Priyanka Hingu', role: 'Compliance Manager' },
-                  { name: 'Tarushi Pareek', role: 'Accounts Manager' },
-                ].map((member, index) => (
-                  <MotionWrapper
-                    key={member.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.05 }}
-                    viewport={{ once: true }}
-                    className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-6 border border-primary-100 hover:shadow-lg transition-shadow"
-                  >
-                    <div className="text-center">
-                      <div className="w-20 h-20 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-white text-2xl font-bold">
-                          {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                        </span>
-                      </div>
-                      <h4 className="text-lg font-bold text-gray-900 mb-1">{member.name}</h4>
-                      <p className="text-primary-600 font-semibold text-sm">{member.role}</p>
-                    </div>
-                  </MotionWrapper>
-                ))}
-              </div>
-            </MotionWrapper>
-            )}
-
-            {/* Fiji Team - Only show if FJ is selected */}
-            {selectedCountry === 'FJ' && (
-              <MotionWrapper
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-              >
-                <h3 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-primary-600 pb-2 flex items-center gap-2">
-                  <span>🇫🇯</span>
-                  <span>Fiji Team</span>
-                </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
-                {[
-                  { name: 'Ritesh Chandra', role: 'Operations Manager' },
-                  { name: 'Kavinesh Prasad', role: 'Area Manager West' },
-                  { name: 'Rohini Devi Singh', role: 'Manager HR/FX Dealer' },
-                  { name: 'Ashnil Anand Kumar', role: 'Compliance Manager' },
-                  { name: 'Ravinesh Reddy', role: 'Manager International Payments' },
-                ].map((member, index) => (
-                  <MotionWrapper
-                    key={member.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.05 }}
-                    viewport={{ once: true }}
-                    className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-6 border border-primary-100 hover:shadow-lg transition-shadow"
-                  >
-                    <div className="text-center">
-                      <div className="w-20 h-20 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-white text-2xl font-bold">
-                          {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                        </span>
-                      </div>
-                      <h4 className="text-lg font-bold text-gray-900 mb-1">{member.name}</h4>
-                      <p className="text-primary-600 font-semibold text-sm">{member.role}</p>
-                    </div>
-                  </MotionWrapper>
-                ))}
-              </div>
-            </MotionWrapper>
-            )}
+              Browse all locations
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16 bg-gradient-to-r from-primary-600 to-accent-500 text-white">
+      {/* Why choose */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-white">
         <div className="container-custom">
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            {[
-              { number: siteStats.yearsOfExcellence, label: 'Years of Excellence' },
-              { number: siteStats.branches.total, label: 'Branches Across Pacific' },
-              { number: siteStats.customers.total, label: 'Happy Customers' },
-              { number: siteStats.totalTransferred, label: 'Safely Transferred' },
-            ].map((stat, index) => (
-              <MotionWrapper
-                key={stat.label}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <div className="text-5xl font-bold mb-2">{stat.number}</div>
-                <div className="text-primary-100">{stat.label}</div>
-              </MotionWrapper>
-            ))}
+          <div className="max-w-3xl mb-10 sm:mb-14">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
+              The Lotus difference
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight !leading-[1.35] pb-[0.15em] mb-4">
+              Why customers choose us
+            </h2>
+            <p className="text-lg text-gray-600 !leading-[1.75]">
+              We’re not just another exchange counter — we’re a local partner for travel money and
+              overseas transfers.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-10">
+            {reasons.map((reason, index) => {
+              const Icon = reason.icon
+              return (
+                <MotionWrapper
+                  key={reason.title}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.25) }}
+                  viewport={{ once: true }}
+                  className="flex gap-4"
+                >
+                  <div className="shrink-0 w-11 h-11 rounded-full bg-primary-50 text-primary-700 flex items-center justify-center">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 !leading-[1.4] pb-0.5">{reason.title}</h3>
+                    <p className="text-gray-600 !leading-[1.75] pb-0.5">{reason.description}</p>
+                  </div>
+                </MotionWrapper>
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* (CTA section removed as requested) */}
+      {/* Closing band */}
+      <section className="relative overflow-x-clip bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 py-16 sm:py-20 text-white">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden>
+          <div className="absolute top-0 right-1/4 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
+        </div>
+        <div className="container-custom relative z-10">
+          <div className="max-w-3xl">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight !leading-[1.35] pb-[0.15em] mb-4">
+              Ready when you are
+            </h2>
+            <p className="text-lg text-white/85 !leading-[1.75] mb-8 max-w-3xl">
+              Visit a branch near you, or get in touch — our teams across Australia, New Zealand and
+              Fiji are here to help with travel money and overseas transfers.
+            </p>
+            <div className="flex flex-wrap gap-3 sm:gap-4">
+              <Link
+                href="/locations"
+                className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 font-semibold text-primary-700 hover:bg-gray-50 transition"
+              >
+                Find a local branch
+              </Link>
+              <Link
+                href="/currency-exchange"
+                className="inline-flex items-center gap-2 rounded-lg border-2 border-white/80 px-5 py-3 font-semibold text-white hover:bg-white/10 transition"
+              >
+                Explore currency exchange
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   )
 }
-

@@ -7,21 +7,21 @@ import {
   PhoneIcon,
   EnvelopeIcon,
   MapPinIcon,
-  ChatBubbleLeftRightIcon,
-  DevicePhoneMobileIcon,
-  GlobeAltIcon
 } from '@heroicons/react/24/outline'
-import { fillStatsTemplate } from '@/config/stats'
 import { useSiteStats } from '@/context/SiteStatsContext'
+import { useCountry } from '@/context/CountryContext'
+import { getSiteFaqs } from '@/data/faqs'
 
 export default function ContactPage() {
   const { stats: siteStats } = useSiteStats()
+  const { selectedCountry } = useCountry()
+  const faqs = getSiteFaqs(selectedCountry)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     subject: '',
-    message: ''
+    message: '',
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -35,8 +35,7 @@ export default function ContactPage() {
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="pt-28 pb-16 bg-gradient-to-br from-primary-50 via-white to-white">
+      <section className="pt-28 sm:pt-32 pb-12 sm:pb-14 bg-gradient-to-br from-primary-50 via-white to-white">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
             <MotionWrapper
@@ -44,126 +43,30 @@ export default function ContactPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-                <span className="h-px w-8 bg-primary-500" aria-hidden />
-                Expert support available
+              <span className="block text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
+                We&apos;re here to help
               </span>
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight">
-                Need to reach us?
+              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-5 tracking-tight leading-tight">
+                Get in touch with us
               </h1>
-              <p className="text-xl text-gray-600 leading-relaxed border-l-4 border-primary-500 pl-5 text-left sm:text-center sm:border-0 sm:pl-0">
-                Here&apos;s how you can contact LotusFX no matter where you are. Reach out through
-                any channel that works best for you.
-              </p>
             </MotionWrapper>
           </div>
         </div>
       </section>
 
-      {/* Contact Methods */}
-      <section className="py-16 bg-white">
+      <section id="message" className="pb-16 sm:pb-20 bg-white scroll-mt-28">
         <div className="container-custom">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
-              We&apos;re here to help
-            </span>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-              Multiple Ways to Reach Us
-            </h2>
-            <p className="text-lg text-gray-600">
-              Choose the contact method that works best for you
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: PhoneIcon,
-                title: 'Phone Support',
-                description: 'Call us during business hours for immediate assistance with your currency exchange or money transfer needs.',
-                action: 'Call Now',
-                href: 'tel:+61212345678',
-              },
-              {
-                icon: EnvelopeIcon,
-                title: 'Email Support',
-                description: "Send us an email and we'll respond within 24 hours. Perfect for detailed questions or documentation.",
-                action: 'Send Email',
-                href: 'mailto:info@lotusfx.com',
-              },
-              {
-                icon: MapPinIcon,
-                title: 'Visit a Branch',
-                description: fillStatsTemplate(siteStats.copy.contactVisitBranch, siteStats),
-                action: 'Find Branch',
-                href: '/locations',
-              },
-              {
-                icon: ChatBubbleLeftRightIcon,
-                title: 'Live Chat',
-                description: 'Chat with our support team in real-time during business hours for instant answers.',
-                action: 'Start Chat',
-                href: '/contact#message',
-              },
-              {
-                icon: DevicePhoneMobileIcon,
-                title: 'Mobile App',
-                description: 'Download the Lotus app to contact support, track transfers, and manage transactions anytime.',
-                action: 'Get App',
-                href: 'https://apps.apple.com/app/lotusfx',
-              },
-              {
-                icon: GlobeAltIcon,
-                title: 'Social Media',
-                description: 'Follow us on Facebook and Instagram for updates, tips, and to reach out with questions.',
-                action: 'Follow Us',
-                href: 'https://www.facebook.com/lotusfx',
-              },
-            ].map((method, index) => (
-              <MotionWrapper
-                key={method.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.08 }}
-                viewport={{ once: true }}
-                className="h-full"
-              >
-                <div className="h-full flex flex-col bg-white rounded-2xl p-6 border border-primary-100 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center mb-4 shadow-md">
-                    <method.icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{method.title}</h3>
-                  <p className="text-gray-600 mb-4 text-sm leading-relaxed flex-1">{method.description}</p>
-                  <a
-                    href={method.href}
-                    target={method.href.startsWith('http') ? '_blank' : undefined}
-                    rel={method.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    className="text-sm font-semibold text-primary-600 hover:text-primary-700"
-                  >
-                    {method.action} →
-                  </a>
-                </div>
-              </MotionWrapper>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Form & Info */}
-      <section id="message" className="py-16 bg-gray-50 scroll-mt-28">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 xl:gap-16 items-start">
             <MotionWrapper
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
               viewport={{ once: true }}
+              className="h-full"
             >
-              <div className="bg-white rounded-2xl shadow-strong p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="bg-white rounded-2xl shadow-strong border border-gray-100 p-7 sm:p-8 h-full flex flex-col">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
+                <form onSubmit={handleSubmit} className="space-y-5 flex-1 flex flex-col">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Full Name *
@@ -218,79 +121,92 @@ export default function ContactPage() {
                       <option value="rates">Exchange Rates</option>
                       <option value="account">Account Support</option>
                       <option value="business">Business Services</option>
+                      <option value="complaint">Complaint</option>
                       <option value="other">Other</option>
                     </select>
                   </div>
-                  <div>
+                  <div className="flex-1 flex flex-col">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Message *
                     </label>
                     <textarea
                       required
                       rows={5}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 flex-1 min-h-[8rem]"
                       placeholder="How can we help you?"
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     />
                   </div>
-                  <button type="submit" className="w-full btn-primary">
+                  <button type="submit" className="w-full btn-primary mt-2">
                     Send Message
                   </button>
                 </form>
               </div>
             </MotionWrapper>
 
-            {/* Contact Information */}
             <MotionWrapper
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
               viewport={{ once: true }}
+              className="h-full"
             >
-              <div className="space-y-8">
+              <div className="space-y-6 h-full flex flex-col">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Direct Contact Information</h2>
-                  <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                    Direct contact information
+                  </h2>
+                  <div className="space-y-5">
                     {[
                       {
                         flag: '🇦🇺',
                         country: 'Australia',
                         email: siteStats.emails.australia,
                         branches: `${siteStats.branches.australia} branches across major cities`,
-                        hours: siteStats.businessHours.australia
+                        hours: siteStats.businessHours.australia,
                       },
                       {
                         flag: '🇳🇿',
                         country: 'New Zealand',
                         email: siteStats.emails.newZealand,
                         branches: `${siteStats.branches.newZealand} branches nationwide`,
-                        hours: siteStats.businessHours.newZealand
+                        hours: siteStats.businessHours.newZealand,
                       },
                       {
                         flag: '🇫🇯',
                         country: 'Fiji',
                         email: siteStats.emails.fiji,
                         branches: `${siteStats.branches.fiji} branches across islands`,
-                        hours: siteStats.businessHours.fiji
+                        hours: siteStats.businessHours.fiji,
                       },
                     ].map((region) => (
-                      <div key={region.country} className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-6 border border-primary-100">
+                      <div
+                        key={region.country}
+                        className="rounded-2xl bg-gradient-to-br from-primary-50 to-white p-5 sm:p-6 border border-primary-100"
+                      >
                         <div className="flex items-center gap-3 mb-4">
-                          <span className="text-3xl">{region.flag}</span>
+                          <span className="text-3xl" aria-hidden>
+                            {region.flag}
+                          </span>
                           <h3 className="text-xl font-bold text-gray-900">{region.country}</h3>
                         </div>
-                        <div className="space-y-2 text-sm text-gray-600">
+                        <div className="space-y-2.5 text-sm text-gray-600">
                           <p className="flex items-start gap-2">
-                            <EnvelopeIcon className="w-5 h-5 flex-shrink-0 text-primary-600" />
-                            <span className="break-all">{region.email}</span>
+                            <EnvelopeIcon className="w-5 h-5 flex-shrink-0 text-primary-600 mt-0.5" />
+                            <a
+                              href={`mailto:${region.email}`}
+                              className="break-all hover:text-primary-700"
+                            >
+                              {region.email}
+                            </a>
                           </p>
                           <p className="flex items-start gap-2">
-                            <MapPinIcon className="w-5 h-5 flex-shrink-0 text-primary-600" />
+                            <MapPinIcon className="w-5 h-5 flex-shrink-0 text-primary-600 mt-0.5" />
                             <span>{region.branches}</span>
                           </p>
                           <p className="flex items-start gap-2">
-                            <PhoneIcon className="w-5 h-5 flex-shrink-0 text-primary-600" />
+                            <PhoneIcon className="w-5 h-5 flex-shrink-0 text-primary-600 mt-0.5" />
                             <span>{region.hours}</span>
                           </p>
                         </div>
@@ -299,22 +215,18 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 shadow-md">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Response Times</h3>
+                <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 mt-auto">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">Quick response times</h3>
                   <div className="space-y-3 text-sm">
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center gap-4">
                       <span className="text-gray-600">Phone calls</span>
                       <span className="font-semibold text-primary-600">Immediate</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Live chat</span>
-                      <span className="font-semibold text-primary-600">1-2 minutes</span>
-                    </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center gap-4">
                       <span className="text-gray-600">Email</span>
                       <span className="font-semibold text-primary-600">Within 24 hours</span>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center gap-4">
                       <span className="text-gray-600">Social media</span>
                       <span className="font-semibold text-primary-600">Within 24 hours</span>
                     </div>
@@ -326,64 +238,37 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 lg:py-20 bg-gray-50">
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Frequently Asked Questions
             </h2>
             <p className="text-lg text-gray-600">
-              Quick answers to common questions about contacting us
+              Get answers to common questions about our services
             </p>
           </div>
 
           <div className="max-w-3xl mx-auto space-y-4">
-            {[
-              {
-                question: 'What are your business hours?',
-                answer: 'We\'re open Monday to Friday, 9am-5pm in your local timezone. Some branches may have extended hours or weekend service. Check our locations page for specific branch hours.'
-              },
-              {
-                question: 'How quickly will you respond to my inquiry?',
-                answer: 'Phone calls are answered immediately during business hours. Email and social media inquiries are responded to within 24 hours. For urgent matters, please call us directly or visit your nearest branch.'
-              },
-              {
-                question: 'Can I schedule an appointment?',
-                answer: 'Yes! You can schedule an appointment at any of our branches by calling ahead, using our mobile app, or visiting in person. This is especially helpful for large transactions or complex currency needs.'
-              },
-              {
-                question: 'Do you offer support in multiple languages?',
-                answer: 'Yes, our staff speak multiple languages including English, Hindi, Mandarin, Cantonese, Tagalog, and more. Let us know your preferred language when you contact us.'
-              },
-              {
-                question: 'What information should I have ready when contacting you?',
-                answer: 'For general inquiries, just your name and contact details. For transaction-specific questions, have your transaction reference number ready. For new services, have your ID and proof of address available.'
-              },
-            ].map((faq, index) => (
+            {faqs.map((faq, index) => (
               <MotionWrapper
-                key={index}
+                key={faq.question}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
                 viewport={{ once: true }}
               >
-                <details className="bg-gray-50 rounded-lg p-6 cursor-pointer hover:bg-gray-100 transition-colors">
+                <details className="bg-white rounded-xl p-6 cursor-pointer border border-gray-100 hover:border-primary-200 transition-colors">
                   <summary className="font-semibold text-gray-900 text-lg">
                     {faq.question}
                   </summary>
-                  <p className="mt-3 text-gray-600">
-                    {faq.answer}
-                  </p>
+                  <p className="mt-3 text-gray-600 leading-relaxed">{faq.answer}</p>
                 </details>
               </MotionWrapper>
             ))}
           </div>
         </div>
       </section>
-
-      {/* (CTA banner removed as requested) */}
     </>
   )
 }
-

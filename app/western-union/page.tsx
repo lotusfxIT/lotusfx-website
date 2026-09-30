@@ -1,304 +1,337 @@
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { MapPinIcon, ClockIcon, ShieldCheckIcon, GlobeAltIcon } from '@heroicons/react/24/outline'
+import {
+  GlobeAltIcon,
+  ClockIcon,
+  ShieldCheckIcon,
+  MapPinIcon,
+  IdentificationIcon,
+  BanknotesIcon,
+  UserIcon,
+} from '@heroicons/react/24/outline'
+import MotionWrapper from '@/components/MotionWrapper'
+import {
+  AccentPanel,
+  IconFeatureCard,
+  SectionEyebrow,
+  SectionHeading,
+  StepCard,
+} from '@/components/marketing/MarketingBlocks'
 import { buildPageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'Western Union Money Transfers',
   description:
-    'Send money worldwide with Western Union at LotusFX branches. Visit us in-store for fast, secure international money transfers across 200+ countries.',
+    'Send money worldwide with Western Union at Lotus FX branches. Fast, secure international transfers across 200+ countries with in-branch support.',
   path: '/western-union',
-  keywords: ['Western Union', 'money transfer', 'international remittance', 'LotusFX'],
+  keywords: ['Western Union', 'money transfer', 'international remittance', 'LotusFX', 'cash pickup'],
 })
 
 const features = [
   {
-    icon: GlobeAltIcon,
-    title: '200+ Countries',
-    description: 'Send money to over 200 countries and territories worldwide with Western Union\'s global network.',
+    icon: <GlobeAltIcon className="w-6 h-6" />,
+    title: '200+ countries',
+    description:
+      'Send money to over 200 countries and territories through Western Union\u2019s global agent network.',
   },
   {
-    icon: ClockIcon,
-    title: 'Fast Transfers',
-    description: 'Most transfers are available for pickup within minutes at Western Union locations worldwide.',
+    icon: <ClockIcon className="w-6 h-6" />,
+    title: 'Fast cash pickup',
+    description:
+      'Most transfers are ready for collection within minutes at Western Union locations worldwide.',
   },
   {
-    icon: ShieldCheckIcon,
-    title: 'Secure & Trusted',
-    description: 'Your money is protected with Western Union\'s industry-leading security and fraud prevention.',
+    icon: <ShieldCheckIcon className="w-6 h-6" />,
+    title: 'Secure & trusted',
+    description:
+      'Your transfer is protected by Western Union security standards and Lotus FX compliance checks.',
   },
   {
-    icon: MapPinIcon,
-    title: 'Convenient Pickup',
-    description: 'Recipients can collect cash at over 500,000 Western Union agent locations globally.',
+    icon: <MapPinIcon className="w-6 h-6" />,
+    title: 'Convenient collection',
+    description:
+      'Recipients can collect cash at hundreds of thousands of Western Union agent locations globally.',
   },
 ]
 
 const steps = [
   {
     number: '01',
-    title: 'Visit Our Branch',
-    description: 'Come to any LotusFX branch with a valid government-issued ID. Our friendly staff will assist you with the transfer process.',
+    title: 'Visit a Lotus FX branch',
+    description:
+      'Bring a valid government-issued photo ID. Our team will guide you through the transfer in branch.',
   },
   {
     number: '02',
-    title: 'Provide Details',
-    description: 'Tell us the recipient\'s name, location, and amount. We\'ll calculate the exchange rate and fees upfront.',
+    title: 'Share recipient details',
+    description:
+      'Provide the recipient\u2019s full name, destination, and amount. We\u2019ll confirm the rate and fees upfront.',
   },
   {
     number: '03',
-    title: 'Complete Payment',
-    description: 'Pay in cash or via bank transfer. You\'ll receive a Money Transfer Control Number (MTCN) for tracking.',
+    title: 'Pay for the transfer',
+    description:
+      'Pay in cash or by bank transfer. You\u2019ll receive a Money Transfer Control Number (MTCN) to share.',
   },
   {
     number: '04',
-    title: 'Recipient Collects',
-    description: 'Your recipient can collect the money at any Western Union location using the MTCN and their ID.',
+    title: 'Recipient collects',
+    description:
+      'Your recipient collects the money at a Western Union location using the MTCN and their ID.',
   },
 ]
+
+const bringItems = [
+  {
+    icon: IdentificationIcon,
+    title: 'Valid photo ID',
+    detail: 'Driver\u2019s licence, passport, or national ID card',
+  },
+  {
+    icon: UserIcon,
+    title: 'Recipient details',
+    detail: 'Full legal name and destination country or city',
+  },
+  {
+    icon: BanknotesIcon,
+    title: 'Payment ready',
+    detail: 'Cash or bank transfer details for the send amount and fees',
+  },
+]
+
+const faqs = [
+  {
+    question: 'Can I send a Western Union transfer online with Lotus FX?',
+    answer:
+      'Western Union transfers through Lotus FX are completed in branch. Visit any participating location and our team will help you send the transfer securely.',
+  },
+  {
+    question: 'How long does a Western Union transfer take?',
+    answer:
+      'Many transfers are available for pickup within minutes, depending on the destination and local agent hours. We\u2019ll confirm expected timing when you send.',
+  },
+  {
+    question: 'What is an MTCN?',
+    answer:
+      'The Money Transfer Control Number (MTCN) is your unique tracking reference. Share it with your recipient so they can collect the funds with their ID.',
+  },
+  {
+    question: 'What identification do I need?',
+    answer:
+      'You\u2019ll need a valid government-issued photo ID. For larger transfers, additional documentation may be required under compliance rules.',
+  },
+]
+
+const btnPrimary =
+  'inline-flex items-center justify-center rounded-xl bg-black text-[#FFE600] font-bold px-7 sm:px-8 py-3.5 sm:py-4 text-base sm:text-lg hover:bg-neutral-900 transition-colors shadow-lg text-center ring-1 ring-black/10'
+const btnSecondary =
+  'inline-flex items-center justify-center rounded-xl bg-white text-black font-bold px-7 sm:px-8 py-3.5 sm:py-4 text-base sm:text-lg border-2 border-black hover:bg-black hover:text-[#FFE600] transition-colors shadow-md text-center'
 
 export default function WesternUnionPage() {
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-800 via-primary-700 to-primary-600 text-white py-20 lg:py-24">
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="absolute -top-24 -left-16 w-80 h-80 bg-yellow-400 rounded-full mix-blend-screen blur-3xl" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary-500 rounded-full mix-blend-screen blur-3xl" />
-        </div>
-        <div className="container-custom relative z-10 px-4 sm:px-6">
-          <div className="grid lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-10 lg:gap-16 items-center">
-            <div>
-              <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-white/20">
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-50">
-                  LotusFX Partner
-                </span>
-                <span className="h-5 w-px bg-white/30" />
-                <span className="text-sm font-semibold">Western Union</span>
-              </div>
-
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 leading-tight">
-                Send Money Worldwide with Western Union
+      <section className="relative pt-24 sm:pt-28 lg:pt-32 pb-12 sm:pb-16 lg:pb-20 bg-[#FFE600] overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(0,0,0,0.08),transparent_40%)]" aria-hidden />
+        <div className="container-custom relative z-10">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-12 items-stretch">
+            <div className="lg:col-span-7 xl:col-span-8 flex flex-col justify-center">
+              <SectionEyebrow tone="wu">Available at Lotus FX</SectionEyebrow>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-[3.25rem] font-bold text-black mb-5 sm:mb-6 leading-[1.15] tracking-tight pr-0 lg:pr-2">
+                Send money worldwide with
               </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-primary-100 mb-8 max-w-2xl">
-                Visit any LotusFX branch to send money to over 200 countries. Fast, secure and
-                trusted by millions worldwide, with personal support from our in‑branch FX experts.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-3 mb-6">
-                <Link
-                  href="/locations"
-                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white text-primary-700 font-semibold shadow-lg hover:bg-gray-50 transition-colors"
-                >
-                  Find Nearest Branch →
-                </Link>
-                <Link
-                  href="/money-transfer"
-                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-white/60 text-white font-semibold hover:bg-white/10 transition-colors"
-                >
-                  View Money Transfer Options
-                </Link>
-              </div>
-
-              <div className="inline-flex items-center gap-2 text-sm text-primary-100">
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-xs">
-                  📍
-                </span>
-                <span>Western Union transfers are available in‑store at LotusFX branches only.</span>
-              </div>
-            </div>
-
-            <div className="hidden lg:flex justify-end">
-              <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/15 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="relative w-32 h-10">
-                    <Image
-                      src="/images/partners/western-union.png"
-                      alt="Western Union"
-                      fill
-                      className="object-contain"
-                      priority
-                    />
-                  </div>
-                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-yellow-400 text-gray-900">
-                    In‑store only
-                  </span>
+              <div className="mb-5 sm:mb-6 inline-flex w-fit max-w-full rounded-xl bg-white border border-black/10 shadow-[0_8px_24px_rgba(0,0,0,0.1)] px-4 sm:px-5 py-3 sm:py-3.5">
+                <div className="relative w-64 h-14 sm:w-80 sm:h-16 md:w-96 md:h-[4.5rem]">
+                  <Image
+                    src="/images/partners/western-union.png"
+                    alt="Western Union"
+                    fill
+                    className="object-contain object-left"
+                    priority
+                  />
                 </div>
-                <ul className="space-y-2 text-sm text-primary-100">
-                  <li className="flex items-start gap-2">
-                    <span className="mt-0.5 text-base">🌍</span>
-                    <span>Send cash to 200+ countries and territories.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-0.5 text-base">⚡</span>
-                    <span>Most transfers ready for pickup within minutes.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-0.5 text-base">🛡️</span>
-                    <span>Protected by Western Union security and LotusFX compliance.</span>
-                  </li>
-                </ul>
+              </div>
+              <div className="space-y-3.5 pr-0 lg:pr-2">
+                <p className="text-base sm:text-lg text-neutral-900 leading-relaxed">
+                  Visit any Lotus FX branch to send money across 200+ countries with Western Union
+                </p>
+                <p className="text-base sm:text-lg text-neutral-900 leading-relaxed">
+                  Fast cash pickup, clear fees, and help from our team in store.
+                </p>
+                <p className="text-sm sm:text-base text-neutral-800/80 leading-relaxed">
+                  Transfers are completed in branch, so you get personal support every step of the
+                  way — rates and fees explained before you pay.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 mt-7 sm:mt-8">
+                <Link href="/locations" className={btnPrimary}>
+                  Find a branch
+                </Link>
+                <Link href="/money-transfer" className={btnSecondary}>
+                  All transfer options
+                </Link>
               </div>
             </div>
+
+            <MotionWrapper
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="lg:col-span-5 xl:col-span-4 h-full min-h-0 lg:min-h-full"
+            >
+              <AccentPanel
+                variant="gold"
+                title="At a glance"
+                items={[
+                  {
+                    label: 'Global reach',
+                    detail: 'Cash pickup in 200+ countries and territories',
+                  },
+                  {
+                    label: 'Often minutes',
+                    detail: 'Many transfers ready for collection quickly',
+                  },
+                  {
+                    label: 'In-branch help',
+                    detail: 'Lotus FX staff guide you through the send',
+                  },
+                  {
+                    label: 'Trackable',
+                    detail: 'Share the MTCN so your recipient can collect safely',
+                  },
+                ]}
+              />
+            </MotionWrapper>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="container-custom px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
-              Global reach
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-              Why Choose Western Union?
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Trusted by millions, Western Union offers the most reliable way to send money across borders.
-            </p>
+      <section className="py-20 lg:py-24 bg-[#FFFCE6]">
+        <div className="container-custom">
+          <div className="text-center mb-14 lg:mb-16">
+            <SectionEyebrow tone="wu">Simple process</SectionEyebrow>
+            <SectionHeading
+              align="center"
+              title="How it works"
+              subtitle="Four clear steps from branch visit to cash in your recipient\u2019s hands."
+            />
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="h-full flex flex-col bg-white rounded-2xl border border-primary-100 p-6 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all"
-              >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center mb-5 shadow-md">
-                  <feature.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-16 lg:py-24 bg-gray-50">
-        <div className="container-custom px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
-              Simple process
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-              How It Works
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Sending money with Western Union at LotusFX is simple and straightforward.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((step) => (
-              <div
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {steps.map((step, i) => (
+              <StepCard
                 key={step.number}
-                className="h-full rounded-2xl border border-primary-100 bg-white p-6 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all"
-              >
-                <div className="text-3xl font-black text-primary-600/90 mb-4 tabular-nums tracking-tight">
-                  {step.number}
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">{step.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{step.description}</p>
-              </div>
+                number={step.number}
+                title={step.title}
+                description={step.description}
+                delay={i * 0.06}
+                tone="wu"
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {/* In-Store CTA */}
-      <section className="py-16 lg:py-24 bg-gradient-to-b from-primary-50/60 to-white">
-        <div className="container-custom px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-5xl mx-auto">
+      <section className="py-20 lg:py-24 bg-white">
+        <div className="container-custom">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20 items-center">
             <div>
-              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-                <span className="h-px w-8 bg-primary-500" aria-hidden />
-                In branch
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 tracking-tight">
-                Visit Us In-Store Today
-              </h2>
-              <p className="text-lg text-gray-700 leading-relaxed border-l-4 border-primary-500 pl-5 mb-8">
-                Our experienced staff at LotusFX branches are ready to help you send money worldwide with Western Union.
-                We offer competitive rates, transparent fees, and multilingual support.
+              <SectionEyebrow tone="wu">Before you visit</SectionEyebrow>
+              <SectionHeading title="What to bring to the branch" />
+              <p className="mt-6 text-lg text-gray-600 leading-relaxed max-w-xl">
+                Arrive prepared and we can usually complete your Western Union send quickly —
+                with rates and fees explained before you pay.
               </p>
-              <Link href="/locations" className="btn-primary inline-flex">
-                Find Nearest Branch →
+              <Link href="/locations" className={`${btnPrimary} mt-8 sm:mt-10`}>
+                Find nearest branch
               </Link>
             </div>
-            <div className="rounded-2xl bg-white border border-primary-100 p-8 shadow-soft">
-              <h3 className="text-xl font-bold text-gray-900 mb-5">What to Bring</h3>
-              <ul className="space-y-4 text-gray-700">
-                <li className="flex items-start gap-3">
-                  <span className="text-primary-600 font-bold mt-0.5">✓</span>
-                  <span>Valid government-issued photo ID (driver&apos;s license, passport, or national ID)</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-primary-600 font-bold mt-0.5">✓</span>
-                  <span>Recipient&apos;s full name and location</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-primary-600 font-bold mt-0.5">✓</span>
-                  <span>Cash or bank transfer details for payment</span>
-                </li>
-              </ul>
+            <div className="space-y-4 sm:space-y-5">
+              {bringItems.map((item, i) => (
+                <MotionWrapper
+                  key={item.title}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, delay: i * 0.08 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="flex gap-4 sm:gap-5 rounded-2xl border border-yellow-200 bg-[#FFFCE6] p-5 sm:p-6 shadow-soft">
+                    <div className="w-12 h-12 rounded-xl bg-black text-[#FFE600] flex items-center justify-center shadow-md shrink-0">
+                      <item.icon className="w-6 h-6" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-lg font-bold text-gray-900">{item.title}</h3>
+                      <p className="text-gray-600 mt-1.5 leading-relaxed">{item.detail}</p>
+                    </div>
+                  </div>
+                </MotionWrapper>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="container-custom px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
-              FAQs
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
-              Frequently Asked Questions
-            </h2>
+      <section className="py-20 lg:py-24 bg-[#FFFCE6]">
+        <div className="container-custom">
+          <div className="text-center mb-14 lg:mb-16">
+            <SectionEyebrow tone="wu">Global reach</SectionEyebrow>
+            <SectionHeading
+              align="center"
+              title="Why Western Union with Lotus FX"
+              subtitle="A trusted global network, with local branch support when you send."
+            />
           </div>
-
-          <div className="max-w-3xl mx-auto space-y-4">
-            {[
-              {
-                q: 'Do I need to visit a branch?',
-                a: 'Yes, Western Union transfers through LotusFX are only available in-store. Visit any of our branches for personalized assistance and secure money transfers.',
-              },
-              {
-                q: 'What identification do I need?',
-                a: "You'll need a valid government-issued photo ID such as a driver's license, passport, or national ID card. Our staff will verify your identity before processing the transfer.",
-              },
-              {
-                q: 'How long does it take?',
-                a: 'Most Western Union transfers are available for pickup within minutes at the destination location. Some transfers may take up to 24 hours depending on the destination country.',
-              },
-              {
-                q: 'What are the fees?',
-                a: 'Fees vary based on the amount sent and destination country. Our staff will provide you with a complete breakdown of all fees and exchange rates before you complete the transaction.',
-              },
-            ].map((faq) => (
-              <div
-                key={faq.q}
-                className="rounded-xl border border-gray-200 border-l-4 border-l-primary-500 bg-white shadow-soft"
-              >
-                <div className="px-6 py-5">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.q}</h3>
-                  <p className="text-gray-600 leading-relaxed">{faq.a}</p>
-                </div>
-              </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {features.map((feature, i) => (
+              <IconFeatureCard
+                key={feature.title}
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+                delay={i * 0.06}
+                tone="wu"
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {/* (CTA section removed as requested) */}
+      <section className="py-20 lg:py-24 bg-neutral-950">
+        <div className="container-custom">
+          <div className="text-center mb-12 lg:mb-14">
+            <span className="block text-sm font-semibold uppercase tracking-[0.18em] text-[#FFE600] mb-3">
+              FAQs
+            </span>
+            <h2 className="text-3xl lg:text-4xl font-bold text-white tracking-tight">
+              Western Union questions
+            </h2>
+          </div>
+          <div className="max-w-3xl mx-auto space-y-4">
+            {faqs.map((faq, i) => (
+              <MotionWrapper
+                key={faq.question}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+                viewport={{ once: true }}
+              >
+                <details className="group bg-neutral-900 rounded-xl border border-neutral-800 p-6 hover:border-[#FFE600]/40 transition-colors">
+                  <summary className="font-semibold text-white text-lg cursor-pointer list-none flex items-start justify-between gap-4">
+                    <span>{faq.question}</span>
+                    <span
+                      className="text-[#FFE600] shrink-0 transition group-open:rotate-45 text-2xl leading-none"
+                      aria-hidden
+                    >
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-neutral-300 leading-relaxed">{faq.answer}</p>
+                </details>
+              </MotionWrapper>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   )
 }

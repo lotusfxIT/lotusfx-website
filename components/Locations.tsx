@@ -31,7 +31,7 @@ export default function Locations() {
             href="/locations"
             className="inline-flex items-center justify-center bg-white text-primary-600 hover:bg-gray-50 font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
           >
-            Open Locations Page →
+            Open Locations Page
           </Link>
         </motion.div>
       </div>

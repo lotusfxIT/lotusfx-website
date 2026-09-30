@@ -110,7 +110,7 @@ export default function RootLayout({
             <Analytics />
             <VercelAnalytics />
             <Header />
-            <main className="min-h-screen overflow-x-hidden w-full">
+            <main className="min-h-screen overflow-x-clip w-full">
               {children}
             </main>
             <Footer />

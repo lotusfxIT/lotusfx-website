@@ -272,7 +272,7 @@ export default function AdminSiteStatsPage() {
             />
             <Field
               label="Currencies available"
-              hint="e.g. 40+"
+              hint="e.g. 35+"
               value={stats.currenciesAvailable}
               onChange={(v) => patch({ currenciesAvailable: v })}
             />

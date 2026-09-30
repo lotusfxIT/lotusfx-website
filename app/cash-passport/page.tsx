@@ -1,356 +1,432 @@
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { CreditCardIcon, GlobeAltIcon, ShieldCheckIcon, DevicePhoneMobileIcon, MapPinIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline'
+import {
+  CreditCardIcon,
+  GlobeAltIcon,
+  ShieldCheckIcon,
+  DevicePhoneMobileIcon,
+  MapPinIcon,
+  CurrencyDollarIcon,
+  ArrowPathIcon,
+} from '@heroicons/react/24/outline'
+import MotionWrapper from '@/components/MotionWrapper'
+import {
+  IconFeatureCard,
+  SectionEyebrow,
+  SectionHeading,
+  StepCard,
+} from '@/components/marketing/MarketingBlocks'
 import { buildPageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'Cash Passport Travel Card',
   description:
-    'Get your Cash Passport multi-currency travel card from LotusFX. Sign up online or visit us in-store. Mastercard security with 10+ currencies.',
+    'Get your Cash Passport multi-currency travel card from Lotus FX. Sign up online or visit us in-store. Mastercard security with 10+ currencies.',
   path: '/cash-passport',
   keywords: ['Cash Passport', 'travel card', 'multi-currency card', 'prepaid travel money', 'Mastercard', 'LotusFX'],
 })
 
 const benefits = [
   {
-    icon: GlobeAltIcon,
-    title: '10+ Currencies',
-    description: 'Load and lock in exchange rates for major currencies including USD, EUR, GBP, JPY, and more.',
+    icon: <GlobeAltIcon className="w-6 h-6" />,
+    title: '10+ currencies',
+    description:
+      'Load major travel currencies including USD, EUR, GBP, JPY and more — ready before you fly.',
   },
   {
-    icon: ShieldCheckIcon,
-    title: 'Mastercard Security',
-    description: 'Chip & PIN protection, contactless payments, and 24/7 fraud monitoring keep your money safe.',
+    icon: <ShieldCheckIcon className="w-6 h-6" />,
+    title: 'Mastercard security',
+    description:
+      'Chip & PIN, contactless payments and fraud monitoring help keep your travel money protected.',
   },
   {
-    icon: DevicePhoneMobileIcon,
-    title: 'Mobile App Control',
-    description: 'Freeze/unfreeze your card, check balances, reload funds, and view transactions from anywhere.',
+    icon: <DevicePhoneMobileIcon className="w-6 h-6" />,
+    title: 'App control',
+    description:
+      'Check balances, freeze or unfreeze your card, reload funds and review transactions on the go.',
   },
   {
-    icon: CurrencyDollarIcon,
-    title: 'Lock Exchange Rates',
-    description: 'Lock in favorable exchange rates before you travel and avoid currency fluctuations.',
+    icon: <CurrencyDollarIcon className="w-6 h-6" />,
+    title: 'Lock in rates',
+    description:
+      'Load at a known rate before you travel so everyday spending abroad feels more predictable.',
   },
 ]
 
 const currencies = [
-  'AUD', 'USD', 'EUR', 'GBP', 'NZD', 'JPY', 'SGD', 'HKD', 'CAD', 'THB', 'CHF', 'AED'
+  'AUD',
+  'USD',
+  'EUR',
+  'GBP',
+  'NZD',
+  'JPY',
+  'SGD',
+  'HKD',
+  'CAD',
+  'THB',
+  'CHF',
+  'AED',
 ]
 
-const options = [
+const getCardOptions = [
   {
     icon: CreditCardIcon,
-    title: 'Sign Up Online',
-    description: 'Get your Cash Passport card quickly by signing up through our secure Mastercard partner link. Complete the application online and receive your card by mail.',
-    features: [
-      'Quick online application',
-      'Secure Mastercard signup',
+    title: 'Get started online',
+    description:
+      'Apply through our secure Mastercard partner flow, then activate and load currencies when your card arrives.',
+    points: [
+      'Convenient online application',
       'Card delivered to your address',
-      'Activate and load via app',
+      'Activate and manage via app',
+      'Reload when you need more funds',
     ],
-    cta: 'Sign Up Now',
-    link: '#', // Replace with actual Mastercard signup link
-    color: 'from-orange-500 to-red-600',
-    highlight: true,
+    href: '#',
+    cta: 'Sign up online',
+    recommended: true,
   },
   {
     icon: MapPinIcon,
-    title: 'Visit Our Branch',
-    description: 'Get your Cash Passport card instantly at any LotusFX branch. Our staff will help you set up your card and load your first currencies.',
-    features: [
-      'Instant card issuance',
-      'Expert staff assistance',
+    title: 'Get your card in branch',
+    description:
+      'Visit a Lotus FX branch for help setting up your Cash Passport and loading your first currencies.',
+    points: [
+      'In-person setup support',
       'Load currencies on the spot',
-      'Immediate activation',
+      'Ask questions before you travel',
+      'Friendly Lotus FX guidance',
     ],
-    cta: 'Find Branch',
-    link: '/locations',
-    color: 'from-gray-700 to-gray-800',
-    highlight: false,
+    href: '/locations',
+    cta: 'Find a branch',
+    recommended: false,
   },
 ]
 
 const process = [
   {
-    title: 'Get Your Card',
-    description: 'Sign up online through our Mastercard link or visit a LotusFX branch to get your Cash Passport card instantly.',
+    number: '01',
+    title: 'Get your card',
+    description: 'Sign up online or visit a Lotus FX branch to get your Cash Passport travel card.',
   },
   {
-    title: 'Load Currencies',
-    description: 'Load up to 10 different currencies at locked-in exchange rates. Add funds via bank transfer, BPAY, or in-store.',
+    number: '02',
+    title: 'Load currencies',
+    description: 'Add the currencies you need at locked-in rates before or during your trip.',
   },
   {
-    title: 'Spend Worldwide',
-    description: 'Use your card anywhere Mastercard is accepted - shops, restaurants, ATMs. Switch between currencies in the app.',
+    number: '03',
+    title: 'Spend worldwide',
+    description: 'Use it anywhere Mastercard is accepted — shops, restaurants and ATMs.',
   },
   {
-    title: 'Reload Anytime',
-    description: 'Top up your card anytime, anywhere. Reload online, via the app, or visit any LotusFX branch.',
+    number: '04',
+    title: 'Reload anytime',
+    description: 'Top up online, in the app, or at a Lotus FX branch when you need more.',
   },
 ]
+
+const faqs = [
+  {
+    question: 'What is Cash Passport?',
+    answer:
+      'Cash Passport is a prepaid multi-currency travel card you can load before you travel, then spend abroad or withdraw from ATMs where Mastercard is accepted.',
+  },
+  {
+    question: 'How do I get a Cash Passport from Lotus FX?',
+    answer:
+      'You can start online through our Mastercard partner signup, or visit a participating Lotus FX branch for in-person help.',
+  },
+  {
+    question: 'Can I hold more than one currency?',
+    answer:
+      'Yes. You can load multiple supported currencies on the same card and switch between them as you travel.',
+  },
+  {
+    question: 'How do I reload the card?',
+    answer:
+      'Reload options typically include online/app top-ups and in-branch loading at Lotus FX. Availability can vary by method and location.',
+  },
+]
+
+const btnPrimary =
+  'inline-flex items-center justify-center rounded-full bg-[#141413] text-[#F3F0EE] font-semibold px-7 sm:px-8 py-3.5 sm:py-4 text-base sm:text-lg hover:bg-black transition-colors shadow-md text-center'
+const btnSecondary =
+  'inline-flex items-center justify-center rounded-full border-2 border-[#141413] text-[#141413] font-semibold px-7 sm:px-8 py-3.5 sm:py-4 text-base sm:text-lg hover:bg-[#141413] hover:text-[#F3F0EE] transition-colors text-center'
 
 export default function CashPassportPage() {
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-800 via-red-700 to-orange-500 text-white py-20 lg:py-24">
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="absolute -top-24 -left-20 w-80 h-80 bg-orange-400 rounded-full mix-blend-screen blur-3xl" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary-500 rounded-full mix-blend-screen blur-3xl" />
-        </div>
-        <div className="container-custom relative z-10 px-4 sm:px-6">
-          <div className="grid lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-10 lg:gap-16 items-center">
-            <div>
-              <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-white/20">
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-50">
-                  LotusFX Partner
-                </span>
-                <span className="h-5 w-px bg-white/30" />
-                <span className="text-sm font-semibold">Cash Passport</span>
+      <section className="relative pt-24 sm:pt-28 lg:pt-32 pb-12 sm:pb-16 lg:pb-20 bg-[#F3F0EE] overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#EB001B] via-[#F79E1B] to-[#3860BE]" aria-hidden />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(56,96,190,0.08),transparent_45%)]" aria-hidden />
+        <div className="container-custom relative z-10">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-12 items-stretch">
+            <div className="lg:col-span-7 xl:col-span-8 flex flex-col justify-center">
+              <SectionEyebrow tone="cp">Available at Lotus FX</SectionEyebrow>
+              <div className="mb-5 sm:mb-6 inline-flex w-fit max-w-full rounded-xl bg-white border border-[#E8E2DA] shadow-md px-4 sm:px-5 py-3 sm:py-3.5">
+                <div className="relative w-64 h-14 sm:w-80 sm:h-16 md:w-96 md:h-[4.5rem]">
+                  <Image
+                    src="/images/partners/cash-passport.png"
+                    alt="Cash Passport"
+                    fill
+                    className="object-contain object-left"
+                    priority
+                  />
+                </div>
               </div>
-
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 leading-tight">
-                Cash Passport Travel Card
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-[3.25rem] font-bold text-[#141413] mb-5 sm:mb-6 leading-[1.15] tracking-tight pr-0 lg:pr-2">
+                Travel money on a smarter card
               </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-orange-100 mb-8 max-w-2xl">
-                The smart way to travel. Lock in exchange rates, spend in 10+ currencies and stay
-                in control with the Cash Passport app and LotusFX support.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Link
-                  href="#"
-                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white text-red-700 font-semibold shadow-lg hover:bg-gray-50 transition-colors"
-                >
-                  Sign Up Online →
+              <div className="space-y-3.5 pr-0 lg:pr-2">
+                <p className="text-base sm:text-lg text-[#141413]/90 leading-relaxed">
+                  Cash Passport lets you load multiple currencies, lock in rates before you travel,
+                  and spend with Mastercard acceptance — with Lotus FX support when you need it.
+                </p>
+                <p className="text-sm sm:text-base text-[#555555] leading-relaxed">
+                  Get started online or in branch, then manage balances and reloads from the app
+                  while you\u2019re away.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 mt-7 sm:mt-8">
+                <Link href="#" className={btnPrimary}>
+                  Sign up online
                 </Link>
-                <Link
-                  href="/locations"
-                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-white/60 text-white font-semibold hover:bg-white/10 transition-colors"
-                >
-                  Get Card In‑Store
+                <Link href="/locations" className={btnSecondary}>
+                  Get card in store
                 </Link>
               </div>
             </div>
 
-            <div className="hidden lg:flex justify-end">
-              <div className="relative w-full max-w-md">
-                <div className="absolute -top-6 -left-6 w-16 h-16 rounded-full bg-white/15 border border-white/30" />
-                <div className="absolute -bottom-4 -right-4 w-20 h-20 rounded-full bg-white/10 border border-white/20" />
+            <MotionWrapper
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="lg:col-span-5 xl:col-span-4 h-full min-h-0 lg:min-h-full"
+            >
+              <div className="relative h-full rounded-2xl sm:rounded-3xl bg-[#141413] p-6 sm:p-7 lg:p-8 shadow-strong overflow-hidden flex flex-col">
+                <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full border border-white/10" aria-hidden />
+                <div className="absolute -bottom-6 -left-6 w-28 h-28 rounded-full border border-[#3860BE]/25" aria-hidden />
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-45"
+                  style={{
+                    backgroundImage:
+                      'radial-gradient(circle at 70% 25%, rgba(56,96,190,0.28), transparent 45%)',
+                  }}
+                  aria-hidden
+                />
+                <p className="relative text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] text-white/75 mb-5 shrink-0">
+                  At a glance
+                </p>
                 <Image
                   src="/images/partners/cash-passport-card.png"
-                  alt="Cash Passport Card"
+                  alt="Cash Passport card"
                   width={420}
                   height={260}
-                  className="relative rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.55)] border border-white/20"
+                  className="relative w-full max-w-[16rem] sm:max-w-[18rem] mx-auto rounded-xl shadow-[0_16px_40px_rgba(0,0,0,0.4)] border border-white/15 mb-5 sm:mb-6"
+                  priority
                 />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Two Options Section */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="container-custom px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
-              Get started
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-              Get Your Cash Passport Card
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Choose how you want to get your card - sign up online through our secure Mastercard link or visit us in-store.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {options.map((option) => (
-              <div
-                key={option.title}
-                className={`bg-gradient-to-br ${option.color} text-white rounded-2xl p-8 shadow-xl relative ${
-                  option.highlight ? 'ring-4 ring-primary-200' : ''
-                }`}
-              >
-                {option.highlight && (
-                  <div className="absolute -top-4 right-4 bg-white text-primary-700 px-4 py-1 rounded-full text-sm font-semibold shadow">
-                    Recommended
-                  </div>
-                )}
-                <option.icon className="w-16 h-16 mb-6" />
-                <h3 className="text-2xl font-bold mb-4">{option.title}</h3>
-                <p className="text-white/90 mb-6">{option.description}</p>
-                <ul className="space-y-3 mb-8">
-                  {option.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <span className="text-white mr-2">✓</span>
-                      <span className="text-white/90">{feature}</span>
+                <ul className="relative grid sm:grid-cols-1 gap-4 sm:gap-5 text-white flex-1 content-between">
+                  {[
+                    { label: 'Multi-currency', detail: 'Load the currencies you actually need' },
+                    { label: 'Spend & withdraw', detail: 'Shops, restaurants and ATMs worldwide' },
+                    { label: 'Stay in control', detail: 'Balances, freeze and reloads in the app' },
+                  ].map((item) => (
+                    <li key={item.label} className="flex gap-3">
+                      <span className="mt-2 h-2 w-2 rounded-full bg-[#3860BE] shrink-0" aria-hidden />
+                      <div>
+                        <p className="font-bold text-base sm:text-lg leading-snug">{item.label}</p>
+                        <p className="text-white/80 text-sm sm:text-[0.95rem] mt-1 leading-relaxed">
+                          {item.detail}
+                        </p>
+                      </div>
                     </li>
                   ))}
                 </ul>
-                <Link
-                  href={option.link}
-                  className="inline-block bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  {option.cta} →
-                </Link>
               </div>
+            </MotionWrapper>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 lg:py-24 bg-[#FCFBFA]">
+        <div className="container-custom">
+          <div className="text-center mb-14 lg:mb-16">
+            <SectionEyebrow tone="cp">Get started</SectionEyebrow>
+            <SectionHeading
+              align="center"
+              title="How to get your Cash Passport"
+              subtitle="Apply online for delivery, or visit Lotus FX for in-person setup help."
+            />
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-10 max-w-5xl mx-auto">
+            {getCardOptions.map((option, i) => (
+              <MotionWrapper
+                key={option.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                viewport={{ once: true }}
+                className="h-full"
+              >
+                <article
+                  className={`relative h-full flex flex-col rounded-[1.75rem] border bg-white p-8 lg:p-9 shadow-soft hover:shadow-lg transition-all ${
+                    option.recommended
+                      ? 'border-[#3860BE]/35 ring-2 ring-[#3860BE]/15'
+                      : 'border-[#E8E2DA] hover:border-[#3860BE]/30'
+                  }`}
+                >
+                  {option.recommended && (
+                    <span className="absolute -top-3 right-6 text-xs font-semibold uppercase tracking-wide bg-[#141413] text-[#F3F0EE] px-3 py-1 rounded-full shadow">
+                      Popular
+                    </span>
+                  )}
+                  <div className="w-12 h-12 rounded-xl bg-[#141413] text-white flex items-center justify-center shadow-md mb-6">
+                    <option.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl lg:text-2xl font-bold text-[#141413] mb-3">{option.title}</h3>
+                  <p className="text-[#555555] leading-relaxed mb-6">{option.description}</p>
+                  <ul className="space-y-3 mb-8 flex-1">
+                    {option.points.map((point) => (
+                      <li key={point} className="flex items-start gap-2.5 text-[#141413]/85">
+                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#3860BE] shrink-0" aria-hidden />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href={option.href}
+                    className={option.recommended ? `${btnPrimary} self-start` : `${btnSecondary} self-start`}
+                  >
+                    {option.cta}
+                  </Link>
+                </article>
+              </MotionWrapper>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-16 lg:py-24 bg-gray-50">
-        <div className="container-custom px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
-              Travel smarter
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-              Why Choose Cash Passport?
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Travel smarter with a multi-currency card that gives you control and security.
-            </p>
+      <section className="py-20 lg:py-24 bg-[#F3F0EE]">
+        <div className="container-custom">
+          <div className="text-center mb-14 lg:mb-16">
+            <SectionEyebrow tone="cp">Travel smarter</SectionEyebrow>
+            <SectionHeading
+              align="center"
+              title="Why travellers choose Cash Passport"
+              subtitle="Control, security and multi-currency convenience in one card."
+            />
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((benefit) => (
-              <div
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {benefits.map((benefit, i) => (
+              <IconFeatureCard
                 key={benefit.title}
-                className="h-full flex flex-col bg-white rounded-2xl border border-primary-100 p-6 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all"
-              >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-white flex items-center justify-center mb-5 shadow-md">
-                  <benefit.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{benefit.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{benefit.description}</p>
-              </div>
+                icon={benefit.icon}
+                title={benefit.title}
+                description={benefit.description}
+                delay={i * 0.06}
+                tone="cp"
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Supported Currencies */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="container-custom px-4 sm:px-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-                <span className="h-px w-8 bg-primary-500" aria-hidden />
-                Multi-currency
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-                Supported Currencies
-              </h2>
-              <p className="text-lg text-gray-600">
-                Load and lock in exchange rates for these major currencies.
-              </p>
-            </div>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-              {currencies.map((currency) => (
-                <div
-                  key={currency}
-                  className="rounded-xl px-4 py-6 text-center border border-primary-100 bg-gradient-to-br from-primary-50 to-white shadow-soft"
-                >
-                  <div className="text-xl font-bold text-gray-900">{currency}</div>
-                </div>
-              ))}
-            </div>
+      <section className="py-20 lg:py-24 bg-white">
+        <div className="container-custom">
+          <div className="text-center mb-12 lg:mb-14">
+            <SectionEyebrow tone="cp">Multi-currency</SectionEyebrow>
+            <SectionHeading
+              align="center"
+              title="Currencies you can load"
+              subtitle="Load and manage major travel currencies on one card."
+            />
           </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-16 lg:py-24 bg-gray-50">
-        <div className="container-custom px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
-              Simple process
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-              How It Works
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Getting started with Cash Passport is simple and straightforward.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {process.map((step, index) => (
-              <div
-                key={step.title}
-                className="h-full rounded-2xl border border-primary-100 bg-white p-6 shadow-soft hover:shadow-lg hover:border-primary-300 transition-all"
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 sm:gap-4 max-w-4xl mx-auto">
+            {currencies.map((code, i) => (
+              <MotionWrapper
+                key={code}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: i * 0.03 }}
+                viewport={{ once: true }}
               >
-                <div className="text-3xl font-black text-primary-600/90 mb-4 tabular-nums tracking-tight">
-                  0{index + 1}
+                <div className="rounded-2xl px-3 py-5 text-center border border-[#E8E2DA] bg-[#F3F0EE] shadow-soft">
+                  <span className="text-base sm:text-lg font-bold text-[#141413] tracking-wide">
+                    {code}
+                  </span>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">{step.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{step.description}</p>
-              </div>
+              </MotionWrapper>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="container-custom px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
+      <section className="py-20 lg:py-24 bg-[#FCFBFA]">
+        <div className="container-custom">
+          <div className="text-center mb-14 lg:mb-16">
+            <SectionEyebrow tone="cp">Simple process</SectionEyebrow>
+            <SectionHeading
+              align="center"
+              title="How it works"
+              subtitle="From getting your card to spending and reloading overseas."
+            />
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {process.map((step, i) => (
+              <StepCard
+                key={step.number}
+                number={step.number}
+                title={step.title}
+                description={step.description}
+                delay={i * 0.06}
+                tone="cp"
+              />
+            ))}
+          </div>
+          <div className="mt-12 flex items-center justify-center gap-2 text-sm text-[#555555]">
+            <ArrowPathIcon className="w-4 h-4 text-[#3860BE]" />
+            <span>Reload online, in the app, or at a Lotus FX branch</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 lg:py-24 bg-[#141413]">
+        <div className="container-custom">
+          <div className="text-center mb-12 lg:mb-14">
+            <span className="block text-sm font-semibold uppercase tracking-[0.18em] text-[#3860BE] mb-3">
               FAQs
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
-              Frequently Asked Questions
+            <h2 className="text-3xl lg:text-4xl font-bold text-white tracking-tight">
+              Cash Passport questions
             </h2>
           </div>
-
           <div className="max-w-3xl mx-auto space-y-4">
-            {[
-              {
-                q: 'How do I get a Cash Passport card?',
-                a: 'You can sign up online through our secure Mastercard partner link for quick delivery, or visit any LotusFX branch to get your card instantly. Both options are available.',
-              },
-              {
-                q: 'What currencies can I load?',
-                a: 'You can load up to 10 different currencies including USD, EUR, GBP, JPY, AUD, NZD, and more. Lock in exchange rates before you travel.',
-              },
-              {
-                q: 'How do I reload my card?',
-                a: 'Reload your card anytime via the mobile app, online banking, BPAY, or visit any LotusFX branch. Funds are available immediately.',
-              },
-              {
-                q: 'Is it safe to use?',
-                a: 'Yes, Cash Passport uses Mastercard security with chip & PIN protection, contactless payments, and 24/7 fraud monitoring. You can freeze your card instantly via the app if needed.',
-              },
-              {
-                q: 'Where can I use it?',
-                a: 'Use your Cash Passport card anywhere Mastercard is accepted worldwide - shops, restaurants, hotels, and ATMs. It works just like a regular debit card.',
-              },
-            ].map((faq) => (
-              <div
-                key={faq.q}
-                className="rounded-xl border border-gray-200 border-l-4 border-l-primary-400 bg-white shadow-soft"
+            {faqs.map((faq, i) => (
+              <MotionWrapper
+                key={faq.question}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+                viewport={{ once: true }}
               >
-                <div className="px-6 py-5">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.q}</h3>
-                  <p className="text-gray-700 leading-relaxed">{faq.a}</p>
-                </div>
-              </div>
+                <details className="group bg-[#1c1c1b] rounded-2xl border border-white/10 p-6 hover:border-[#3860BE]/40 transition-colors">
+                  <summary className="font-semibold text-white text-lg cursor-pointer list-none flex items-start justify-between gap-4">
+                    <span>{faq.question}</span>
+                    <span
+                      className="text-[#3860BE] shrink-0 transition group-open:rotate-45 text-2xl leading-none"
+                      aria-hidden
+                    >
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-[#D1CDC7] leading-relaxed">{faq.answer}</p>
+                </details>
+              </MotionWrapper>
             ))}
           </div>
         </div>
       </section>
-
-      {/* (CTA section removed as requested) */}
     </>
   )
 }

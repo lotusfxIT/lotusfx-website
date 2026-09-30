@@ -35,9 +35,11 @@ function getCountryApiConfig(country: string) {
     xClient: string
   }> = {
     AU: {
-      url: process.env.EXCHANGE_RATE_API_URL_AU || 'https://au.app.lotusfx.com/rst/Currencies/getExchangeRate',
-      xKey: process.env.EXCHANGE_RATE_X_KEY_AU || process.env.EXCHANGE_RATE_X_KEY || '',
-      xClient: process.env.EXCHANGE_RATE_X_CLIENT_AU || process.env.EXCHANGE_RATE_X_CLIENT || '',
+      url:
+        process.env.EXCHANGE_RATE_API_URL_AU ||
+        'http://139.180.183.4:8080/rst/Currencies/getExchangeRate',
+      xKey: process.env.EXCHANGE_RATE_X_KEY_AU || process.env.EXCHANGE_RATE_X_KEY || 'abc123',
+      xClient: process.env.EXCHANGE_RATE_X_CLIENT_AU || process.env.EXCHANGE_RATE_X_CLIENT || 'LotusFX',
     },
     NZ: {
       url: process.env.EXCHANGE_RATE_API_URL_NZ || 'https://nz.app.lotusfx.com/rst/Currencies/getExchangeRate',

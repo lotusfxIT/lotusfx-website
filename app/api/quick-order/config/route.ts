@@ -6,6 +6,7 @@ import {
   getQuickOrderPortalLoginUrl,
   isDeliveryEnabled,
 } from '@/lib/quick-order-api'
+import { getCountryPortalLinks } from '@/lib/country-portals'
 
 /** Public config for the wizard (no secrets). */
 export async function GET(request: NextRequest) {
@@ -21,6 +22,8 @@ export async function GET(request: NextRequest) {
     enablePickup: true,
     baseCurrency: getQuickOrderBaseCurrency(country),
     portalLoginUrl: getQuickOrderPortalLoginUrl(country),
+    appStoreUrl: getCountryPortalLinks(country).appStore,
+    playStoreUrl: getCountryPortalLinks(country).playStore,
     companyName: 'LotusFX',
   })
 }

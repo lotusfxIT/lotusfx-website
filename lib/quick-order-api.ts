@@ -1,3 +1,5 @@
+import { getPortalLoginUrl } from './country-portals'
+
 /**
  * Server-only Quick Order API client for LotusFX 4D REST endpoints.
  * Keys must never be exposed as NEXT_PUBLIC_*.
@@ -33,10 +35,7 @@ export function getQuickOrderBaseCurrency(country?: string | null): QuickOrderBa
 }
 
 export function getQuickOrderPortalLoginUrl(country?: string | null): string {
-  const c = normalizeCountry(country)
-  if (c === 'NZ') return 'https://nzcportal.lotusfx.com/customers/login.shtml'
-  if (c === 'FJ') return 'https://nzcportal.lotusfx.com/customers/login.shtml'
-  return 'https://auportal.lotusfx.com/customers/login.shtml'
+  return getPortalLoginUrl(country) || ''
 }
 
 export function getQuickOrderConfig(
@@ -87,16 +86,17 @@ export function getQuickOrderConfig(
     return { country: selected, baseUrl, xKey, xClient, timeoutMs }
   }
 
-  // AU stays on the 4dDev public-purchase test server for now.
-  // Do NOT fall back to AU exchange-rate keys — those are for au.app.lotusfx.com
-  // and return 401 on test.lotusfx.com.
+  // AU → new AU app server on :8080 (same public keys as 4dDev standalone).
   const baseUrl = (
     process.env.QUICK_ORDER_API_URL_AU ||
     process.env.QUICK_ORDER_API_URL ||
-    'https://test.lotusfx.com'
+    process.env.EXCHANGE_RATE_API_BASE_AU ||
+    'http://139.180.183.4:8080'
   ).replace(/\/$/, '')
   const xKey =
-    process.env.QUICK_ORDER_X_KEY_AU || process.env.QUICK_ORDER_X_KEY || 'abc123'
+    process.env.QUICK_ORDER_X_KEY_AU ||
+    process.env.QUICK_ORDER_X_KEY ||
+    'abc123'
   const xClient =
     process.env.QUICK_ORDER_X_CLIENT_AU ||
     process.env.QUICK_ORDER_X_CLIENT ||

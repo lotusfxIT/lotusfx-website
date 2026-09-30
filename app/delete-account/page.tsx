@@ -48,24 +48,21 @@ export default function DeleteAccountPage() {
           </li>
         </ol>
 
-        <div className="mt-6 rounded-2xl border border-primary-100 bg-white p-6 shadow-soft space-y-3">
-          <h3 className="text-lg font-bold text-gray-900">Customer care email addresses</h3>
-          <ul className="space-y-2">
+        <div className="mt-6 space-y-3">
+          <h3>Customer care email addresses</h3>
+          <ul className="space-y-3 list-none pl-0">
             {SUPPORT_EMAILS.map(({ region, email }) => (
-              <li key={region}>
-                <span className="font-medium text-gray-900">{region}:</span>{' '}
-                <a href={`mailto:${email}?subject=Account%20deletion%20request%20%E2%80%94%20LotusFX%20app`} className="text-primary-700 font-semibold hover:text-primary-900">
+              <li key={region} className="list-none">
+                <span className="font-semibold text-gray-900">{region}:</span>{' '}
+                <a href={`mailto:${email}?subject=Account%20deletion%20request%20%E2%80%94%20LotusFX%20app`}>
                   {email}
                 </a>
               </li>
             ))}
           </ul>
-          <p className="text-sm text-gray-600">
-            You can also{' '}
-            <Link href="/contact" className="text-primary-700 font-semibold hover:text-primary-900">
-              contact us online
-            </Link>{' '}
-            or visit your nearest LotusFX branch.
+          <p>
+            You can also <Link href="/contact">contact us online</Link> or visit your nearest
+            LotusFX branch.
           </p>
         </div>
       </section>

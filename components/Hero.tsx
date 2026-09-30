@@ -1,11 +1,11 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowRightIcon, CheckCircleIcon, StarIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon } from '@heroicons/react/24/outline'
 import CurrencyCalculator from './CurrencyCalculator'
 import { useCountryContent } from '@/hooks/useCountryContent'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useCountry } from '@/context/CountryContext'
 import { useSiteStats } from '@/context/SiteStatsContext'
 import { trackEvent } from '@/lib/analytics'
@@ -33,7 +33,7 @@ const statsTemplate = [
   {
     label: 'Years',
     value: '{years}',
-    subtext: 'Experience',
+    subtext: 'Legacy',
     href: '/about',
   },
 ]
@@ -42,17 +42,7 @@ export default function Hero() {
   const { content, loading } = useCountryContent()
   const { selectedCountry } = useCountry()
   const { stats: siteStats } = useSiteStats()
-  const [showLogo, setShowLogo] = useState(true)
   const [showQuoteHeading, setShowQuoteHeading] = useState(true)
-
-  // Animation cycle: Logo (7s) -> Content (7s) -> Logo (7s) -> repeat
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setShowLogo(prev => !prev)
-    }, 7000)
-
-    return () => clearInterval(interval)
-  }, [showLogo])
 
   // Determine branch count per selected country
   const countryNames: Record<string, string> = {
@@ -84,6 +74,21 @@ export default function Hero() {
     siteStats.hero.featureCurrencies,
   ].filter(Boolean)
 
+  // Stable short copy — avoid long fallback flash while CMS content loads
+  const defaultHeroSubtitle =
+    'Market-leading exchange rates, no commission on currency exchange, and 50+ locations across Australia, New Zealand and Fiji.'
+  const heroTitle =
+    (!loading && content?.heroTitle) ||
+    'Get more holiday out of your travel money'
+  const rawSubtitle = (
+    (!loading && content?.heroSubtitle) ||
+    defaultHeroSubtitle
+  ).replace(/\sand\sFiji\.?/gi, ' and Fiji.')
+  // Break after "across" on tablet+; mobile keeps normal spaces so lines can wrap
+  const acrossSplit = rawSubtitle.match(/^(.*?across)\s+(.*)$/i)
+  const subtitleBefore = acrossSplit?.[1] ?? rawSubtitle
+  const subtitleAfter = acrossSplit?.[2] ?? ''
+
   // Build stats with country-specific data
   const stats = statsTemplate.map((stat) => {
     const rawValue =
@@ -105,191 +110,119 @@ export default function Hero() {
   })
 
   return (
-    <section className="relative min-h-[calc(100vh-80px)] flex items-center overflow-hidden pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-12 w-full">
+    <section className="relative min-h-[100svh] lg:h-[100svh] flex flex-col overflow-x-clip w-full pt-[calc(4rem+1.5rem)] pb-6 sm:pt-[calc(4rem+1.75rem)] sm:pb-7 lg:pt-[calc(5rem+2rem)] lg:pb-8">
       {/* Background with red gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800"></div>
 
       {/* Animated Background Elements - Red/Wooden tones */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary-500 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob"></div>
         <div className="absolute top-40 right-10 w-72 h-72 bg-accent-400 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-blob animation-delay-2000"></div>
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-primary-600 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob animation-delay-4000"></div>
       </div>
       
-      <div className="container-custom relative z-10 px-4 sm:px-6">
-        <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-8 sm:gap-10 lg:gap-16 xl:gap-24 items-stretch min-w-0">
-          {/* Left Column - Content */}
+      <div className="container-custom relative z-10 px-4 sm:px-6 flex-1 flex flex-col min-h-0">
+        <div className="grid lg:grid-cols-[1.3fr_0.7fr] gap-6 sm:gap-8 lg:gap-8 xl:gap-12 items-stretch flex-1 min-h-0 min-w-0">
+          {/* Left Column */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -48 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-4 sm:space-y-6 relative min-w-0"
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="relative min-w-0 h-full flex flex-col overflow-visible"
           >
-            <div className="relative z-10 w-full max-w-full overflow-hidden" style={{ height: '520px' }}>
-              <AnimatePresence mode="sync">
-                {showLogo ? (
-                  // Beautiful Company Name Display
-                  <motion.div
-                    key="logo"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="absolute inset-0 flex flex-col items-center lg:items-start justify-center overflow-hidden w-full max-w-full px-1 space-y-1"
+            {/* Text block — even gaps, room for descenders */}
+            <div className="relative z-10 w-full min-w-0 overflow-visible space-y-5 sm:space-y-6 lg:space-y-7">
+              {/* 1. Company name */}
+              <p
+                className="font-museo uppercase text-white !leading-[1.15] pb-1"
+                aria-label="Lotus Foreign Exchange"
+              >
+                <span className="inline-flex max-w-full flex-wrap items-baseline gap-x-[0.4em] gap-y-0 sm:flex-nowrap">
+                  <span className="font-bold text-[2.15rem] sm:text-[3.1rem] lg:text-[3.6rem] tracking-[0.02em]">
+                    Lotus
+                  </span>
+                  <span className="font-medium text-[1.2rem] sm:text-[1.95rem] lg:text-[2.25rem] tracking-[0.14em] text-white/90">
+                    Foreign Exchange
+                  </span>
+                </span>
+              </p>
+
+              {/* 2. Slogan — wraps on mobile; one line on tablet+ */}
+              <h1 className="text-[1.65rem] sm:text-[2.2rem] md:text-[2.35rem] lg:text-[2.5rem] xl:text-[2.75rem] font-bold text-white !leading-[1.35] pb-[0.15em] tracking-tight md:whitespace-nowrap">
+                {heroTitle}
+              </h1>
+
+              {/* 3. Brief description — wrap freely on mobile; break after "across" from sm up */}
+              <p className="text-base sm:text-xl lg:text-[1.35rem] xl:text-xl text-white/90 !leading-[1.5] pb-[0.1em]">
+                <span className="md:whitespace-nowrap">{subtitleBefore}</span>
+                {subtitleAfter ? (
+                  <>
+                    <br className="hidden sm:block" />
+                    <span className="sm:hidden"> </span>
+                    {subtitleAfter}
+                  </>
+                ) : null}
+              </p>
+
+              {/* 4. Checklist */}
+              <ul className="space-y-4 list-none p-0 m-0 max-w-[48rem]">
+                {features.map((feature, index) => (
+                  <motion.li
+                    key={feature}
+                    initial={{ opacity: 0, x: -24 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.45, delay: 0.35 + index * 0.08, ease: 'easeOut' }}
+                    className="flex items-start gap-3 min-w-0"
                   >
-                    {[
-                      { word: 'Lotus', delay: 0.2, tracking: 'tracking-[0.12em] sm:tracking-[0.18em] lg:tracking-[0.25em]' },
-                      { word: 'Foreign', delay: 0.3, tracking: 'tracking-[0.08em] sm:tracking-[0.16em] lg:tracking-[0.28em]' },
-                      { word: 'Exchange', delay: 0.4, tracking: 'tracking-[0.06em] sm:tracking-[0.14em] lg:tracking-[0.28em]' },
-                    ].map(({ word, delay, tracking }) => (
-                      <motion.div
-                        key={word}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay }}
-                        className={`w-full max-w-full text-center lg:text-left text-[clamp(2.35rem,11vw,5.25rem)] font-semibold uppercase leading-[1.1] ${tracking}`}
-                        style={{
-                          background: 'linear-gradient(180deg, #ffffff 0%, #f5f0e8 45%, #ebe4d9 100%)',
-                          WebkitBackgroundClip: 'text',
-                          backgroundClip: 'text',
-                          color: 'transparent',
-                          filter: 'drop-shadow(0 2px 20px rgba(0,0,0,0.12))',
-                        }}
-                      >
-                        {word}
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                ) : (
-                  // Content Display
-                  <motion.div
-                    key="content"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    className="absolute inset-0 space-y-6"
-                  >
-                    <div className="space-y-3">
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium border border-white/30"
-                      >
-                        <StarIcon className="w-4 h-4" />
-                        <span>
-                          {siteStats.hero.trustedPrefix}{' '}
-                          {content?.customers || `${siteStats.customers.total} customers`}
-                        </span>
-                      </motion.div>
-
-                      <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.3 }}
-                        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
-                      >
-                        {content?.heroTitle || 'Get more holiday out of your travel money'}
-                      </motion.h1>
-
-                      <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                        className="text-base sm:text-lg lg:text-xl text-accent-100 max-w-2xl"
-                      >
-                        {content?.heroSubtitle ||
-                          'Your money should go toward the trip, not exchange fees. Lotus FX helps you sort your travel money properly with market-leading exchange rates, convenient locations, and a local, friendly service. No hassles. No commissions. Just more money left for the moments you\u2019re travelling for.'}
-                      </motion.p>
-                    </div>
-
-                    {/* Features List - shown with content */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.5 }}
-                      className="space-y-3"
-                    >
-                      {features.map((feature, index) => (
-                        <motion.div
-                          key={feature}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.4, delay: 0.6 + index * 0.1 }}
-                          className="flex items-center space-x-3"
-                        >
-                          <CheckCircleIcon className="w-5 h-5 text-white flex-shrink-0" />
-                          <span className="text-white font-medium">{feature}</span>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    <CheckCircleIcon className="w-6 h-6 sm:w-7 sm:h-7 text-white/90 flex-shrink-0 mt-0.5" />
+                    <span className="text-white font-medium text-lg sm:text-xl !leading-[1.5] pb-0.5">
+                      {feature}
+                    </span>
+                  </motion.li>
+                ))}
+              </ul>
             </div>
 
-            {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              className="flex flex-col sm:flex-row gap-3 p-0.5"
-            >
-              {isQuickOrderEnabled(selectedCountry) ? (
+            <div className="mt-auto pt-7 sm:pt-8 space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                {isQuickOrderEnabled(selectedCountry) && (
+                  <Link
+                    href={buildQuickOrderUrl({ to: 'USD' })}
+                    onClick={() =>
+                      trackEvent('order_initiation', {
+                        cta_name: 'quick_order',
+                        quote_type: 'cash',
+                        country: selectedCountry,
+                        location: 'hero',
+                      })
+                    }
+                    className="hero-qo-pulse col-span-1 lg:col-span-2 w-full text-base lg:text-lg px-5 py-3.5 flex items-center justify-center gap-2 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] shadow-lg hover:shadow-xl bg-white hover:bg-gray-50 text-primary-700 relative z-[1]"
+                  >
+                    <span>Quick Order</span>
+                    <span className="ml-1 inline-flex items-center rounded-full bg-primary-600 px-2 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wide text-white">
+                      New
+                    </span>
+                  </Link>
+                )}
                 <Link
-                  href={buildQuickOrderUrl()}
+                  href="/locations"
                   onClick={() =>
-                    trackEvent('order_initiation', {
-                      cta_name: 'quick_order',
-                      quote_type: 'cash',
-                      country: selectedCountry,
+                    trackEvent('cta_click', {
+                      cta_name: 'find_branch',
                       location: 'hero',
+                      country: selectedCountry,
                     })
                   }
-                  className="text-base lg:text-lg px-7 py-3 flex items-center justify-center space-x-2 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] shadow-lg hover:shadow-xl text-white"
-                  style={{
-                    background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
-                  }}
+                  className="col-span-1 lg:col-span-2 w-full text-base lg:text-lg px-5 py-3.5 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] border-2 border-white text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center gap-2"
                 >
-                  <span>Quick Order</span>
-                  <ArrowRightIcon className="w-5 h-5" />
+                  <span>Find a local branch</span>
                 </Link>
-              ) : null}
-              <Link
-                href="/locations"
-                onClick={() =>
-                  trackEvent('cta_click', {
-                    cta_name: 'find_branch',
-                    location: 'hero',
-                    country: selectedCountry,
-                  })
-                }
-                className="text-base lg:text-lg px-7 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] shadow-lg hover:shadow-xl text-white flex items-center justify-center space-x-2"
-                style={{
-                  background: 'linear-gradient(135deg, #E0C9A6 0%, #D4B896 50%, #C8AA84 100%)'
-                }}
-              >
-                <span>Find a branch</span>
-                <ArrowRightIcon className="w-5 h-5" />
-              </Link>
-            </motion.div>
+              </div>
 
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1 }}
-              className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 pt-4 sm:pt-6"
-            >
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.href}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 1.1 + index * 0.1 }}
-                >
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                {stats.map((stat) => (
                   <Link
+                    key={stat.href}
                     href={stat.href}
                     onClick={() =>
                       trackEvent('cta_click', {
@@ -312,20 +245,20 @@ export default function Hero() {
                       </div>
                     ) : null}
                   </Link>
-                </motion.div>
-              ))}
-            </motion.div>
+                ))}
+              </div>
+            </div>
           </motion.div>
 
           {/* Right Column - Calculator */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
+            initial={{ opacity: 0, x: 48 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative h-full flex flex-col min-h-0 min-w-0 w-full"
+            transition={{ duration: 0.7, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+            className="relative h-full min-h-0 min-w-0 w-full flex flex-col"
           >
-            <div className="bg-white rounded-2xl shadow-strong p-4 sm:p-6 border border-gray-100 relative z-10 w-full max-w-lg mx-auto lg:mx-auto lg:mr-8 flex flex-col min-h-[800px] min-w-0">
-              {/* Currency symbols - LEFT side of calculator - Distributed */}
+            <div className="bg-white rounded-2xl shadow-strong p-4 sm:p-6 border border-gray-100 relative z-10 w-full max-w-lg h-full mx-auto lg:ml-auto lg:mr-0 flex flex-col min-h-0 min-w-0">
+              {/* Currency symbols - LEFT — soft white + pink/light red */}
               <div
                 className="absolute top-0 bottom-0 pointer-events-none hidden lg:block overflow-visible"
                 style={{
@@ -337,47 +270,32 @@ export default function Hero() {
                 }}
                 aria-hidden="true"
               >
-                {/* Wooden currency symbols - distributed */}
                 <span
-                  className="absolute top-[10%] right-[20%] text-4xl lg:text-5xl font-bold"
-                  style={{
-                    backgroundImage: 'linear-gradient(135deg, rgba(212,184,150,0.95), rgba(200,170,132,0.8)), url(/wood.jpg)',
-                    backgroundSize: 'cover',
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    color: 'transparent',
-                    opacity: 0.6,
-                    textShadow: '0 2px 4px rgba(0,0,0,0.15)',
-                  }}
+                  className="absolute top-[10%] right-[20%] text-4xl lg:text-5xl font-bold text-white/70"
+                  style={{ textShadow: '0 0 14px rgba(255,255,255,0.2)' }}
                 >
                   $
                 </span>
                 <span
-                  className="absolute top-[30%] right-0 text-5xl lg:text-6xl font-bold text-white opacity-70"
-                  style={{
-                    textShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                  }}
+                  className="absolute top-[30%] right-0 text-5xl lg:text-6xl font-bold text-white/80"
+                  style={{ textShadow: '0 2px 10px rgba(127,29,29,0.28)' }}
                 >
                   ₩
                 </span>
                 <span
                   className="absolute top-[50%] right-[30%] text-4xl lg:text-5xl font-bold"
                   style={{
-                    backgroundImage: 'linear-gradient(135deg, rgba(212,184,150,0.95), rgba(200,170,132,0.8)), url(/wood.jpg)',
-                    backgroundSize: 'cover',
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    color: 'transparent',
-                    opacity: 0.6,
-                    textShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                    color: 'rgba(251,146,160,0.85)',
+                    textShadow: '0 0 16px rgba(251,113,133,0.45)',
                   }}
                 >
                   ₺
                 </span>
                 <span
-                  className="absolute top-[70%] right-[10%] text-5xl lg:text-6xl font-bold text-white opacity-75"
+                  className="absolute top-[70%] right-[10%] text-5xl lg:text-6xl font-bold"
                   style={{
-                    textShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                    color: 'rgba(254,205,211,0.88)',
+                    textShadow: '0 2px 8px rgba(190,18,60,0.25)',
                   }}
                 >
                   ₱
@@ -385,20 +303,15 @@ export default function Hero() {
                 <span
                   className="absolute top-[85%] right-[25%] text-4xl lg:text-5xl font-bold"
                   style={{
-                    backgroundImage: 'linear-gradient(135deg, rgba(212,184,150,0.95), rgba(200,170,132,0.8)), url(/wood.jpg)',
-                    backgroundSize: 'cover',
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    color: 'transparent',
-                    opacity: 0.6,
-                    textShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                    color: 'rgba(251,113,133,0.75)',
+                    textShadow: '0 0 14px rgba(244,63,94,0.35)',
                   }}
                 >
                   元
                 </span>
               </div>
 
-              {/* Currency symbols - RIGHT side of calculator - Distributed */}
+              {/* Currency symbols - RIGHT — soft white + pink/light red */}
               <div
                 className="absolute top-0 bottom-0 pointer-events-none hidden lg:block overflow-visible"
                 style={{
@@ -410,33 +323,26 @@ export default function Hero() {
                 }}
                 aria-hidden="true"
               >
-                {/* Currency symbols - distributed */}
                 <span
-                  className="absolute top-[8%] left-[15%] text-5xl lg:text-6xl font-bold text-white opacity-70"
-                  style={{
-                    textShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                  }}
+                  className="absolute top-[8%] left-[15%] text-5xl lg:text-6xl font-bold text-white/80"
+                  style={{ textShadow: '0 2px 10px rgba(127,29,29,0.28)' }}
                 >
                   ¥
                 </span>
                 <span
                   className="absolute top-[25%] left-0 text-4xl lg:text-5xl font-bold"
                   style={{
-                    backgroundImage: 'linear-gradient(135deg, rgba(212,184,150,0.95), rgba(200,170,132,0.8)), url(/wood.jpg)',
-                    backgroundSize: 'cover',
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    color: 'transparent',
-                    opacity: 0.6,
-                    textShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                    color: 'rgba(254,205,211,0.9)',
+                    textShadow: '0 2px 8px rgba(190,18,60,0.22)',
                   }}
                 >
                   €
                 </span>
                 <span
-                  className="absolute top-[45%] left-[25%] text-5xl lg:text-6xl font-bold text-white opacity-75"
+                  className="absolute top-[45%] left-[25%] text-5xl lg:text-6xl font-bold"
                   style={{
-                    textShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                    color: 'rgba(251,113,133,0.82)',
+                    textShadow: '0 0 18px rgba(244,63,94,0.4)',
                   }}
                 >
                   ₹
@@ -444,22 +350,15 @@ export default function Hero() {
                 <span
                   className="absolute top-[65%] left-[5%] text-4xl lg:text-5xl font-bold"
                   style={{
-                    backgroundImage: 'linear-gradient(135deg, rgba(212,184,150,0.95), rgba(200,170,132,0.8)), url(/wood.jpg)',
-                    backgroundSize: 'cover',
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    color: 'transparent',
-                    opacity: 0.6,
-                    textShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                    color: 'rgba(255,228,230,0.9)',
+                    textShadow: '0 2px 8px rgba(190,18,60,0.22)',
                   }}
                 >
                   £
                 </span>
                 <span
-                  className="absolute top-[82%] left-[20%] text-5xl lg:text-6xl font-bold text-white opacity-70"
-                  style={{
-                    textShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                  }}
+                  className="absolute top-[82%] left-[20%] text-5xl lg:text-6xl font-bold text-white/70"
+                  style={{ textShadow: '0 2px 10px rgba(127,29,29,0.25)' }}
                 >
                   ₫
                 </span>

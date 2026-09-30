@@ -1,108 +1,123 @@
 'use client'
 
+import Link from 'next/link'
 import GoogleMyBusiness from '@/components/GoogleMyBusiness'
 import CurrencySymbolsBg from '@/components/CurrencySymbolsBg'
 import { useCountry } from '@/context/CountryContext'
-import { MapPinIcon } from '@heroicons/react/24/outline'
-
-const countryInfo = {
-  AU: {
-    name: 'Australia',
-    description:
-      'Choose from over 50+ convenient Lotus FX locations across Australia. Exchange foreign currency with market-leading rates and no commission fees.',
-    branchCount: '20+ branches',
-  },
-  NZ: {
-    name: 'New Zealand',
-    description:
-      'Choose from over 50+ convenient Lotus FX locations across New Zealand. Exchange foreign currency with market-leading rates and no commission fees.',
-    branchCount: '18+ branches',
-  },
-  FJ: {
-    name: 'Fiji',
-    description:
-      'Choose from over 50+ convenient Lotus FX locations across Fiji. Exchange foreign currency with market-leading rates and no commission fees.',
-    branchCount: '16+ branches',
-  },
-}
+import { useSiteStats } from '@/context/SiteStatsContext'
 
 const FLAG_CDN = 'https://flagcdn.com'
 
 function CountryFlag({
   code,
-  className = 'w-10 h-6 rounded-md object-cover shadow-sm border border-white/40',
+  className = 'w-8 h-5 rounded object-cover shadow-sm',
 }: {
   code: string
   className?: string
 }) {
-  const cc = (code || 'AU').toLowerCase()
-  return <img src={`${FLAG_CDN}/${cc}.svg`} alt={code} className={className} loading="lazy" />
+  return (
+    <img
+      src={`${FLAG_CDN}/${(code || 'AU').toLowerCase()}.svg`}
+      alt=""
+      className={className}
+      loading="lazy"
+    />
+  )
 }
 
 export default function LocationsPage() {
-  const { selectedCountry } = useCountry()
-  const country = countryInfo[selectedCountry as keyof typeof countryInfo] || countryInfo.AU
+  const { selectedCountry, setSelectedCountry } = useCountry()
+  const { stats } = useSiteStats()
+
+  const count = (value: string) => String(value || '').replace(/\+$/, '')
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white pt-28 sm:pt-32 lg:pt-36 pb-12 lg:pb-14">
         <CurrencySymbolsBg variant="white" />
-        <div className="container-custom relative z-10 py-16 lg:py-24">
-          <div className="grid lg:grid-cols-[minmax(0,1.2fr),minmax(0,1fr)] gap-10 lg:gap-16 items-center">
-            <div>
-              <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-5 py-2 mb-6 border border-white/20">
-                <CountryFlag code={selectedCountry} />
-                <div className="flex flex-col items-start leading-tight">
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-50">
-                    Locations
-                  </span>
-                  <span className="text-sm font-medium">
-                    {country.name} · {country.branchCount}
-                  </span>
-                </div>
-              </div>
+        <div className="container-custom relative z-10">
+          <div className="max-w-2xl mx-auto text-center mb-10">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+              Find a branch
+            </h1>
+          </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-5 leading-tight">
-                Find a branch
-              </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-primary-100 mb-6 max-w-2xl">
-                {country.description} Browse branches in {country.name} by region, see hours,
-                reviews, and directions.
-              </p>
-
-              {/* Removed extra chips under header per design request */}
-            </div>
-
-            {/* Right column intentionally left empty on desktop to keep hero clean */}
+          <div className="mx-auto grid max-w-3xl grid-cols-3 gap-3 sm:gap-4">
+            {[
+              { code: 'AU', label: 'Australia', n: count(stats.branches.australia) },
+              { code: 'NZ', label: 'New Zealand', n: count(stats.branches.newZealand) },
+              { code: 'FJ', label: 'Fiji', n: count(stats.branches.fiji) },
+            ].map((c) => {
+              const active = selectedCountry === c.code
+              return (
+                <button
+                  key={c.code}
+                  type="button"
+                  onClick={() => setSelectedCountry(c.code)}
+                  className={`rounded-2xl px-3 py-5 sm:px-4 sm:py-6 text-center border transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 ${
+                    active
+                      ? 'bg-white text-primary-800 border-white shadow-lg'
+                      : 'bg-white/10 text-white border-white/20 hover:bg-white/15'
+                  }`}
+                >
+                  <CountryFlag
+                    code={c.code}
+                    className="mx-auto mb-3 w-9 h-6 rounded object-cover shadow-sm ring-1 ring-black/5"
+                  />
+                  <p className="text-2xl sm:text-3xl font-bold tabular-nums tracking-tight">
+                    {c.n}
+                  </p>
+                  <p
+                    className={`text-[11px] sm:text-xs font-semibold uppercase tracking-wide ${
+                      active ? 'text-primary-500' : 'text-primary-200'
+                    }`}
+                  >
+                    branches
+                  </p>
+                  <p
+                    className={`mt-1 text-xs sm:text-sm font-semibold ${
+                      active ? 'text-primary-600' : 'text-primary-100'
+                    }`}
+                  >
+                    {c.label}
+                  </p>
+                </button>
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* Google My Business Integration */}
-      <section className="py-12 lg:py-16 bg-white">
+      <section
+        id="branches"
+        className="py-12 lg:py-16 bg-gradient-to-b from-white via-primary-50/20 to-white scroll-mt-24"
+      >
         <div className="container-custom">
           <GoogleMyBusiness />
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 bg-primary-600 text-white">
-        <div className="container-custom text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            Can't Find a Branch Near You?
+      <section className="py-14 lg:py-16 bg-primary-600 text-white">
+        <div className="container-custom text-center max-w-xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3 tracking-tight">
+            Can&apos;t find a branch near you?
           </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            No problem! Use our online platform to exchange currency and have it 
-            delivered to your door, or visit any of our partner locations.
+          <p className="text-primary-100 mb-7 leading-relaxed">
+            Order currency online for pickup, or contact us for help with your travel money.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-primary-600 hover:bg-gray-50 font-bold text-lg py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-              Exchange Online
-            </button>
-            <button className="border-2 border-white text-white hover:bg-white hover:text-primary-600 font-bold text-lg py-4 px-8 rounded-lg transition-all duration-200">
-              Find Partner Locations
-            </button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/quick-order"
+              className="inline-flex items-center justify-center bg-white text-primary-700 hover:bg-gray-50 font-semibold py-3 px-7 rounded-xl transition"
+            >
+              Order currency online
+            </Link>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center border-2 border-white text-white hover:bg-white/10 font-semibold py-3 px-7 rounded-xl transition"
+            >
+              Contact us
+            </Link>
           </div>
         </div>
       </section>

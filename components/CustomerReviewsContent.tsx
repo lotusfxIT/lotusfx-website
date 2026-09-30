@@ -219,8 +219,8 @@ export default function CustomerReviewsContent() {
         <div className="container-custom py-8">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
             <div>
-              <p className="text-2xl font-bold text-primary-600">4–5★</p>
-              <p className="text-sm text-gray-500 mt-1">Hand-picked Google reviews</p>
+              <p className="text-2xl font-bold text-primary-600">Google</p>
+              <p className="text-sm text-gray-500 mt-1">Verified customer reviews</p>
             </div>
             <div>
               <p className="text-2xl font-bold text-primary-600">{siteStats.branches.total}+</p>
@@ -241,7 +241,7 @@ export default function CustomerReviewsContent() {
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Latest customer stories</h2>
               <p className="text-gray-600 mt-2">
-                Showing recent 4 &amp; 5 star reviews from {countryLabel}.
+                Recent customer reviews from {countryLabel}.
               </p>
             </div>
             <div
@@ -296,7 +296,7 @@ export default function CustomerReviewsContent() {
 
           <p className="text-center text-sm text-gray-500 mt-10">
             These are authentic reviews left by real customers on Google for LotusFX branches.
-            Ratings shown are 4 and 5 stars only.
+            Google reviews from customers across our branch network.
           </p>
         </div>
       </section>

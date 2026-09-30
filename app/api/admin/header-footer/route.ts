@@ -22,25 +22,23 @@ const DEFAULT_CONFIG = {
     contact_phone: '+61 2 1234 5678',
     contact_email: 'info@lotusfx.com',
     social_links: [
-      { name: 'Facebook', url: 'https://facebook.com/lotusfx' },
-      { name: 'Instagram', url: 'https://instagram.com/lotusfx' },
+      { name: 'Facebook', url: 'https://www.facebook.com/lotusforeignexchange/' },
+      { name: 'Instagram', url: 'https://www.instagram.com/lotusforeignexchange' },
+      { name: 'YouTube', url: 'https://www.youtube.com/@LotusForeignExchange' },
       { name: 'LinkedIn', url: 'https://linkedin.com/company/lotusfx' },
     ],
     sections: {
       'Services': [
         { name: 'Currency Exchange', href: '/currency-exchange' },
         { name: 'Money Transfer', href: '/money-transfer' },
-        { name: 'Travel Money', href: '/travel-money' },
         { name: 'Business FX', href: '/business-fx' },
       ],
       'Locations': [
         { name: 'Australia', href: '/au' },
         { name: 'New Zealand', href: '/nz' },
         { name: 'Fiji', href: '/fj' },
-        { name: 'Find a Branch', href: '/locations' },
       ],
       'Support': [
-        { name: 'Complaints', href: '/complaints' },
         { name: 'Contact Us', href: '/contact' },
         { name: 'FAQ', href: '/faq' },
       ],
@@ -52,8 +50,8 @@ const DEFAULT_CONFIG = {
     },
     legal_links: [
       { name: 'Privacy Policy', href: '/privacy' },
+      { name: 'Complaints', href: '/complaints' },
       { name: 'Terms of Service', href: '/terms' },
-      { name: 'Security', href: '/security' },
     ],
   },
 }

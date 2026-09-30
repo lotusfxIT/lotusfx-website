@@ -484,7 +484,7 @@ export default function LocationPage() {
                           rel="noopener noreferrer"
                           className="inline-flex items-center text-primary-600 hover:text-primary-700 text-sm font-semibold mt-2"
                         >
-                          Open in Google Maps →
+                          Open in Google Maps
                         </a>
                       </div>
                     </div>
@@ -553,7 +553,7 @@ export default function LocationPage() {
                       href="/money-transfer"
                       className="inline-flex text-primary-600 font-semibold hover:text-primary-700"
                     >
-                      Learn About Money Transfers →
+                      Learn About Money Transfers
                     </Link>
                   </div>
                 </div>

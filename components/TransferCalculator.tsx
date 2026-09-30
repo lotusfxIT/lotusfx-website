@@ -97,12 +97,13 @@ function TransferCalculatorActive() {
       setError(null)
 
       try {
+        // Same orientation as Quick Order / standalone: foreign → base
         const response = await fetch('/api/exchange-rate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            fromCcy: baseCurrency,
-            toCcy: toCurrency,
+            fromCcy: toCurrency,
+            toCcy: baseCurrency,
             toAmount: send,
             country: selectedCountry,
             transferMode,
@@ -122,7 +123,8 @@ function TransferCalculatorActive() {
           // Prefer inverse for "1 base = X foreign" display & receive = send * inverse
           const receiveRate = inverse > 0 ? inverse : rateNumber
           conversionRateRef.current = receiveRate
-          const converted = result.toAmount != null ? Number(result.toAmount) : send * receiveRate
+          // Do not use proxy toAmount (it multiplies by rate, not inverse)
+          const converted = send * receiveRate
           setReceiveAmount(Number(converted).toFixed(2))
           setRate(receiveRate)
           setError(null)

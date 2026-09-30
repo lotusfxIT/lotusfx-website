@@ -14,9 +14,9 @@ export default function StructuredData() {
       'Currency exchange and money transfer services across Australia, New Zealand and Fiji.',
     foundingDate: '2002',
     sameAs: [
-      'https://www.facebook.com/lotusfx',
-      'https://www.instagram.com/lotusfx',
-      'https://www.linkedin.com/company/lotusfx',
+      'https://www.facebook.com/lotusforeignexchange/',
+      'https://www.instagram.com/lotusforeignexchange',
+      'https://www.youtube.com/@LotusForeignExchange',
     ],
   }
 

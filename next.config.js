@@ -10,6 +10,14 @@ const nextConfig = {
     ],
     formats: ['image/webp', 'image/avif'],
   },
+  async redirects() {
+    return [
+      { source: '/privacy-policy', destination: '/privacy', permanent: true },
+      { source: '/contact-us', destination: '/contact', permanent: true },
+      { source: '/download-app', destination: '/', permanent: false },
+      { source: '/promo', destination: '/', permanent: false },
+    ]
+  },
   async headers() {
     return [
       {

@@ -8,6 +8,8 @@ import FijiBranchRatesCard from '@/components/FijiBranchRatesCard'
 import Link from 'next/link'
 import { trackEvent } from '@/lib/analytics'
 import { buildQuickOrderUrl, isQuickOrderEnabled } from '@/lib/quick-order-url'
+import { getCountryPortalLinks } from '@/lib/country-portals'
+import CountryAppLinks from '@/components/CountryAppLinks'
 
 // Currency code → ISO country code for flag images (flagcdn.com)
 const currencyToCountry: Record<string, string> = {
@@ -90,7 +92,7 @@ const transferModes = [
 
 type TransferMode = 'Wire' | 'Moneygram' | 'Western Union' | 'eWire' | 'Wallet'
 
-// API only accepts the "base" currency as fromCcy per country. Swap button changes UI only.
+// Country base currency (what customers pay with / send from).
 function getBaseCurrency(country: string): string {
   if (country === 'NZ') return 'NZD'
   if (country === 'FJ') return 'FJD'
@@ -116,6 +118,8 @@ type CurrencyCalculatorProps = {
   forceCashOnly?: boolean
   /** Pre-select the foreign currency on currency detail pages */
   defaultToCurrency?: string
+  /** Lock foreign currency (no dropdown) — use with defaultToCurrency on currency pages */
+  lockForeignCurrency?: boolean
 }
 
 export default function CurrencyCalculator(props: CurrencyCalculatorProps) {
@@ -130,12 +134,14 @@ function CurrencyCalculatorActive({
   onOptionChosen,
   forceCashOnly = false,
   defaultToCurrency,
+  lockForeignCurrency = false,
 }: CurrencyCalculatorProps) {
   const { selectedCountry } = useCountry()
   const [chosen, setChosen] = useState<boolean>(forceCashOnly ? true : false)
   const [quoteType, setQuoteType] = useState<'cash' | 'transfer'>('cash')
   const [buyOrSell, setBuyOrSell] = useState<'buy' | 'sell'>('buy') // Foreign Exchange: You Buy / You Sell → isBuy in API
   const baseCurrency = getBaseCurrency(selectedCountry)
+  const lockedForeign = lockForeignCurrency && defaultToCurrency ? defaultToCurrency : null
   const [fromCurrency, setFromCurrency] = useState(baseCurrency)
   const [toCurrency, setToCurrency] = useState(defaultToCurrency || 'USD')
   const [transferMode, setTransferMode] = useState<TransferMode>('Wire')
@@ -159,6 +165,17 @@ function CurrencyCalculatorActive({
     conversionRateRef.current = 0
     amountSideRef.current = 'foreign'
   }, [selectedCountry, defaultToCurrency])
+
+  useEffect(() => {
+    if (!lockedForeign) return
+    if (buyOrSell === 'buy') {
+      setToCurrency(lockedForeign)
+      setFromCurrency(baseCurrency)
+    } else {
+      setFromCurrency(lockedForeign)
+      setToCurrency(baseCurrency)
+    }
+  }, [lockedForeign, buyOrSell, baseCurrency])
 
   const toCountryOptions = toCountries.filter((c) => c.currency !== baseCurrency)
   const allowEWire = toCurrency === 'NZD' || toCurrency === 'FJD' || toCurrency === 'AUD'
@@ -192,23 +209,28 @@ function CurrencyCalculatorActive({
     setError(null)
     const fromAmount = parseFloat(amount)
 
-    // API only accepts base (AUD) as fromCcy. Sell: call base→sellCurrency with toAmount=1, then use inverse for result.
-    const apiFromCcy = baseCurrency
-    const apiToCcy = quoteType === 'transfer' ? toCurrency : (buyOrSell === 'buy' ? toCurrency : fromCurrency)
-    const isReversed = quoteType === 'transfer' ? false : (quoteType === 'cash' ? false : fromCurrency !== baseCurrency)
-    const apiToAmount = quoteType === 'cash' && buyOrSell === 'sell' ? 1 : (quoteType === 'cash' ? fromAmount : (isReversed ? 1 : fromAmount))
+    // Same orientation as public-purchase-standalone / Quick Order:
+    // fromCcy = foreign, toCcy = country base (AUD/NZD/FJD). Rate = base per 1 foreign.
+    const foreignCcy =
+      quoteType === 'transfer'
+        ? toCurrency
+        : buyOrSell === 'buy'
+          ? toCurrency
+          : fromCurrency
 
     try {
       const response = await fetch('/api/exchange-rate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fromCcy: apiFromCcy,
-          toCcy: apiToCcy,
-          toAmount: apiToAmount,
+          fromCcy: foreignCcy,
+          toCcy: baseCurrency,
+          toAmount: fromAmount,
           country: selectedCountry,
           ...(quoteType === 'transfer' ? { transferMode } : {}),
-          ...(quoteType === 'cash' && buyOrSell === 'buy' ? { isBuy: true } : {}),
+          ...(quoteType === 'cash' && buyOrSell === 'buy'
+            ? { isBuy: true, transferMode: 'booking' }
+            : {}),
         }),
       })
 
@@ -223,23 +245,15 @@ function CurrencyCalculatorActive({
       let converted: number
       let displayRate: number
       if (quoteType === 'transfer') {
-        // Money Transfer: display 1 AUD = 0.699 USD (inverse value in the rate slot); amount = send * inverse
+        // Money Transfer: display 1 AUD = 0.699 USD (inverse); receive = send * inverse
         const inverseRate = result.inverse != null ? Number(result.inverse) : 1 / Number(result.rate)
-        displayRate = inverseRate // show inverse in line: "1 AUD = 0.699 USD"
+        displayRate = inverseRate
         conversionRateRef.current = inverseRate
         converted = fromAmount * inverseRate
         setConvertedAmount(Number(converted).toFixed(2))
         setRate(displayRate)
-      } else if (isReversed) {
-        // Flipped (FROM USD TO AUD): use other rate 1 USD = 1.45 AUD, amount = 1000 * 1.45 = 1450 AUD
-        const rateFromTo = result.inverse != null ? Number(result.inverse) : 1 / Number(result.rate)
-        displayRate = rateFromTo
-        conversionRateRef.current = rateFromTo
-        converted = fromAmount * rateFromTo
-        setConvertedAmount(Number(converted).toFixed(2))
-        setRate(displayRate)
       } else if (quoteType === 'cash' && buyOrSell === 'sell') {
-        // Sell: use normal rate for amount and for exchange rate line (1 USD = rate AUD)
+        // Sell: rate = AUD per 1 foreign; You Receive = amount * rate
         const normalRate = Number(result.rate)
         displayRate = normalRate
         conversionRateRef.current = normalRate
@@ -247,7 +261,7 @@ function CurrencyCalculatorActive({
         setConvertedAmount(Number(converted).toFixed(2))
         setRate(displayRate)
       } else {
-        // Foreign Exchange Buy: You Pay = amount * normal rate (AUD). Exchange rate line = inverse (1 AUD = 0.73 USD)
+        // Buy: You Pay = amount * rate (AUD). Rate line = inverse (1 AUD = 0.73 USD)
         const normalRate = Number(result.rate)
         const inverseRate = result.inverse != null ? Number(result.inverse) : 1 / normalRate
         displayRate = inverseRate
@@ -427,27 +441,14 @@ function CurrencyCalculatorActive({
         </div>
 
         <div className="pt-5 border-t border-gray-100 shrink-0 w-full">
-          <p className="text-center text-xs text-gray-500 mb-3">Download on</p>
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
-            <a
-              href="https://apps.apple.com/app/lotusfx"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-900 text-white text-xs font-medium hover:bg-gray-800 transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-              App Store
-            </a>
-            <a
-              href="https://play.google.com/store/apps/details?id=com.lotusfx"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-900 text-white text-xs font-medium hover:bg-gray-800 transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden><path fill="currentColor" d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.302 2.302-8.636-8.634z"/></svg>
-              Google Play
-            </a>
-          </div>
+          {getCountryPortalLinks(selectedCountry).showApps ? (
+            <>
+              <p className="text-center text-xs text-gray-500 mb-3">Download on</p>
+              <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
+                <CountryAppLinks variant="dark" />
+              </div>
+            </>
+          ) : null}
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-gray-500">
             <span>✓ Best rates</span>
             <span>✓ No hidden fees</span>
@@ -719,7 +720,9 @@ function CurrencyCalculatorActive({
               onClick={() => {
               setBuyOrSell('buy');
               setFromCurrency(baseCurrency);
-              if (toCurrency === baseCurrency) {
+              if (lockedForeign) {
+                setToCurrency(lockedForeign);
+              } else if (toCurrency === baseCurrency) {
                 const other = currencies.find((c) => c.code !== baseCurrency);
                 if (other) setToCurrency(other.code);
               }
@@ -740,7 +743,9 @@ function CurrencyCalculatorActive({
               onClick={() => {
               setBuyOrSell('sell');
               setToCurrency(baseCurrency);
-              if (fromCurrency === baseCurrency) {
+              if (lockedForeign) {
+                setFromCurrency(lockedForeign);
+              } else if (fromCurrency === baseCurrency) {
                 const other = currencies.find((c) => c.code !== baseCurrency);
                 if (other) setFromCurrency(other.code);
               }
@@ -765,6 +770,20 @@ function CurrencyCalculatorActive({
                 <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">You Buy</label>
                 <div className="flex space-x-3">
                   <div className="flex-1 relative" ref={buyDropdownRef}>
+                    {lockedForeign ? (
+                      <div className="w-full h-14 px-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-medium flex items-center gap-3 text-left">
+                        {(() => {
+                          const currency = getCurrencyInfo(toCurrency)
+                          return (
+                            <>
+                              <FlagImg code={currency.code} />
+                              <span>{currency.code} - {currency.name}</span>
+                            </>
+                          )
+                        })()}
+                      </div>
+                    ) : (
+                      <>
                     <button
                       type="button"
                       onClick={() => { const next = openDropdown === 'buy' ? null : 'buy'; setOpenDropdown(next); if (next) setDropdownSearch('') }}
@@ -820,6 +839,8 @@ function CurrencyCalculatorActive({
                         </div>
                       </div>
                     )}
+                      </>
+                    )}
                   </div>
                   <div className="w-32 relative">
                     <input
@@ -860,6 +881,20 @@ function CurrencyCalculatorActive({
                 <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">You Sell</label>
                 <div className="flex space-x-3">
                   <div className="flex-1 relative" ref={sellDropdownRef}>
+                    {lockedForeign ? (
+                      <div className="w-full h-14 px-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-medium flex items-center gap-3 text-left">
+                        {(() => {
+                          const currency = getCurrencyInfo(fromCurrency)
+                          return (
+                            <>
+                              <FlagImg code={currency.code} />
+                              <span>{currency.code} - {currency.name}</span>
+                            </>
+                          )
+                        })()}
+                      </div>
+                    ) : (
+                      <>
                     <button
                       type="button"
                       onClick={() => { const next = openDropdown === 'sell' ? null : 'sell'; setOpenDropdown(next); if (next) setDropdownSearch('') }}
@@ -914,6 +949,8 @@ function CurrencyCalculatorActive({
                           })()}
                         </div>
                       </div>
+                    )}
+                      </>
                     )}
                   </div>
                   <div className="w-32 relative">
@@ -999,27 +1036,26 @@ function CurrencyCalculatorActive({
               <span>Quick Order</span>
             </Link>
           )}
-          {quoteType === 'transfer' && (
-            <a
-              href={
-                selectedCountry === 'AU'
-                  ? 'https://auportal.lotusfx.com/customers/login.shtml'
-                  : 'https://nzcportal.lotusfx.com/customers/login.shtml'
-              }
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() =>
-                trackEvent('order_initiation', {
-                  cta_name: 'portal_login',
-                  quote_type: 'transfer',
-                  country: selectedCountry,
-                })
-              }
-              className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
-            >
-              <span>Login / Sign Up</span>
-            </a>
-          )}
+          {(() => {
+            const transferPortal = getCountryPortalLinks(selectedCountry)
+            return quoteType === 'transfer' && transferPortal.showLogin && transferPortal.web ? (
+              <a
+                href={transferPortal.web}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() =>
+                  trackEvent('order_initiation', {
+                    cta_name: 'portal_login',
+                    quote_type: 'transfer',
+                    country: selectedCountry,
+                  })
+                }
+                className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
+              >
+                <span>Login / Sign Up</span>
+              </a>
+            ) : null
+          })()}
           <Link
             href="/locations"
             onClick={() =>

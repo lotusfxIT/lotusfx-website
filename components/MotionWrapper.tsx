@@ -30,6 +30,7 @@ export default function MotionWrapper({
       transition={transition}
       viewport={viewport}
       className={className}
+      style={{ overflow: 'visible' }}
     >
       {children}
     </motion.div>

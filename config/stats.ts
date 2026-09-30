@@ -49,7 +49,7 @@ export type SiteStats = {
 
 export const DEFAULT_SITE_STATS: SiteStats = {
   customerRating: '4.9★',
-  currenciesAvailable: '40+',
+  currenciesAvailable: '35+',
   yearsOfExcellence: '20+',
   totalTransferred: '$2.4B+',
   customers: {
@@ -79,7 +79,7 @@ export const DEFAULT_SITE_STATS: SiteStats = {
     featureCompetitiveRates: 'The most competitive exchange rates',
     featureNoCommission: 'No commission on currency exchange',
     featureLocations: '50+ locations across Australia, New Zealand & Fiji',
-    featureCurrencies: '40+ currencies available',
+    featureCurrencies: '35+ currencies available',
   },
   copy: {
     featuresLocationsDescription:

@@ -10,7 +10,8 @@ export type CurrencyDenominations = {
   byCountry?: Record<string, { notes: number[]; coins?: number[] }>
 }
 
-export const ALL_CURRENCIES: CurrencyDenominations[] = currenciesData.currencies
+export const ALL_CURRENCIES: CurrencyDenominations[] =
+  currenciesData.currencies as CurrencyDenominations[]
 
 export const currencyToCountry: Record<string, string> = {
   AED: 'ae',
@@ -150,11 +151,36 @@ export function getCurrencyBySlug(slug: string): CurrencyDenominations | undefin
 }
 
 export function formatValue(value: number): string {
-  return value >= 1 ? String(Math.round(value)) : String(value)
+  if (value >= 1) {
+    return Math.round(value).toLocaleString('en-US')
+  }
+  return String(value)
 }
 
 export function formatDenom(symbol: string, value: number): string {
   return `${symbol}${formatValue(value)}`
+}
+
+/** Parse admin input like "100, 50, 20" or "100K, 50K, 5". */
+export function parseDenomList(input: string): number[] {
+  if (!input.trim()) return []
+  return input
+    .split(/[,;\s]+/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const upper = part.toUpperCase().replace(/,/g, '')
+      if (upper.endsWith('K')) {
+        const n = Number(upper.slice(0, -1))
+        return Number.isFinite(n) ? n * 1000 : NaN
+      }
+      return Number(upper)
+    })
+    .filter((n) => Number.isFinite(n) && n > 0)
+}
+
+export function formatDenomList(values: number[]): string {
+  return values.map(formatValue).join(', ')
 }
 
 export function getDenominationsForCountry(
@@ -172,6 +198,62 @@ export function isCurrencyVisibleInCountry(
   currency: CurrencyDenominations,
   country: string
 ): boolean {
-  if (!currency.countries || currency.countries.length === 0) return true
-  return currency.countries.includes(country)
+  if (currency.countries && currency.countries.length > 0) {
+    if (!currency.countries.includes(country)) return false
+  }
+  // If an explicit country stock list exists, hide currencies with no notes there
+  if (currency.byCountry && country in currency.byCountry) {
+    const notes = currency.byCountry[country]?.notes ?? []
+    return notes.length > 0
+  }
+  // For AU: only show currencies that declare AU stock (or have no byCountry at all)
+  if (country === 'AU' && currency.byCountry) {
+    return false
+  }
+  return true
+}
+
+export type CurrenciesDenominationsFile = {
+  currencies: CurrencyDenominations[]
+}
+
+export function normalizeCurrenciesFile(
+  data: Partial<CurrenciesDenominationsFile> | null | undefined
+): CurrenciesDenominationsFile {
+  const list = Array.isArray(data?.currencies) ? data!.currencies : []
+  return {
+    currencies: list
+      .filter((c) => c && typeof c.code === 'string' && c.code.trim())
+      .map((c) => ({
+        code: String(c.code).toUpperCase().trim(),
+        name: String(c.name || c.code).trim(),
+        symbol: String(c.symbol || '').trim() || String(c.code).toUpperCase(),
+        notes: Array.isArray(c.notes) ? c.notes.map(Number).filter((n) => Number.isFinite(n) && n > 0) : [],
+        ...(Array.isArray(c.coins)
+          ? { coins: c.coins.map(Number).filter((n) => Number.isFinite(n) && n > 0) }
+          : {}),
+        ...(Array.isArray(c.countries) ? { countries: c.countries.map(String) } : {}),
+        ...(c.byCountry && typeof c.byCountry === 'object'
+          ? {
+              byCountry: Object.fromEntries(
+                Object.entries(c.byCountry).map(([cc, stock]) => [
+                  cc,
+                  {
+                    notes: Array.isArray(stock?.notes)
+                      ? stock.notes.map(Number).filter((n) => Number.isFinite(n) && n > 0)
+                      : [],
+                    ...(Array.isArray(stock?.coins)
+                      ? {
+                          coins: stock.coins
+                            .map(Number)
+                            .filter((n) => Number.isFinite(n) && n > 0),
+                        }
+                      : {}),
+                  },
+                ])
+              ),
+            }
+          : {}),
+      })),
+  }
 }

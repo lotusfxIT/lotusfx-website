@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import fs from 'fs'
 import path from 'path'
+import { useCountry } from '@/context/CountryContext'
+import { getSiteFaqs } from '@/data/faqs'
 
 interface PageData {
   title?: string
@@ -19,6 +21,8 @@ export default function DynamicPage({ params }: { params: { slug: string } }) {
   const [pageData, setPageData] = useState<PageData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const { selectedCountry } = useCountry()
+  const faqs = getSiteFaqs(selectedCountry)
 
   useEffect(() => {
     fetchPageData()
@@ -75,8 +79,7 @@ export default function DynamicPage({ params }: { params: { slug: string } }) {
             className="py-16 md:py-24"
           >
             <div className="max-w-3xl">
-              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-                <span className="h-px w-8 bg-primary-500" aria-hidden />
+              <span className="block text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
                 Lotus FX
               </span>
               {pageData.hero.title && (
@@ -194,23 +197,21 @@ export default function DynamicPage({ params }: { params: { slug: string } }) {
           </motion.section>
         )}
 
-        {/* FAQ Section */}
-        {pageData.faq && pageData.faq.items && (
+        {/* FAQ Section — shared site FAQs */}
+        {pageData.faq && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="py-16 md:py-24 border-t border-gray-200"
           >
-            {pageData.faq.title && (
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-700 mb-12 text-center">
-                {pageData.faq.title}
-              </h2>
-            )}
+            <h2 className="text-3xl md:text-4xl font-bold text-primary-700 mb-12 text-center">
+              {pageData.faq.title || 'Frequently Asked Questions'}
+            </h2>
             <div className="max-w-2xl mx-auto space-y-4">
-              {pageData.faq.items.map((item: any, idx: number) => (
+              {faqs.map((item) => (
                 <motion.details
-                  key={idx}
+                  key={item.question}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}

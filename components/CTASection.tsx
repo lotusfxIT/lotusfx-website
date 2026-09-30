@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRightIcon, PhoneIcon, MapPinIcon, ClockIcon } from '@heroicons/react/24/outline'
+import { PhoneIcon, MapPinIcon, ClockIcon } from '@heroicons/react/24/outline'
 
 const ctaItems = [
   {
@@ -33,17 +33,17 @@ export default function CTASection() {
       <div className="absolute inset-0 pointer-events-none" />
 
       <div className="container-custom relative z-10">
-        {/* Single currency symbol decoration */}
-        <div className="absolute right-24 top-16 pointer-events-none text-white/8 text-7xl font-bold">
+        {/* Currency symbol decorations - desktop only */}
+        <div className="absolute right-24 top-16 pointer-events-none text-white/8 text-7xl font-bold hidden md:block" aria-hidden>
           €
         </div>
-        <div className="absolute left-16 top-1/4 pointer-events-none text-white/6 text-6xl font-bold">
+        <div className="absolute left-16 top-1/4 pointer-events-none text-white/6 text-6xl font-bold hidden md:block" aria-hidden>
           $
         </div>
-        <div className="absolute left-1/4 bottom-20 pointer-events-none text-white/5 text-8xl font-bold">
+        <div className="absolute left-1/4 bottom-20 pointer-events-none text-white/5 text-8xl font-bold hidden md:block" aria-hidden>
           ¥
         </div>
-        <div className="absolute right-1/3 bottom-1/3 pointer-events-none text-white/7 text-5xl font-bold">
+        <div className="absolute right-1/3 bottom-1/3 pointer-events-none text-white/7 text-5xl font-bold hidden md:block" aria-hidden>
           £
         </div>
         {/* Main CTA */}
@@ -66,7 +66,6 @@ export default function CTASection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <button className="bg-white text-primary-600 hover:bg-gray-50 font-bold text-lg py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center space-x-2">
               <span>Get Best Rates Now</span>
-              <ArrowRightIcon className="w-5 h-5" />
             </button>
             <button className="border-2 border-white text-white hover:bg-white hover:text-primary-600 font-bold text-lg py-4 px-8 rounded-lg transition-all duration-200">
               Find Nearest Branch

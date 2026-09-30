@@ -85,7 +85,7 @@ export default function TransferServices() {
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
             <p className="text-gray-600 text-sm mb-3">{service.summary}</p>
-            <span className="text-sm font-semibold text-primary-600">View details →</span>
+            <span className="text-sm font-semibold text-primary-600">View details</span>
           </button>
         </MotionWrapper>
       ))}

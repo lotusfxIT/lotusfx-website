@@ -11,6 +11,7 @@ import {
   UserGroupIcon,
   SparklesIcon,
   ArrowRightIcon,
+  BanknotesIcon,
 } from '@heroicons/react/24/outline'
 
 interface DashboardStats {
@@ -216,6 +217,14 @@ export default function AdminDashboard() {
       description: 'Edit homepage numbers, branches, emails, hours',
       href: '/admin/stats',
       color: 'from-primary-600 to-accent-700',
+      stat: 1,
+    },
+    {
+      icon: BanknotesIcon,
+      title: 'Currencies & denominations',
+      description: 'Edit AU / NZ / FJ currency stock lists for currency pages',
+      href: '/admin/currencies',
+      color: 'from-primary-500 to-primary-700',
       stat: 1,
     },
     {

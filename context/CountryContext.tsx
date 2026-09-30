@@ -1,8 +1,10 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
 
 const VALID_COUNTRIES = ['AU', 'NZ', 'FJ']
+const STORAGE_COUNTRY = 'selectedCountry'
+const STORAGE_MANUAL = 'countryManual'
 
 function getCountryFromCookie(): string | null {
   if (typeof document === 'undefined') return null
@@ -22,56 +24,93 @@ interface CountryContextType {
 const CountryContext = createContext<CountryContextType | undefined>(undefined)
 
 export function CountryProvider({ children }: { children: ReactNode }) {
-  const [selectedCountry, setSelectedCountry] = useState('NZ')
+  const [selectedCountry, setSelectedCountryState] = useState('AU')
   const [detectedCountry, setDetectedCountry] = useState<string | null>(null)
   const [isClient, setIsClient] = useState(false)
   const [countryReady, setCountryReady] = useState(false)
 
-  // Priority: localStorage (user switcher) → subdomain cookie → IP. Default NZ.
-  // Do not overwrite an explicit header selection with the host cookie on every load —
-  // that made AU Quick Order briefly appear then bounce on NZ / apex hosts.
-  useEffect(() => {
-    setIsClient(true)
-    const fromSubdomain = getCountryFromCookie()
-    const savedCountry = localStorage.getItem('selectedCountry')
-
-    if (savedCountry && VALID_COUNTRIES.includes(savedCountry)) {
-      setSelectedCountry(savedCountry)
-      if (fromSubdomain) setDetectedCountry(fromSubdomain)
-      setCountryReady(true)
-    } else if (fromSubdomain) {
-      setSelectedCountry(fromSubdomain)
-      setDetectedCountry(fromSubdomain)
-      localStorage.setItem('selectedCountry', fromSubdomain)
-      setCountryReady(true)
-    } else {
-      detectCountryFromIP().finally(() => setCountryReady(true))
+  // Header / UI: explicit user choice — sticky until they change it again.
+  const setSelectedCountry = useCallback((country: string) => {
+    if (!VALID_COUNTRIES.includes(country)) return
+    setSelectedCountryState(country)
+    try {
+      localStorage.setItem(STORAGE_COUNTRY, country)
+      localStorage.setItem(STORAGE_MANUAL, '1')
+    } catch {
+      /* ignore */
     }
   }, [])
 
-  const detectCountryFromIP = async () => {
-    try {
-      const response = await fetch('/api/detect-country')
-      const data = await response.json()
-      if (data.country && VALID_COUNTRIES.includes(data.country)) {
-        setDetectedCountry(data.country)
-        setSelectedCountry(data.country)
-        localStorage.setItem('selectedCountry', data.country)
-      }
-    } catch (error) {
-      console.log('Could not detect country, using default NZ')
-      setSelectedCountry('NZ')
-    }
-  }
-
-  // Save to localStorage whenever country changes
+  // Priority: manual switcher → country subdomain cookie → IP/Vercel geo.
   useEffect(() => {
-    if (isClient) {
-      localStorage.setItem('selectedCountry', selectedCountry)
-      // Dispatch event for components that need to react to country changes
-      window.dispatchEvent(new CustomEvent('countryChange', { detail: { country: selectedCountry } }))
+    setIsClient(true)
+    let cancelled = false
+
+    const init = async () => {
+      const fromSubdomain = getCountryFromCookie()
+      const savedCountry = localStorage.getItem(STORAGE_COUNTRY)
+      const isManual = localStorage.getItem(STORAGE_MANUAL) === '1'
+
+      if (isManual && savedCountry && VALID_COUNTRIES.includes(savedCountry)) {
+        setSelectedCountryState(savedCountry)
+        if (fromSubdomain) setDetectedCountry(fromSubdomain)
+        setCountryReady(true)
+        return
+      }
+
+      if (fromSubdomain) {
+        setSelectedCountryState(fromSubdomain)
+        setDetectedCountry(fromSubdomain)
+        try {
+          localStorage.setItem(STORAGE_COUNTRY, fromSubdomain)
+          localStorage.removeItem(STORAGE_MANUAL)
+        } catch {
+          /* ignore */
+        }
+        setCountryReady(true)
+        return
+      }
+
+      try {
+        const response = await fetch('/api/detect-country')
+        const data = await response.json()
+        if (cancelled) return
+        if (data.country && VALID_COUNTRIES.includes(data.country)) {
+          setDetectedCountry(data.country)
+          setSelectedCountryState(data.country)
+          try {
+            localStorage.setItem(STORAGE_COUNTRY, data.country)
+            localStorage.removeItem(STORAGE_MANUAL)
+          } catch {
+            /* ignore */
+          }
+        }
+      } catch {
+        if (!cancelled) {
+          console.log('Could not detect country, using default AU')
+          setSelectedCountryState('AU')
+        }
+      } finally {
+        if (!cancelled) setCountryReady(true)
+      }
     }
-  }, [selectedCountry, isClient])
+
+    void init()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // Keep localStorage in sync for non-manual updates (geo / subdomain).
+  useEffect(() => {
+    if (!isClient || !countryReady) return
+    try {
+      localStorage.setItem(STORAGE_COUNTRY, selectedCountry)
+    } catch {
+      /* ignore */
+    }
+    window.dispatchEvent(new CustomEvent('countryChange', { detail: { country: selectedCountry } }))
+  }, [selectedCountry, isClient, countryReady])
 
   return (
     <CountryContext.Provider
@@ -89,4 +128,3 @@ export function useCountry() {
   }
   return context
 }
-

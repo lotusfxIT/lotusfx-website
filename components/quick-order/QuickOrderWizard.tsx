@@ -11,6 +11,7 @@ import {
   DevicePhoneMobileIcon,
   ArrowTopRightOnSquareIcon,
   ChevronDownIcon,
+  ChevronRightIcon,
   MagnifyingGlassIcon,
   ClipboardDocumentIcon,
 } from '@heroicons/react/24/outline'
@@ -21,6 +22,7 @@ import { useSiteStats } from '@/context/SiteStatsContext'
 import type { SiteStats } from '@/config/stats'
 import { useCountry } from '@/context/CountryContext'
 import { isQuickOrderEnabled } from '@/lib/quick-order-url'
+import { getCountryPortalLinks } from '@/lib/country-portals'
 
 type StepId = 'purchase' | 'fulfillment' | 'details' | 'payment'
 
@@ -56,9 +58,6 @@ const STEPS: { id: StepId; label: string; icon: typeof ShoppingBagIcon }[] = [
   { id: 'details', label: 'Details', icon: UserIcon },
   { id: 'payment', label: 'Confirm', icon: DocumentCheckIcon },
 ]
-
-const APP_STORE_URL = 'https://apps.apple.com/app/lotusfx'
-const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.lotusfx'
 
 function countryLabel(code: string) {
   if (code === 'NZ') return 'New Zealand'
@@ -106,6 +105,81 @@ function formatBranchAddress(branch: Branch) {
   return [branch.Address, branch.City, branch.Province, branch.CountryCode]
     .filter(Boolean)
     .join(', ')
+}
+
+/** Short UI label: keep text through "Branch", drop address / trailing detail. */
+function formatBranchLabel(name: string) {
+  const trimmed = String(name || '').trim()
+  if (!trimmed) return 'Store'
+  const untilBranch = trimmed.match(/^(.+?\bBranch)\b/i)
+  if (untilBranch) return untilBranch[1].replace(/\s+/g, ' ').trim()
+  return trimmed.split(/\s+[—–-]\s+/)[0].replace(/\s+/g, ' ').trim() || trimmed
+}
+
+const PROVINCE_ALIASES: Record<string, string> = {
+  nsw: 'NSW',
+  nws: 'NSW', // API typo seen in getBranches
+  vic: 'Victoria',
+  victoria: 'Victoria',
+  qld: 'Queensland',
+  queensland: 'Queensland',
+  'qld (queensland)': 'Queensland',
+  sa: 'South Australia',
+  'south australia': 'South Australia',
+  wa: 'Western Australia',
+  'western australia': 'Western Australia',
+  tas: 'Tasmania',
+  tasmania: 'Tasmania',
+  act: 'ACT',
+  nt: 'Northern Territory',
+  'northern territory': 'Northern Territory',
+}
+
+const PROVINCE_ORDER = [
+  'NSW',
+  'Victoria',
+  'Queensland',
+  'South Australia',
+  'Western Australia',
+  'Tasmania',
+  'ACT',
+  'Northern Territory',
+]
+
+/** Staff / portal locations that customers should not pick for in-store collection. */
+function isCustomerFacingBranch(branch: Branch): boolean {
+  const id = String(branch.BranchID || '').trim().toUpperCase()
+  const name = String(branch.BranchName || '').trim().toLowerCase()
+  if (id.startsWith('WEB')) return false
+  if (/\bweb\s*portal\b/i.test(name)) return false
+  if (/\bportal\b/i.test(name) && !/\bbranch\b/i.test(name)) return false
+  return true
+}
+
+function resolveProvince(branch: Branch): string {
+  const raw = String(branch.Province || '').trim()
+  if (raw) {
+    const mapped = PROVINCE_ALIASES[raw.toLowerCase()]
+    if (mapped) return mapped
+  }
+  const fromName = String(branch.BranchName || '').match(/^([A-Za-z]{2,3})\s*[-–—]/)
+  if (fromName) {
+    const mapped = PROVINCE_ALIASES[fromName[1].toLowerCase()]
+    if (mapped) return mapped
+  }
+  return raw || 'Other'
+}
+
+/** Branch name under a province group (drop "NSW- " prefix). */
+function formatBranchShortLabel(name: string) {
+  const full = formatBranchLabel(name)
+  return full.replace(/^[A-Za-z]{2,3}\s*[-–—]\s*/, '').trim() || full
+}
+
+function formatSelectedBranchLabel(branch: Branch) {
+  const province = resolveProvince(branch)
+  const short = formatBranchShortLabel(branch.BranchName)
+  return province && province !== 'Other' ? `${province} · ${short}` : short
 }
 
 /** 4D returns WebEwireID (e.g. LAWEB10192), not orderId. */
@@ -183,11 +257,12 @@ export default function QuickOrderWizard() {
   const [apiReady, setApiReady] = useState(true)
   const [loadingMeta, setLoadingMeta] = useState(true)
   const [baseCurrency, setBaseCurrency] = useState(() => defaultBaseCurrency(marketCountry))
-  const [portalLoginUrl, setPortalLoginUrl] = useState(
-    marketCountry === 'NZ' || marketCountry === 'FJ'
-      ? 'https://nzcportal.lotusfx.com/customers/login.shtml'
-      : 'https://auportal.lotusfx.com/customers/login.shtml'
-  )
+  const portal = getCountryPortalLinks(marketCountry)
+  const [portalLoginUrl, setPortalLoginUrl] = useState(portal.web || '')
+  const appStoreUrl = portal.appStore
+  const playStoreUrl = portal.playStore
+  const showPortalApps = portal.showApps
+  const showPortalLogin = portal.showLogin && Boolean(portalLoginUrl)
 
   const [currenciesSold, setCurrenciesSold] = useState<CurrencySold[]>([])
   const [selectedCurrency, setSelectedCurrency] = useState({
@@ -239,9 +314,14 @@ export default function QuickOrderWizard() {
   const [isMobile, setIsMobile] = useState(false)
   const [currencyOpen, setCurrencyOpen] = useState(false)
   const [currencySearch, setCurrencySearch] = useState('')
+  const [storeOpen, setStoreOpen] = useState(false)
+  const [storeSearch, setStoreSearch] = useState('')
+  const [expandedProvinces, setExpandedProvinces] = useState<string[]>([])
+  const [nudgeNext, setNudgeNext] = useState(true)
   const toastId = useRef(0)
   const overLimitTracked = useRef(false)
   const currencyDropdownRef = useRef<HTMLDivElement>(null)
+  const storeDropdownRef = useRef<HTMLDivElement>(null)
 
   const showToast = useCallback((message: string, variant?: 'error' | 'success') => {
     const id = ++toastId.current
@@ -290,6 +370,64 @@ export default function QuickOrderWizard() {
     )
   }, [sortedCurrencies, currencySearch])
 
+  const branchesByProvince = useMemo(() => {
+    const q = storeSearch.trim().toLowerCase()
+    const groups = new Map<string, Branch[]>()
+
+    for (const b of branches) {
+      if (!isCustomerFacingBranch(b)) continue
+
+      const province = resolveProvince(b)
+      if (province === 'Other') continue
+
+      const label = formatBranchShortLabel(b.BranchName).toLowerCase()
+      const full = `${b.BranchName} ${formatBranchAddress(b)} ${province}`.toLowerCase()
+      if (q && !label.includes(q) && !full.includes(q)) continue
+
+      const list = groups.get(province) || []
+      list.push(b)
+      groups.set(province, list)
+    }
+
+    for (const list of Array.from(groups.values())) {
+      list.sort((a, b) =>
+        formatBranchShortLabel(a.BranchName).localeCompare(
+          formatBranchShortLabel(b.BranchName),
+          undefined,
+          { sensitivity: 'base' }
+        )
+      )
+    }
+
+    const keys = Array.from(groups.keys()).sort((a, b) => {
+      const ai = PROVINCE_ORDER.indexOf(a)
+      const bi = PROVINCE_ORDER.indexOf(b)
+      if (ai === -1 && bi === -1) return a.localeCompare(b)
+      if (ai === -1) return 1
+      if (bi === -1) return -1
+      return ai - bi
+    })
+
+    return keys.map((province) => ({
+      province,
+      branches: groups.get(province) || [],
+    }))
+  }, [branches, storeSearch])
+
+  useEffect(() => {
+    if (!storeOpen) {
+      setExpandedProvinces([])
+      return
+    }
+    // While searching, expand matching groups so results are visible.
+    // Otherwise leave all provinces collapsed until the user opens one.
+    if (storeSearch.trim()) {
+      setExpandedProvinces(branchesByProvince.map((g) => g.province))
+    } else {
+      setExpandedProvinces([])
+    }
+  }, [storeOpen, storeSearch, branchesByProvince])
+
   useEffect(() => {
     if (!currencyOpen) return
     const onPointerDown = (e: MouseEvent) => {
@@ -303,11 +441,37 @@ export default function QuickOrderWizard() {
   }, [currencyOpen])
 
   useEffect(() => {
+    if (!storeOpen) return
+    const onPointerDown = (e: MouseEvent) => {
+      if (!storeDropdownRef.current?.contains(e.target as Node)) {
+        setStoreOpen(false)
+        setStoreSearch('')
+      }
+    }
+    document.addEventListener('mousedown', onPointerDown)
+    return () => document.removeEventListener('mousedown', onPointerDown)
+  }, [storeOpen])
+
+  useEffect(() => {
     if (activeStep !== 'purchase') {
       setCurrencyOpen(false)
       setCurrencySearch('')
     }
+    if (activeStep !== 'fulfillment') {
+      setStoreOpen(false)
+      setStoreSearch('')
+    }
   }, [activeStep])
+
+  useEffect(() => {
+    if (activeStep === 'payment' || loadingMeta || paymentResult) {
+      setNudgeNext(false)
+      return
+    }
+    setNudgeNext(true)
+    const t = setTimeout(() => setNudgeNext(false), 5200)
+    return () => clearTimeout(t)
+  }, [activeStep, loadingMeta, paymentResult])
 
   function selectCurrency(found: CurrencySold) {
     amountSide.current = 'buy'
@@ -417,7 +581,7 @@ export default function QuickOrderWizard() {
               flag: cfg.baseCurrency.flag || marketCountry,
             })
           }
-          if (cfg.portalLoginUrl) setPortalLoginUrl(cfg.portalLoginUrl)
+          if (cfg.portalLoginUrl !== undefined) setPortalLoginUrl(cfg.portalLoginUrl || '')
           if (!cfg.configured && cfg.configError) {
             showToast(cfg.configError, 'error')
           }
@@ -426,10 +590,12 @@ export default function QuickOrderWizard() {
         if (cur.success && Array.isArray(cur.currencies) && cur.currencies.length) {
           setCurrenciesSold(cur.currencies)
           const prefTo = searchParams.get('to')?.toUpperCase()
+          const preferredOrder = ['USD', 'EUR', 'GBP', 'NZD', 'JPY', 'AUD']
           const preferred =
             cur.currencies.find((c: CurrencySold) => c.currency === prefTo) ||
-            cur.currencies.find((c: CurrencySold) => c.currency === 'USD') ||
-            cur.currencies.find((c: CurrencySold) => c.currency === 'CAD') ||
+            preferredOrder
+              .map((code) => cur.currencies.find((c: CurrencySold) => c.currency === code))
+              .find(Boolean) ||
             cur.currencies[0]
           setSelectedCurrency({
             code: preferred.currency,
@@ -866,7 +1032,9 @@ export default function QuickOrderWizard() {
         {fulfillmentMethod === 'pickup' && selectedBranch ? (
           <div className="flex justify-between gap-3 pt-1">
             <span className="text-gray-500">Store</span>
-            <span className="font-semibold text-gray-900 text-right">{selectedBranch.BranchName}</span>
+            <span className="font-semibold text-gray-900 text-right">
+              {formatSelectedBranchLabel(selectedBranch)}
+            </span>
           </div>
         ) : null}
       </div>
@@ -901,9 +1069,9 @@ export default function QuickOrderWizard() {
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-primary-600 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob animation-delay-4000" />
       </div>
 
-      <div className="relative z-10 flex flex-col flex-1 pt-24 sm:pt-28 pb-28">
+      <div className="relative z-10 flex flex-col flex-1 pt-24 sm:pt-28 pb-36 sm:pb-40">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8">
-          <div>
+          <div className="mb-4 sm:mb-6">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
               Quick Order
             </h1>
@@ -913,7 +1081,7 @@ export default function QuickOrderWizard() {
           </div>
 
           {!paymentResult ? (
-            <div className="mt-6 flex w-full gap-2 sm:gap-3">
+            <div className="mt-8 sm:mt-12 lg:mt-16 flex w-full gap-2 sm:gap-3">
               {STEPS.map((step, idx) => {
                 const Icon = step.icon
                 const isActive = idx === activeIdx
@@ -1051,7 +1219,10 @@ export default function QuickOrderWizard() {
                         Collection branch
                       </p>
                       <p className="text-lg font-bold text-gray-900">
-                        {collectionPlace?.name || selectedBranch?.BranchName || '—'}
+                        {collectionPlace?.name ||
+                          (selectedBranch
+                            ? formatSelectedBranchLabel(selectedBranch)
+                            : '—')}
                       </p>
                     </div>
 
@@ -1149,7 +1320,9 @@ export default function QuickOrderWizard() {
                           <dt className="text-gray-500">Collection</dt>
                           <dd className="font-semibold text-gray-900 m-0">
                             {fulfillmentMethod === 'pickup'
-                              ? selectedBranch?.BranchName || '—'
+                              ? (selectedBranch
+                                  ? formatSelectedBranchLabel(selectedBranch)
+                                  : '—')
                               : deliveryLocation || 'Delivery'}
                           </dd>
                         </dl>
@@ -1367,25 +1540,135 @@ export default function QuickOrderWizard() {
                       {fulfillmentMethod === 'pickup' ? (
                         <div>
                           <label className={labelClass}>Store</label>
-                          <select
-                            className={`${fieldClass} ${
-                              !selectedBranch ? 'border-amber-400 focus:ring-amber-400' : ''
-                            }`}
-                            value={selectedBranch?.BranchID || ''}
-                            onChange={(e) => {
-                              const found =
-                                branches.find((b) => b.BranchID === e.target.value) || null
-                              setSelectedBranch(found)
-                            }}
-                          >
-                            <option value="">Select a store</option>
-                            {branches.map((b) => (
-                              <option key={b.BranchID} value={b.BranchID}>
-                                {b.BranchName}
-                                {formatBranchAddress(b) ? ` — ${formatBranchAddress(b)}` : ''}
-                              </option>
-                            ))}
-                          </select>
+                          <div className="relative" ref={storeDropdownRef}>
+                            <button
+                              type="button"
+                              className={`${fieldClass} flex items-center gap-3 text-left ${
+                                !selectedBranch ? 'border-amber-400 focus:ring-amber-400' : ''
+                              }`}
+                              onClick={() => {
+                                setStoreOpen((open) => {
+                                  const next = !open
+                                  if (next) setStoreSearch('')
+                                  return next
+                                })
+                              }}
+                              aria-haspopup="listbox"
+                              aria-expanded={storeOpen}
+                            >
+                              <MapPinIcon className="w-5 h-5 text-primary-600 shrink-0" aria-hidden />
+                              <span
+                                className={`flex-1 truncate ${
+                                  selectedBranch ? 'font-semibold text-gray-900' : 'text-gray-400'
+                                }`}
+                              >
+                                {selectedBranch
+                                  ? formatSelectedBranchLabel(selectedBranch)
+                                  : 'Select a store'}
+                              </span>
+                              <ChevronDownIcon
+                                className={`w-5 h-5 text-gray-400 shrink-0 transition-transform ${
+                                  storeOpen ? 'rotate-180' : ''
+                                }`}
+                              />
+                            </button>
+
+                            {storeOpen ? (
+                              <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-white border-2 border-gray-200 rounded-xl shadow-lg overflow-hidden flex flex-col max-h-80">
+                                <div className="p-2 border-b border-gray-100 sticky top-0 bg-white z-10">
+                                  <div className="flex items-center gap-2 px-2 py-1.5 bg-gray-100 rounded-lg">
+                                    <MagnifyingGlassIcon className="w-4 h-4 text-gray-400 shrink-0" />
+                                    <input
+                                      type="search"
+                                      autoFocus
+                                      value={storeSearch}
+                                      onChange={(e) => setStoreSearch(e.target.value)}
+                                      placeholder="Search province or store"
+                                      className="flex-1 bg-transparent border-0 outline-none text-sm placeholder:text-gray-400"
+                                      aria-label="Search stores"
+                                    />
+                                  </div>
+                                </div>
+                                <div className="overflow-y-auto" role="listbox">
+                                  {branchesByProvince.length === 0 ? (
+                                    <p className="px-4 py-3 text-sm text-gray-500 text-center">
+                                      No stores match
+                                    </p>
+                                  ) : (
+                                    <>
+                                      <p className="px-4 pt-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                                        Provinces
+                                      </p>
+                                      {branchesByProvince.map(({ province, branches: provinceBranches }) => {
+                                        const isExpanded = expandedProvinces.includes(province)
+                                        return (
+                                          <div key={province} className="border-b border-gray-100 last:border-b-0">
+                                            <button
+                                              type="button"
+                                              className="w-full px-4 py-2.5 flex items-center gap-2 text-left hover:bg-gray-50"
+                                              onClick={() => {
+                                                setExpandedProvinces((prev) =>
+                                                  prev.includes(province)
+                                                    ? prev.filter((p) => p !== province)
+                                                    : [...prev, province]
+                                                )
+                                              }}
+                                              aria-expanded={isExpanded}
+                                            >
+                                              <ChevronDownIcon
+                                                className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${
+                                                  isExpanded ? 'rotate-0' : '-rotate-90'
+                                                }`}
+                                              />
+                                              <span className="flex-1 font-bold text-gray-900">
+                                                {province}
+                                              </span>
+                                              <span className="text-xs font-semibold text-gray-400 tabular-nums">
+                                                {provinceBranches.length}
+                                              </span>
+                                            </button>
+                                            {isExpanded
+                                              ? provinceBranches.map((b) => {
+                                                  const active = b.BranchID === selectedBranch?.BranchID
+                                                  return (
+                                                    <button
+                                                      key={b.BranchID}
+                                                      type="button"
+                                                      role="option"
+                                                      aria-selected={active}
+                                                      className={`w-full pl-10 pr-4 py-2.5 flex items-center gap-3 text-left hover:bg-primary-50 ${
+                                                        active
+                                                          ? 'bg-primary-50 text-primary-800'
+                                                          : 'text-gray-800'
+                                                      }`}
+                                                      onClick={() => {
+                                                        setSelectedBranch(b)
+                                                        setStoreOpen(false)
+                                                        setStoreSearch('')
+                                                      }}
+                                                    >
+                                                      <MapPinIcon
+                                                        className={`w-4 h-4 shrink-0 ${
+                                                          active ? 'text-primary-600' : 'text-gray-400'
+                                                        }`}
+                                                        aria-hidden
+                                                      />
+                                                      <span className="font-semibold truncate">
+                                                        {formatBranchShortLabel(b.BranchName)}
+                                                      </span>
+                                                    </button>
+                                                  )
+                                                })
+                                              : null}
+                                          </div>
+                                        )
+                                      })}
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            ) : null}
+                          </div>
                         </div>
                       ) : (
                         <div>
@@ -1544,92 +1827,110 @@ export default function QuickOrderWizard() {
 
                     {isMobile ? (
                       <div className="space-y-3">
-                        <p className="text-xs font-bold uppercase tracking-wider text-amber-900 text-center sm:text-left">
-                          Download the LotusFX app
-                        </p>
-                        <div className="flex flex-wrap items-center gap-3">
+                        {showPortalApps && appStoreUrl && playStoreUrl ? (
+                          <>
+                            <p className="text-xs font-bold uppercase tracking-wider text-amber-900 text-center sm:text-left">
+                              Download the LotusFX app
+                            </p>
+                            <div className="flex flex-wrap items-center gap-3">
+                              <a
+                                href={appStoreUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() =>
+                                  trackEvent('cta_click', {
+                                    cta_name: 'app_store',
+                                    location: 'quick_order_over_limit',
+                                  })
+                                }
+                                className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition"
+                              >
+                                App Store
+                              </a>
+                              <a
+                                href={playStoreUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() =>
+                                  trackEvent('cta_click', {
+                                    cta_name: 'google_play',
+                                    location: 'quick_order_over_limit',
+                                  })
+                                }
+                                className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition"
+                              >
+                                Google Play
+                              </a>
+                            </div>
+                          </>
+                        ) : null}
+                        {showPortalLogin ? (
                           <a
-                            href={APP_STORE_URL}
+                            href={portalLoginUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() =>
-                              trackEvent('cta_click', {
-                                cta_name: 'app_store',
+                              trackEvent('order_initiation', {
+                                cta_name: 'portal_login',
                                 location: 'quick_order_over_limit',
                               })
                             }
-                            className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition"
+                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-700 hover:text-primary-800"
                           >
-                            App Store
+                            Or log in on the website
+                            <ArrowTopRightOnSquareIcon className="h-4 w-4" />
                           </a>
-                          <a
-                            href={PLAY_STORE_URL}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() =>
-                              trackEvent('cta_click', {
-                                cta_name: 'google_play',
-                                location: 'quick_order_over_limit',
-                              })
-                            }
-                            className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition"
-                          >
-                            Google Play
-                          </a>
-                        </div>
-                        <a
-                          href={portalLoginUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() =>
-                            trackEvent('order_initiation', {
-                              cta_name: 'portal_login',
-                              location: 'quick_order_over_limit',
-                            })
-                          }
-                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-700 hover:text-primary-800"
-                        >
-                          Or log in on the website
-                          <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-                        </a>
+                        ) : (
+                          <p className="text-sm text-gray-700">
+                            Please visit a Lotus FX branch to complete larger orders.
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                        <a
-                          href={portalLoginUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() =>
-                            trackEvent('order_initiation', {
-                              cta_name: 'portal_login',
-                              location: 'quick_order_over_limit',
-                            })
-                          }
-                          className="btn-primary inline-flex items-center justify-center gap-2"
-                        >
-                          Login / Sign Up
-                          <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-                        </a>
-                        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
-                          <span>On your phone?</span>
+                        {showPortalLogin ? (
                           <a
-                            href={APP_STORE_URL}
+                            href={portalLoginUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="font-semibold text-primary-700 hover:text-primary-800"
+                            onClick={() =>
+                              trackEvent('order_initiation', {
+                                cta_name: 'portal_login',
+                                location: 'quick_order_over_limit',
+                              })
+                            }
+                            className="btn-primary inline-flex items-center justify-center gap-2"
                           >
-                            App Store
+                            Login / Sign Up
+                            <ArrowTopRightOnSquareIcon className="h-4 w-4" />
                           </a>
-                          <span className="text-gray-400">·</span>
-                          <a
-                            href={PLAY_STORE_URL}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-semibold text-primary-700 hover:text-primary-800"
-                          >
-                            Google Play
-                          </a>
-                        </div>
+                        ) : null}
+                        {showPortalApps && appStoreUrl && playStoreUrl ? (
+                          <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+                            <span>On your phone?</span>
+                            <a
+                              href={appStoreUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-semibold text-primary-700 hover:text-primary-800"
+                            >
+                              App Store
+                            </a>
+                            <span className="text-gray-400">·</span>
+                            <a
+                              href={playStoreUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-semibold text-primary-700 hover:text-primary-800"
+                            >
+                              Google Play
+                            </a>
+                          </div>
+                        ) : !showPortalLogin ? (
+                          <p className="text-sm text-gray-700">
+                            Please visit a Lotus FX branch to complete larger orders.
+                          </p>
+                        ) : null}
                       </div>
                     )}
                   </div>
@@ -1638,7 +1939,7 @@ export default function QuickOrderWizard() {
                 {activeStep !== 'payment' ? (
                 <p className="mt-6 pt-5 border-t border-gray-100 text-xs sm:text-sm text-gray-500 text-center">
                   Guest limit {baseCurrency.code} {guestLimit.toLocaleString()}. Pay in store when
-                  you collect — no online payment.
+                  you collect.
                 </p>
                 ) : null}
               </div>
@@ -1648,23 +1949,25 @@ export default function QuickOrderWizard() {
       </div>
 
       {!loadingMeta && !paymentResult ? (
-        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-primary-800/40 bg-primary-800/95 backdrop-blur-md">
-          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
+        <div className="fixed bottom-0 inset-x-0 z-40 border-t-2 border-white/25 bg-primary-800/95 backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.35)]">
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex items-center justify-between gap-3 sm:gap-4">
             <button
               type="button"
-              className="min-w-[7rem] rounded-lg border-2 border-white/40 bg-transparent px-5 py-2.5 font-semibold text-white hover:bg-white/10 transition disabled:opacity-40 disabled:pointer-events-none"
+              className="min-w-[8rem] sm:min-w-[9.5rem] rounded-xl border-2 border-white/50 bg-white/10 px-6 sm:px-7 py-3 sm:py-3.5 text-base sm:text-lg font-bold text-white hover:bg-white/20 transition disabled:opacity-40 disabled:pointer-events-none"
               onClick={stepBack}
               disabled={activeIdx === 0 || isSubmitting}
             >
               Back
             </button>
-            <p className="hidden sm:block text-sm text-primary-100">
+            <p className="hidden sm:block text-sm sm:text-base text-primary-50 font-medium text-center px-2">
               Step {activeIdx + 1} of {STEPS.length} · {STEPS[activeIdx]?.label}
             </p>
             {activeStep === 'payment' ? (
               <button
                 type="button"
-                className="min-w-[9rem] rounded-lg bg-white text-primary-700 font-semibold px-6 py-2.5 shadow-md hover:bg-primary-50 transition disabled:opacity-50 disabled:pointer-events-none"
+                className={`min-w-[10rem] sm:min-w-[12rem] inline-flex items-center justify-center gap-1.5 rounded-xl bg-white text-primary-700 text-base sm:text-lg font-bold px-7 sm:px-8 py-3 sm:py-3.5 shadow-lg hover:bg-primary-50 transition disabled:opacity-50 disabled:pointer-events-none ${
+                  nudgeNext ? 'qo-next-nudge' : ''
+                }`}
                 onClick={submitOrder}
                 disabled={isSubmitting || !apiReady}
               >
@@ -1673,18 +1976,24 @@ export default function QuickOrderWizard() {
             ) : (
               <button
                 type="button"
-                className="min-w-[7rem] rounded-lg bg-white text-primary-700 font-semibold px-6 py-2.5 shadow-md hover:bg-primary-50 transition disabled:opacity-50 disabled:pointer-events-none"
-                onClick={stepForward}
+                className={`min-w-[8.5rem] sm:min-w-[11rem] inline-flex items-center justify-center gap-1.5 rounded-xl bg-white text-primary-700 text-base sm:text-lg font-bold px-7 sm:px-8 py-3 sm:py-3.5 shadow-lg hover:bg-primary-50 transition disabled:opacity-50 disabled:pointer-events-none ${
+                  nudgeNext ? 'qo-next-nudge' : ''
+                }`}
+                onClick={() => {
+                  setNudgeNext(false)
+                  stepForward()
+                }}
                 disabled={isSubmitting || isOverLimit}
               >
                 Next
+                <ChevronRightIcon className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden />
               </button>
             )}
           </div>
         </div>
       ) : null}
 
-      <div className="fixed left-4 bottom-20 sm:bottom-24 z-50 grid gap-2.5">
+      <div className="fixed left-4 bottom-24 sm:bottom-28 z-50 grid gap-2.5">
         {toasts.map((t) => (
           <Toast
             key={t.id}

@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { get, put } from '@vercel/blob'
+import { get, put, del } from '@vercel/blob'
 
 export type PersistResult =
   | { ok: true; method: 'fs' | 'blob' }
@@ -80,6 +80,12 @@ export async function writeAdminJson(
 
   if (token) {
     try {
+      // Delete first so overwrites cannot leave a stale private blob revision.
+      try {
+        await del(blobPath, { token })
+      } catch {
+        // ignore missing blob
+      }
       await put(blobPath, body, {
         access: 'private',
         addRandomSuffix: false,

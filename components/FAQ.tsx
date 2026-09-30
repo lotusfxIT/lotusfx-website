@@ -3,52 +3,13 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-
-const faqs = [
-  {
-    question: 'What are your exchange rates?',
-    answer: 'Our exchange rates are updated in real-time and are among the most competitive in the market. We offer rates that are typically 2-3% better than banks, with no hidden fees or commissions. You can check our current rates on our website or by calling any of our branches.',
-  },
-  {
-    question: 'How do I exchange currency with LotusFX?',
-    answer: 'You can exchange currency with us in three ways: 1) Visit any of our 54 branches across Australia, New Zealand, and Fiji, 2) Use our online platform to order currency and pick it up at a branch, or 3) Use our mobile app for instant quotes and branch booking. All methods offer the same competitive rates.',
-  },
-  {
-    question: 'Is it safe to exchange currency with LotusFX?',
-    answer: 'Yes, absolutely. LotusFX is licensed by ASIC (Australian Securities and Investments Commission) and is a member of AFMA (Australian Financial Markets Association). We use bank-grade security for all transactions and are PCI DSS compliant. Your funds are protected with enterprise-level security measures.',
-  },
-  {
-    question: 'Do you charge any fees or commissions?',
-    answer: 'No, we don\'t charge any hidden fees or commissions. Our rates are transparent and include all costs. The rate you see is the rate you get. We make our money from the spread between buy and sell rates, which is how all legitimate currency exchange businesses operate.',
-  },
-  {
-    question: 'How long does a money transfer take?',
-    answer: 'Transfer times vary depending on the destination and method: Same-day transfers to major countries, 1-2 business days for most international transfers, and 2-3 business days for less common destinations. We\'ll provide you with an estimated delivery time when you initiate the transfer.',
-  },
-  {
-    question: 'What currencies do you support?',
-    answer: 'We support 25+ currencies including all major currencies (USD, EUR, GBP, JPY, CAD, CHF, SGD) and many exotic currencies. We can source almost any currency with advance notice. Check our website for the complete list of supported currencies.',
-  },
-  {
-    question: 'Can I track my money transfer?',
-    answer: 'Yes, you can track your transfer in real-time through our online platform or mobile app. You\'ll receive a tracking number and regular updates via SMS and email. You can also call our customer service team for assistance with tracking.',
-  },
-  {
-    question: 'What documents do I need for large transactions?',
-    answer: 'For transactions over $10,000 AUD, we need to verify your identity as per AML (Anti-Money Laundering) regulations. Please bring a valid photo ID (driver\'s license or passport) and proof of address (utility bill or bank statement). For business transactions, additional documentation may be required.',
-  },
-  {
-    question: 'Do you offer business currency exchange services?',
-    answer: 'Yes, we offer specialized business services including regular currency exchange, forward contracts, and risk management solutions. Our business clients benefit from preferential rates and dedicated account management. Contact our business team for more information.',
-  },
-  {
-    question: 'What if I\'m not satisfied with the service?',
-    answer: 'We\'re committed to customer satisfaction and offer a 100% satisfaction guarantee. If you\'re not happy with our service, please contact our customer service team immediately. We\'ll work to resolve any issues and ensure you\'re completely satisfied with your experience.',
-  },
-]
+import { useCountry } from '@/context/CountryContext'
+import { getSiteFaqs } from '@/data/faqs'
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const { selectedCountry } = useCountry()
+  const faqs = getSiteFaqs(selectedCountry)
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index)
@@ -56,8 +17,8 @@ export default function FAQ() {
 
   return (
     <section className="relative section-padding bg-white overflow-hidden">
-      {/* Currency symbol decorations - light red/pink color */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* Currency symbol decorations - desktop only */}
+      <div className="absolute inset-0 pointer-events-none hidden md:block" aria-hidden>
         <span className="absolute top-10 right-20 text-8xl font-bold text-red-200 opacity-25">
           €
         </span>

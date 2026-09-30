@@ -12,7 +12,9 @@ import type { Metadata } from 'next'
 import { buildPageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Competitive Currency Exchange & Money Transfers',
+  title: {
+    absolute: 'Competitive Currency Exchange & Money Transfers | LotusFX',
+  },
   description:
     'Exchange foreign currency with competitive rates and no commission fees. Currency exchange across Australia, New Zealand & Fiji plus global money transfers.',
   path: '/',
@@ -24,12 +26,12 @@ export default function Home() {
       <StructuredData />
       <PopupModal />
       <Hero />
-      <Partners />
-      <HomeServiceSections />
       <Features />
       <ZeroCommission />
+      <HomeServiceSections />
       <Locations />
       <Testimonials />
+      <Partners />
       <FAQ />
     </>
   )

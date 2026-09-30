@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { buildPageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'About LotusFX',
+  title: 'About Us',
   description:
     'Learn about LotusFX — trusted currency exchange and money transfer services across Australia, New Zealand and Fiji since 2002.',
   path: '/about',

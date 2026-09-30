@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { CalendarIcon, UserIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
+import { CalendarIcon, UserIcon } from '@heroicons/react/24/outline'
 
 interface BlogPost {
   id: string
@@ -55,8 +55,7 @@ export default function BlogPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary-600 mb-4">
-              <span className="h-px w-8 bg-primary-500" aria-hidden />
+            <span className="block text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
               Insights
             </span>
             <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Blog</h1>
@@ -151,7 +150,6 @@ export default function BlogPage() {
                             {post.author}
                           </span>
                         </div>
-                        <ArrowRightIcon className="w-4 h-4 text-primary-600" />
                       </div>
                     </div>
                   </div>

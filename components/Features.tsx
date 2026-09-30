@@ -82,7 +82,7 @@ export default function Features() {
 
   return (
     <section className="relative section-padding bg-white overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none hidden md:block" aria-hidden>
         {/* Currency symbols decorations - light red/pink color */}
         <span className="absolute -top-8 left-4 text-red-200 text-7xl font-extrabold opacity-30">
           $
@@ -123,13 +123,50 @@ export default function Features() {
           </p>
         </motion.div>
 
+        {/* Features Grid with red icon styling */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-14">
+          {features.map((feature, index) => (
+            <motion.div
+              key={feature.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -8 }}
+              className="group relative h-full"
+            >
+              {/* Gradient Background on Hover */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+
+              {/* Card Content */}
+              <div className="relative h-full flex flex-col p-8 rounded-2xl border-2 border-primary-100 bg-white shadow-md group-hover:border-primary-400 transition-all duration-300 hover:shadow-lg">
+                {/* Icon Container - red circular style */}
+                <motion.div
+                  whileHover={{ scale: 1.15, rotate: 8 }}
+                  className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center mx-auto mb-5 shadow-md group-hover:shadow-xl transition-shadow duration-300"
+                >
+                  <feature.icon className="w-8 h-8 text-white" />
+                </motion.div>
+
+                {/* Text Content */}
+                <h3 className="text-xl font-bold text-gray-900 mb-3 text-center group-hover:text-primary-700 transition-colors duration-300">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed text-center group-hover:text-gray-700 transition-colors duration-300 flex-1">
+                  {feature.description}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
         {/* Trusted by Thousands band - solid LotusFX red */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="bg-primary-600 rounded-2xl p-8 lg:p-12 mb-14 shadow-md"
+          className="bg-primary-600 rounded-2xl p-8 lg:p-12 shadow-md"
         >
           <div className="text-center mb-8">
             <h3 className="text-2xl lg:text-3xl font-bold text-white mb-2">
@@ -160,43 +197,6 @@ export default function Features() {
             ))}
           </div>
         </motion.div>
-
-        {/* Features Grid with red icon styling */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -8 }}
-              className="group relative"
-            >
-              {/* Gradient Background on Hover */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-
-              {/* Card Content */}
-              <div className="relative p-8 rounded-2xl border-2 border-primary-100 bg-white shadow-md group-hover:border-primary-400 transition-all duration-300 hover:shadow-lg">
-                {/* Icon Container - red circular style */}
-                <motion.div
-                  whileHover={{ scale: 1.15, rotate: 8 }}
-                  className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center mx-auto mb-5 shadow-md group-hover:shadow-xl transition-shadow duration-300"
-                >
-                  <feature.icon className="w-8 h-8 text-white" />
-                </motion.div>
-
-                {/* Text Content */}
-                <h3 className="text-xl font-bold text-gray-900 mb-3 text-center group-hover:text-primary-700 transition-colors duration-300">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-center group-hover:text-gray-700 transition-colors duration-300">
-                  {feature.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
       </div>
     </section>
   )

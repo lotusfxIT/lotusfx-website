@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { Bars3Icon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCountry } from '@/context/CountryContext'
+import { getCountryPortalLinks } from '@/lib/country-portals'
 
 const countries = [
   { name: 'Australia', code: 'AU' },
@@ -15,7 +16,7 @@ const countries = [
 
 const FLAG_CDN = 'https://flagcdn.com'
 
-function CountryFlag({ code, className = 'w-6 h-4 rounded-sm object-cover' }: { code: string; className?: string }) {
+function CountryFlag({ code, className = 'w-9 h-6 rounded-sm object-cover shadow-sm ring-1 ring-black/10' }: { code: string; className?: string }) {
   const cc = code.toLowerCase()
   return <img src={`${FLAG_CDN}/${cc}.svg`} alt={code} className={className} loading="lazy" />
 }
@@ -47,7 +48,10 @@ export default function Header() {
       const data = await response.json()
       if (data.header) {
         const items = (data.header.nav_items || [])
-          .filter((item: { name: string }) => item.name.toLowerCase() !== 'rates')
+          .filter((item: { name: string }) => {
+            const lower = item.name.toLowerCase()
+            return lower !== 'rates' && lower !== 'reviews'
+          })
           .map((item: { name: string; href: string }) => {
             const lower = item.name.toLowerCase()
             if (lower === 'about') return { ...item, name: 'About Us' }
@@ -63,7 +67,6 @@ export default function Header() {
         { name: 'Currency Exchange', href: '/currency-exchange' },
         { name: 'Money Transfer', href: '/money-transfer' },
         { name: 'Locations', href: '/locations' },
-        { name: 'Reviews', href: '/customer-reviews' },
         { name: 'About Us', href: '/about' },
         { name: 'Contact Us', href: '/contact' },
       ])
@@ -72,17 +75,7 @@ export default function Header() {
     }
   }
 
-  // Get portal URL based on selected country
-  const getPortalUrl = () => {
-    switch (selectedCountry) {
-      case 'NZ':
-        return 'https://nzcportal.lotusfx.com/customers/login.shtml'
-      case 'AU':
-        return 'https://auportal.lotusfx.com/customers/login.shtml'
-      default:
-        return 'https://nzcportal.lotusfx.com/customers/login.shtml'
-    }
-  }
+  const portal = getCountryPortalLinks(selectedCountry)
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-white shadow-lg border-b border-gray-100">
@@ -160,11 +153,11 @@ export default function Header() {
             <div className="relative">
               <button
                 onClick={() => setCountryMenuOpen(!countryMenuOpen)}
-                className="flex items-center space-x-1 text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors duration-200"
+                className="flex items-center gap-2.5 text-base font-semibold text-gray-800 hover:text-primary-600 transition-colors duration-200"
               >
                 <CountryFlag code={selectedCountry} />
                 <span>{countries.find(c => c.code === selectedCountry)?.name || ''}</span>
-                <ChevronDownIcon className="w-4 h-4" />
+                <ChevronDownIcon className="w-5 h-5" />
               </button>
 
               <AnimatePresence>
@@ -173,7 +166,7 @@ export default function Header() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
+                    className="absolute right-0 mt-2 w-60 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
                   >
                     {countries.map((country) => (
                       <button
@@ -182,10 +175,10 @@ export default function Header() {
                           setSelectedCountry(country.code)
                           setCountryMenuOpen(false)
                         }}
-                        className={`w-full flex items-center space-x-2 px-4 py-2 text-sm transition-colors duration-200 ${
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-base font-medium transition-colors duration-200 ${
                           selectedCountry === country.code
                             ? 'bg-primary-50 text-primary-700'
-                            : 'text-gray-700 hover:bg-gray-50'
+                            : 'text-gray-800 hover:bg-gray-50'
                         }`}
                       >
                         <CountryFlag code={country.code} />
@@ -197,24 +190,76 @@ export default function Header() {
               </AnimatePresence>
             </div>
 
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <a
-                href={getPortalUrl()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary shadow-lg hover:shadow-xl"
-              >
-                Login / Sign Up
-              </a>
-            </motion.div>
+            {portal.showLogin && portal.web ? (
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <a
+                  href={portal.web}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary shadow-lg hover:shadow-xl"
+                >
+                  Login / Sign Up
+                </a>
+              </motion.div>
+            ) : null}
           </div>
 
-          {/* Mobile menu button */}
-          <div className="lg:hidden">
+          {/* Mobile: country selector + menu */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  setCountryMenuOpen(!countryMenuOpen)
+                }}
+                className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm font-semibold text-gray-800"
+                aria-haspopup="listbox"
+                aria-expanded={countryMenuOpen}
+                aria-label="Select country"
+              >
+                <CountryFlag code={selectedCountry} className="w-7 h-5 rounded-sm object-cover shadow-sm ring-1 ring-black/10" />
+                <span className="max-[360px]:hidden">{selectedCountry}</span>
+                <ChevronDownIcon className={`w-4 h-4 text-gray-500 transition ${countryMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {countryMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute right-0 z-50 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
+                  >
+                    {countries.map((country) => (
+                      <button
+                        key={country.code}
+                        type="button"
+                        onClick={() => {
+                          setSelectedCountry(country.code)
+                          setCountryMenuOpen(false)
+                        }}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-base font-medium transition-colors duration-200 ${
+                          selectedCountry === country.code
+                            ? 'bg-primary-50 text-primary-700'
+                            : 'text-gray-800 hover:bg-gray-50'
+                        }`}
+                      >
+                        <CountryFlag code={country.code} />
+                        <span>{country.name}</span>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             <button
               type="button"
               className="text-gray-700 hover:text-primary-600 transition-colors duration-200"
-              onClick={() => setMobileMenuOpen(true)}
+              onClick={() => {
+                setCountryMenuOpen(false)
+                setMobileMenuOpen(true)
+              }}
             >
               <span className="sr-only">Open main menu</span>
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
@@ -257,6 +302,31 @@ export default function Header() {
                   </button>
                 </div>
                 <div className="px-4 py-6 space-y-4">
+                  <div className="pb-4 border-b border-gray-200">
+                    <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">
+                      Country
+                    </p>
+                    <div className="space-y-1">
+                      {countries.map((country) => (
+                        <button
+                          key={country.code}
+                          type="button"
+                          onClick={() => {
+                            setSelectedCountry(country.code)
+                            setMobileMenuOpen(false)
+                          }}
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-200 ${
+                            selectedCountry === country.code
+                              ? 'bg-primary-50 text-primary-700'
+                              : 'text-gray-800 hover:bg-gray-50'
+                          }`}
+                        >
+                          <CountryFlag code={country.code} />
+                          <span>{country.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   {navigation.map((item) => (
                     <Link
                       key={item.name}
@@ -292,17 +362,19 @@ export default function Header() {
                       ))}
                     </div>
                   </div>
-                  <div className="pt-4 border-t border-gray-200">
-                    <a
-                      href={getPortalUrl()}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-primary w-full text-center block"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Login / Sign Up
-                    </a>
-                  </div>
+                  {portal.showLogin && portal.web ? (
+                    <div className="pt-4 border-t border-gray-200">
+                      <a
+                        href={portal.web}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary w-full text-center block"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Login / Sign Up
+                      </a>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>

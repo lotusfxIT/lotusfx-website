@@ -6,6 +6,8 @@ import {
   MapPinIcon,
   ArrowPathIcon,
   SparklesIcon,
+  CheckBadgeIcon,
+  BuildingStorefrontIcon,
 } from '@heroicons/react/24/outline'
 import CurrencyCalculator from '@/components/CurrencyCalculator'
 import CurrencySymbolsBg from '@/components/CurrencySymbolsBg'
@@ -13,7 +15,6 @@ import CurrencyDenominationsDisplay from '@/components/CurrencyDenominationsDisp
 import Locations from '@/components/Locations'
 import {
   IconFeatureCard,
-  LeadParagraphs,
   SectionEyebrow,
   SectionHeading,
 } from '@/components/marketing/MarketingBlocks'
@@ -43,8 +44,8 @@ export function generateMetadata({ params }: PageProps): Metadata {
   }
 
   return buildPageMetadata({
-    title: `Buy ${currency.name} (${currency.code})`,
-    description: `Buy and sell ${currency.name} (${currency.code}) with market-leading exchange rates and no commission fees. View denominations and find a branch across Australia, New Zealand and Fiji.`,
+    title: `Buy & Sell ${currency.name} (${currency.code})`,
+    description: `Buy and sell ${currency.name} (${currency.code}) with market-leading exchange rates and no commission fees. Compare travel money options, view denominations and find a Lotus FX branch across Australia, New Zealand and Fiji.`,
     path: `/currency-exchange/${currencySlug(currency.code)}`,
     ogImage: '/images/currency-exchange-og.jpg',
   })
@@ -55,38 +56,32 @@ function CurrencyPageSections({ currency }: { currency: CurrencyDenominations })
 
   const seoCards = [
     {
-      title: `Convenient ${currency.name} currency exchange`,
-      description: `${currency.code} is a popular travel and international currency. Lotus FX offers competitive ${currency.code} exchange rates across branches in Australia, New Zealand and Fiji, helping you buy and sell foreign cash quickly, conveniently and with confidence.`,
+      title: `Buy ${currency.name} for travel`,
+      description: `Get ${currency.code} cash before you fly with competitive buy rates and no commission fees. Walk into a Lotus FX branch across Australia, New Zealand or Fiji and leave with the notes you need.`,
       icon: <BanknotesIcon className="w-6 h-6" />,
     },
     {
-      title: 'Practical travel money support',
-      description: `Our friendly, travel-savvy team can help you choose practical ${currency.code} denominations for the way you'll actually use cash during your trip — from smaller notes for everyday spending to larger notes where appropriate. If you're unsure how much ${currency.code} cash makes sense for your plans, our team is happy to guide you based on your destination and itinerary.`,
-      icon: <SparklesIcon className="w-6 h-6" />,
+      title: `Sell leftover ${pluralName}`,
+      description: `Back from your trip with unused ${currency.code}? Sell leftover ${pluralName} back into local currency at Lotus FX — a simple way to tidy up travel money when you return.`,
+      icon: <ArrowPathIcon className="w-6 h-6" />,
     },
     {
-      title: `Sell your leftover ${pluralName}`,
-      description: `Returned from your trip with unused ${currency.code} cash? Lotus FX can help you exchange leftover ${pluralName} back into local currency at branches across Australia, New Zealand and Fiji.`,
-      icon: <ArrowPathIcon className="w-6 h-6" />,
+      title: 'Compare rates before you visit',
+      description: `Use our live calculator to estimate today's ${currency.code} rate, then confirm in branch. Indicative online rates help you plan — final rates and availability are confirmed in store.`,
+      icon: <SparklesIcon className="w-6 h-6" />,
     },
   ]
 
   return (
     <>
-      <section id="denominations" className="py-16 bg-white scroll-mt-28">
-        <div className="container-custom max-w-5xl">
-          <CurrencyDenominationsDisplay currency={currency} />
-        </div>
-      </section>
-
       <section className="py-16 lg:py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="container-custom">
           <div className="text-center mb-12">
             <SectionEyebrow>{currency.code} travel money</SectionEyebrow>
             <SectionHeading
               align="center"
-              title={`Everything you need for ${currency.name}`}
-              subtitle="Competitive rates, practical denominations, and help when you get home with leftover cash."
+              title={`Buy, sell and compare ${currency.name}`}
+              subtitle="Competitive rates to buy travel cash, sell leftovers when you return, and check indicative rates before you visit."
             />
           </div>
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
@@ -114,7 +109,7 @@ function CurrencyPageSections({ currency }: { currency: CurrencyDenominations })
               </div>
               <h2 className="text-2xl lg:text-3xl font-bold mb-4">Explore more foreign currencies</h2>
               <p className="text-primary-100 mb-8 max-w-2xl mx-auto text-lg">
-                Planning a multi-country trip? Lotus FX offers 40+ major and minor currencies for
+                Planning a multi-country trip? Lotus FX offers 35+ major and minor currencies for
                 international travel.
               </p>
               <Link
@@ -135,44 +130,89 @@ export default function CurrencyDetailPage({ params }: PageProps) {
   const currency = getCurrencyBySlug(params.currency)
   if (!currency) notFound()
 
+  const highlights = [
+    { icon: CheckBadgeIcon, label: 'No commission fees' },
+    { icon: BanknotesIcon, label: 'Competitive live rates' },
+    { icon: BuildingStorefrontIcon, label: 'Ready at branch' },
+  ]
+
   return (
     <>
-      <section className="relative pt-32 lg:pt-40 pb-20 bg-gradient-to-b from-primary-50/40 via-white to-white overflow-hidden">
+      <section className="relative pt-28 lg:pt-32 pb-6 bg-gradient-to-b from-primary-50/50 via-white to-white overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-primary-600" aria-hidden />
         <CurrencySymbolsBg />
         <div className="container-custom relative z-10">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-            <div className="max-w-xl">
-              <SectionEyebrow>
-                Get your {currency.name} travel money sorted before you go
-              </SectionEyebrow>
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight leading-tight">
-                Buy {currency.name} ({currency.code})
-              </h1>
-              <LeadParagraphs
-                paragraphs={[
-                  `Lotus FX makes it simple to buy and sell ${currency.name} (${currency.code}) with market-leading exchange rates, no commission fees, and convenient branch locations across Australia, New Zealand and Fiji.`,
-                  `Having ${currency.code} cash ready before you travel can make your trip smoother from the start — with practical denominations available at branch.`,
-                ]}
-              />
-              <div className="flex flex-col sm:flex-row flex-wrap gap-4 mt-8">
-                <Link href="#rates" className="btn-primary text-center px-8 py-4">
-                  View {currency.code} Exchange Rates
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+            {/* Left — compact intro card matching right height */}
+            <div className="flex flex-col justify-between rounded-3xl border border-primary-100/80 bg-white/90 backdrop-blur-sm shadow-soft p-6 sm:p-7 lg:p-8">
+              <div>
+                <h1 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold text-gray-900 tracking-tight leading-tight mb-4 min-h-[2.5rem] sm:min-h-[2.75rem] flex flex-wrap items-center gap-x-2">
+                  <span>Buy &amp; sell {currency.name}</span>
+                  <span className="text-primary-600">({currency.code})</span>
+                </h1>
+                <div className="space-y-2 text-base text-gray-600 leading-relaxed">
+                  <p>
+                    Market-leading rates, no commission, and the notes you actually need — whether
+                    you&apos;re buying for travel or selling leftovers.
+                  </p>
+                  <p>
+                    Ready at Lotus FX branches across Australia, New Zealand and Fiji.
+                  </p>
+                </div>
+
+                <ul className="mt-5 grid sm:grid-cols-1 gap-2.5">
+                  {highlights.map(({ icon: Icon, label }) => (
+                    <li
+                      key={label}
+                      className="flex items-center gap-3 rounded-xl bg-primary-50/70 px-3.5 py-2.5 text-sm sm:text-[0.95rem] font-medium text-gray-800"
+                    >
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-primary-600 shadow-sm">
+                        <Icon className="h-4 w-4" aria-hidden />
+                      </span>
+                      {label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mt-6 flex flex-col sm:flex-row gap-2.5">
+                <Link href="#rates" className="btn-primary text-center px-6 py-3 flex-1">
+                  Check {currency.code} rate
                 </Link>
-                <Link href="#denominations" className="btn-secondary text-center px-8 py-4">
-                  See Denominations
-                </Link>
-                <Link href="/locations" className="btn-secondary text-center px-8 py-4">
-                  Find a Branch
+                <Link href="/locations" className="btn-secondary text-center px-6 py-3 flex-1">
+                  Find a branch
                 </Link>
               </div>
             </div>
-            <div
-              id="rates"
-              className="bg-white rounded-2xl shadow-strong p-6 sm:p-8 border border-gray-100 scroll-mt-32"
-            >
-              <CurrencyCalculator forceCashOnly defaultToCurrency={currency.code} />
-            </div>
+
+            <CurrencyDenominationsDisplay
+              currency={currency}
+              compact
+              className="scroll-mt-28 w-full"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Calculator with proper section intro */}
+      <section id="rates" className="relative py-12 lg:py-16 bg-gradient-to-b from-white via-primary-50/30 to-white scroll-mt-28">
+        <div className="container-custom">
+          <div className="text-center max-w-xl mx-auto mb-8">
+            <SectionEyebrow>Live exchange rate</SectionEyebrow>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+              Check today&apos;s {currency.code} rate
+            </h2>
+            <p className="mt-3 text-gray-600 leading-relaxed">
+              See how much you&apos;ll pay or receive before you visit a branch. Rates are indicative
+              and may vary in store.
+            </p>
+          </div>
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-strong p-5 sm:p-7 border border-gray-100">
+            <CurrencyCalculator
+              forceCashOnly
+              defaultToCurrency={currency.code}
+              lockForeignCurrency
+            />
           </div>
         </div>
       </section>

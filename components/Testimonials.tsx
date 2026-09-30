@@ -108,7 +108,7 @@ export default function Testimonials() {
 
   return (
     <section className="relative section-padding bg-white overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none hidden md:block" aria-hidden>
         <span className="absolute top-20 left-10 text-7xl font-bold text-red-200 opacity-35">$</span>
         <span className="absolute top-40 right-16 text-6xl font-bold text-red-200 opacity-40">€</span>
         <span className="absolute bottom-32 left-1/4 text-8xl font-bold text-red-200 opacity-25">¥</span>

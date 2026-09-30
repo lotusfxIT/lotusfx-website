@@ -15,14 +15,6 @@
         "href": "/locations"
       },
       {
-        "name": "Reviews",
-        "href": "/customer-reviews"
-      },
-      {
-        "name": "Rates",
-        "href": "/rates"
-      },
-      {
         "name": "About",
         "href": "/about"
       },
@@ -40,11 +32,11 @@
     "social_links": [
       {
         "name": "Facebook",
-        "url": "https://facebook.com/lotusfx"
+        "url": "https://www.facebook.com/lotusforeignexchange/"
       },
       {
         "name": "Instagram",
-        "url": "https://instagram.com/lotusfx"
+        "url": "https://www.instagram.com/lotusforeignexchange"
       },
       {
         "name": "LinkedIn",
@@ -56,11 +48,11 @@
       },
       {
         "name": "X",
-        "url": "https://x.com/lotusfx"
+        "url": "https://x.com/LotusFX2002"
       },
       {
         "name": "YouTube",
-        "url": "https://youtube.com/@lotusfx"
+        "url": "https://www.youtube.com/@LotusForeignExchange"
       },
       {
         "name": "WhatsApp",
@@ -82,10 +74,6 @@
           "href": "/money-transfer"
         },
         {
-          "name": "Travel Money",
-          "href": "/travel-money"
-        },
-        {
           "name": "Business FX",
           "href": "/business-fx"
         }
@@ -102,17 +90,9 @@
         {
           "name": "Fiji",
           "href": "/fj"
-        },
-        {
-          "name": "Find a Branch",
-          "href": "/locations"
         }
       ],
       "Support": [
-        {
-          "name": "Complaints",
-          "href": "/complaints"
-        },
         {
           "name": "Contact Us",
           "href": "/contact"
@@ -143,12 +123,12 @@
         "href": "/privacy"
       },
       {
-        "name": "Terms of Service",
-        "href": "/terms"
+        "name": "Complaints",
+        "href": "/complaints"
       },
       {
-        "name": "Security",
-        "href": "/security"
+        "name": "Terms of Service",
+        "href": "/terms"
       }
     ]
   }

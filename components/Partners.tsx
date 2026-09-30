@@ -52,12 +52,13 @@ export default function Partners() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="h-full"
             >
               <Link
                 href={partner.link}
-                className="block group"
+                className="block group h-full"
               >
-                <div className="bg-white rounded-xl shadow-soft hover:shadow-strong border border-gray-200 p-8 h-full flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 hover:border-primary-500">
+                <div className="bg-white rounded-xl shadow-soft hover:shadow-strong border border-gray-200 p-8 h-full flex flex-col items-center justify-center transition-all duration-300 hover:scale-[1.02] hover:border-primary-500">
                   <div className="relative w-full h-32 mb-6 flex items-center justify-center">
                     <Image
                       src={partner.image}
@@ -74,7 +75,7 @@ export default function Partners() {
                     {partner.description}
                   </p>
                   <div className="mt-4 text-primary-600 font-medium text-sm group-hover:text-primary-700 transition-colors">
-                    Learn more →
+                    Learn more
                   </div>
                 </div>
               </Link>

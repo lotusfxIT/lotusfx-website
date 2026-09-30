@@ -4,7 +4,8 @@ import type { NextRequest } from 'next/server'
 const COOKIE_NAME = 'NEXT_COUNTRY'
 const VALID_COUNTRIES = ['AU', 'NZ', 'FJ'] as const
 
-// Host → country. Production: lotusfx.com. Testing: stafflotusfx.com.
+// Only country subdomains pin a market. Apex hosts (stafflotusfx.com / lotusfx.com)
+// leave country unset so IP/Vercel geo can pick AU / NZ / FJ for the visitor.
 const HOST_TO_COUNTRY: Record<string, (typeof VALID_COUNTRIES)[number]> = {
   // Production
   'au.lotusfx.com': 'AU',
@@ -13,8 +14,6 @@ const HOST_TO_COUNTRY: Record<string, (typeof VALID_COUNTRIES)[number]> = {
   'www.fj.lotusfx.com': 'FJ',
   'nz.lotusfx.com': 'NZ',
   'www.nz.lotusfx.com': 'NZ',
-  'lotusfx.com': 'NZ',
-  'www.lotusfx.com': 'NZ',
   // Testing (stafflotusfx.com)
   'au.stafflotusfx.com': 'AU',
   'www.au.stafflotusfx.com': 'AU',
@@ -22,8 +21,6 @@ const HOST_TO_COUNTRY: Record<string, (typeof VALID_COUNTRIES)[number]> = {
   'www.fj.stafflotusfx.com': 'FJ',
   'nz.stafflotusfx.com': 'NZ',
   'www.nz.stafflotusfx.com': 'NZ',
-  'stafflotusfx.com': 'NZ',
-  'www.stafflotusfx.com': 'NZ',
 }
 
 function getCountryFromHost(hostname: string): (typeof VALID_COUNTRIES)[number] | null {
@@ -45,6 +42,16 @@ export function middleware(request: NextRequest) {
       sameSite: 'lax',
       httpOnly: false,
     })
+  } else {
+    // Apex / unknown host: clear a stale subdomain cookie so geo can run.
+    if (request.cookies.get(COOKIE_NAME)) {
+      response.cookies.set(COOKIE_NAME, '', {
+        path: '/',
+        maxAge: 0,
+        sameSite: 'lax',
+        httpOnly: false,
+      })
+    }
   }
 
   return response

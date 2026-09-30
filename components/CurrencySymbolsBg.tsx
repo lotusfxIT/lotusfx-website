@@ -24,7 +24,7 @@ type CurrencySymbolsBgProps = {
 
 export default function CurrencySymbolsBg({ variant = 'default' }: CurrencySymbolsBgProps) {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0" aria-hidden>
+    <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0 hidden md:block" aria-hidden>
       {POSITIONS.map((pos, i) => {
         const symbol = SYMBOLS[i % SYMBOLS.length]
         const colorClass = variant === 'white' ? 'text-white' : pos.color
