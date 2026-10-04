@@ -15,14 +15,10 @@ export default function PopupModal() {
   const portal = getCountryPortalLinks(selectedCountry)
 
   useEffect(() => {
-    // Check if user has already seen the popup in this session
+    // Show on first visit this session (no artificial delay).
     const hasSeenPopup = sessionStorage.getItem('lotusfx-popup-seen')
     if (!hasSeenPopup) {
-      // Give visitors time to understand the page before showing the promotion.
-      const timer = setTimeout(() => {
-        setIsOpen(true)
-      }, 4500)
-      return () => clearTimeout(timer)
+      setIsOpen(true)
     }
   }, [])
 
