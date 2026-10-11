@@ -126,7 +126,7 @@ export default function Header() {
             <Link href="/" className="flex shrink-0 items-center hover:opacity-80 transition-opacity">
               <img
                 src="/images/lotus-logo-horizontal.jpg"
-                alt="LotusFX Logo"
+                alt="Lotus Foreign Exchange"
                 className="h-7 min-[360px]:h-9 sm:h-10 lg:h-12 w-auto object-contain"
               />
             </Link>
@@ -341,7 +341,7 @@ export default function Header() {
                       >
                         <img
                           src="/images/lotus-logo-horizontal.jpg"
-                          alt="LotusFX Logo"
+                          alt="Lotus Foreign Exchange"
                           className="h-9 w-auto object-contain"
                         />
                       </Link>

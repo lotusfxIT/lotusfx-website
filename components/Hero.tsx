@@ -69,14 +69,14 @@ export default function Hero() {
 
   const features = [
     siteStats.hero.featureCompetitiveRates,
-    siteStats.hero.featureNoCommission,
-    siteStats.hero.featureLocations,
     siteStats.hero.featureCurrencies,
+    siteStats.hero.featurePartners,
+    siteStats.hero.featureTrusted,
   ].filter(Boolean)
 
   // Stable short copy — avoid long fallback flash while CMS content loads
   const defaultHeroSubtitle =
-    'Market-leading exchange rates, no commission on currency exchange, and 50+ locations across Australia, New Zealand and Fiji.'
+    'Travel money and international money transfers, with 50+ branches across Australia, New Zealand and Fiji.'
   const heroTitle =
     (!loading && content?.heroTitle) ||
     'Get more holiday out of your travel money'
@@ -132,17 +132,12 @@ export default function Hero() {
           >
             {/* Text block — even gaps, room for descenders */}
             <div className="relative z-10 w-full min-w-0 overflow-visible space-y-4 sm:space-y-6 lg:space-y-7">
-              {/* 1. Company name */}
-              <p className="font-museo font-bold uppercase text-white whitespace-nowrap !leading-[1.15] pb-1 text-[clamp(1rem,5.6vw,1.6rem)] sm:text-[1.9rem] lg:text-[2.15rem] xl:text-[2.4rem] tracking-[0.06em]">
-                Lotus Foreign Exchange
-              </p>
-
-              {/* 2. Slogan — wraps on mobile; one line on tablet+ */}
+              {/* 1. Slogan — wraps on mobile; one line on tablet+ */}
               <h1 className="text-[2.05rem] sm:text-[2.2rem] md:text-[2.35rem] lg:text-[2.5rem] xl:text-[2.75rem] font-bold text-white !leading-[1.2] pb-[0.15em] tracking-tight">
                 {heroTitle}
               </h1>
 
-              {/* 3. Brief description — wrap freely on mobile; break after "across" from sm up */}
+              {/* 2. Brief description — wrap freely on mobile; break after "across" from sm up */}
               <p className="text-base sm:text-xl lg:text-[1.35rem] xl:text-xl text-white/90 !leading-[1.5] pb-[0.1em]">
                 <span className="md:whitespace-nowrap">{subtitleBefore}</span>
                 {subtitleAfter ? (
@@ -154,7 +149,7 @@ export default function Hero() {
                 ) : null}
               </p>
 
-              {/* 4. Checklist */}
+              {/* 3. Checklist */}
               <ul className="space-y-3 sm:space-y-4 list-none p-0 m-0 max-w-[48rem]">
                 {features.map((feature, index) => (
                   <motion.li
@@ -371,6 +366,17 @@ export default function Hero() {
                 <CurrencyCalculator
                   onOptionChosen={() => setShowQuoteHeading(false)}
                 />
+              </div>
+              <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-center gap-4 sm:gap-5 shrink-0">
+                <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Global partners
+                </span>
+                <Link href="/western-union" aria-label="Western Union" className="opacity-80 hover:opacity-100 transition-opacity">
+                  <img src="/images/partners/western-union.png" alt="Western Union" className="h-5 sm:h-6 w-auto" />
+                </Link>
+                <Link href="/moneygram" aria-label="MoneyGram" className="opacity-80 hover:opacity-100 transition-opacity">
+                  <img src="/images/partners/moneygram.png" alt="MoneyGram" className="h-5 sm:h-6 w-auto" />
+                </Link>
               </div>
             </div>
           </motion.div>

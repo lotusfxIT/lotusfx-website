@@ -428,19 +428,19 @@ export default function AdminSiteStatsPage() {
             onChange={(v) => patch({ hero: { ...stats.hero, featureCompetitiveRates: v } })}
           />
           <Field
-            label="Feature 2"
-            value={stats.hero.featureNoCommission}
-            onChange={(v) => patch({ hero: { ...stats.hero, featureNoCommission: v } })}
-          />
-          <Field
-            label="Feature 3 (locations)"
-            value={stats.hero.featureLocations}
-            onChange={(v) => patch({ hero: { ...stats.hero, featureLocations: v } })}
-          />
-          <Field
-            label="Feature 4 (currencies)"
+            label="Feature 2 (currencies)"
             value={stats.hero.featureCurrencies}
             onChange={(v) => patch({ hero: { ...stats.hero, featureCurrencies: v } })}
+          />
+          <Field
+            label="Feature 3 (partners)"
+            value={stats.hero.featurePartners}
+            onChange={(v) => patch({ hero: { ...stats.hero, featurePartners: v } })}
+          />
+          <Field
+            label="Feature 4 (trusted since)"
+            value={stats.hero.featureTrusted}
+            onChange={(v) => patch({ hero: { ...stats.hero, featureTrusted: v } })}
           />
         </motion.section>
 

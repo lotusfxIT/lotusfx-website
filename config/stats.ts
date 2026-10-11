@@ -33,9 +33,12 @@ export type SiteStats = {
   hero: {
     trustedPrefix: string
     featureCompetitiveRates: string
-    featureNoCommission: string
-    featureLocations: string
     featureCurrencies: string
+    featurePartners: string
+    featureTrusted: string
+    /** Legacy bullets — no longer shown (duplicated the hero subtitle). */
+    featureNoCommission?: string
+    featureLocations?: string
   }
   /** Marketing blurbs — use {placeholders} so numbers stay in sync when counts change. */
   copy: {
@@ -49,7 +52,7 @@ export type SiteStats = {
 
 export const DEFAULT_SITE_STATS: SiteStats = {
   customerRating: '4.9★',
-  currenciesAvailable: '35+',
+  currenciesAvailable: '30+',
   yearsOfExcellence: '20+',
   totalTransferred: '$2.4B+',
   customers: {
@@ -76,10 +79,10 @@ export const DEFAULT_SITE_STATS: SiteStats = {
   },
   hero: {
     trustedPrefix: 'Trusted by',
-    featureCompetitiveRates: 'The most competitive exchange rates',
-    featureNoCommission: 'No commission on currency exchange',
-    featureLocations: '50+ locations across Australia, New Zealand & Fiji',
-    featureCurrencies: '35+ currencies available',
+    featureCompetitiveRates: 'Competitive rates with no commission',
+    featureCurrencies: '30+ currencies available',
+    featurePartners: 'Global partners: Western Union & MoneyGram',
+    featureTrusted: 'Trusted since 2002',
   },
   copy: {
     featuresLocationsDescription:

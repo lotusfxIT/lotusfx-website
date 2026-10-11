@@ -263,7 +263,7 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-3">
             <img
               src="/images/lotus-logo-white.png"
-              alt="LotusFX Logo"
+              alt="Lotus Foreign Exchange"
               className="h-10 w-auto"
               style={{ filter: 'brightness(0) saturate(100%)' }}
             />
