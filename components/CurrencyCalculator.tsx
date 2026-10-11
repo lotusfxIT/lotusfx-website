@@ -488,7 +488,7 @@ function CurrencyCalculatorActive({
       }} />
       <motion.div
         className={`flex flex-col flex-1 h-full min-h-0 w-full min-w-0 ${
-          quoteType === 'cash' ? 'justify-evenly gap-3' : 'gap-5 sm:gap-6'
+          quoteType === 'cash' ? 'justify-evenly gap-3' : 'gap-3'
         }`}
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -530,13 +530,13 @@ function CurrencyCalculatorActive({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="space-y-2"
+            className="space-y-1.5"
           >
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center sm:text-left">
               You send
             </label>
             <div className="flex gap-3">
-              <div className="flex-1 flex items-center justify-center h-14 px-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-semibold text-gray-800 text-lg">
+              <div className="flex-1 flex items-center justify-center h-12 px-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-semibold text-gray-800 text-lg">
                 {baseCurrency}
               </div>
               <div className="flex-1 relative">
@@ -545,7 +545,7 @@ function CurrencyCalculatorActive({
                   value={amount}
                   onChange={(e) => onForeignAmountChange(e.target.value)}
                   placeholder="Amount"
-                  className="amount-input w-full h-14 pl-4 pr-10 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg text-center hover:border-primary-300"
+                  className="amount-input w-full h-12 pl-4 pr-10 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg text-center hover:border-primary-300"
                 />
                 <PencilSquareIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" aria-hidden />
               </div>
@@ -556,7 +556,7 @@ function CurrencyCalculatorActive({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="space-y-2"
+            className="space-y-1.5"
           >
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center sm:text-left">
               To country
@@ -569,7 +569,7 @@ function CurrencyCalculatorActive({
                   setOpenDropdown(next)
                   if (next) setDropdownSearch('')
                 }}
-                className="w-full h-14 px-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-medium hover:border-primary-300 flex items-center justify-center gap-3 text-left"
+                className="w-full h-12 px-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-medium hover:border-primary-300 flex items-center justify-center gap-3 text-left"
               >
                 {(() => {
                   const c = toCountryOptions.find((x) => x.currency === toCurrency) || toCountryOptions[0]
@@ -633,12 +633,12 @@ function CurrencyCalculatorActive({
           </motion.div>
 
           {/* Recipient gets — editable so either side can drive the quote */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center sm:text-left">
               Recipient gets
             </label>
             <div className="flex gap-3">
-              <div className="flex-1 flex items-center justify-center h-14 px-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-semibold text-gray-800 text-lg">
+              <div className="flex-1 flex items-center justify-center h-12 px-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-semibold text-gray-800 text-lg">
                 {toCurrency}
               </div>
               <div className="flex-1 relative">
@@ -649,10 +649,10 @@ function CurrencyCalculatorActive({
                     value={isCalculating ? '' : convertedAmount}
                     placeholder={isCalculating ? '…' : 'Amount'}
                     onChange={(e) => onBaseAmountChange(e.target.value)}
-                    className="amount-input w-full h-14 pl-4 pr-10 border-2 border-primary-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg text-center hover:border-primary-400"
+                    className="amount-input w-full h-12 pl-4 pr-10 border-2 border-primary-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-bold text-lg text-center hover:border-primary-400"
                   />
                 ) : (
-                  <div className="w-full h-14 flex items-center justify-center px-3 border-2 border-gray-200 rounded-xl bg-primary-50 text-sm font-semibold text-primary-800 text-center">
+                  <div className="w-full h-12 flex items-center justify-center px-3 border-2 border-gray-200 rounded-xl bg-primary-50 text-sm font-semibold text-primary-800 text-center">
                     {transferMode === 'Moneygram' ? 'Login to get the rate' : 'Please visit us in store'}
                   </div>
                 )}
@@ -674,7 +674,7 @@ function CurrencyCalculatorActive({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="space-y-2"
+            className="space-y-1.5"
           >
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center sm:text-left">
               Transfer type
@@ -689,7 +689,7 @@ function CurrencyCalculatorActive({
               ].map((mode) => (
                 <label
                   key={mode.value}
-                  className={`flex items-center gap-2.5 px-3 py-2 border-2 rounded-lg cursor-pointer transition-colors ${
+                  className={`flex items-center gap-2.5 px-3 py-1.5 border-2 rounded-lg cursor-pointer transition-colors ${
                     transferMode === mode.value
                       ? 'border-primary-500 bg-primary-50/50'
                       : 'border-gray-200 hover:bg-gray-50'
@@ -1046,7 +1046,7 @@ function CurrencyCalculatorActive({
       )}
 
       {/* CTA + footer — transfer pins to bottom; FX spaces evenly with the form */}
-      <div className={`space-y-3 shrink-0 ${quoteType === 'transfer' ? 'mt-auto pt-4 sm:pt-6' : 'pt-1'}`}>
+      <div className={`space-y-3 shrink-0 ${quoteType === 'transfer' ? 'mt-auto pt-2' : 'pt-1'}`}>
         <div className="space-y-2.5">
           {quoteType === 'cash' && isQuickOrderEnabled(selectedCountry) && (
             <Link
