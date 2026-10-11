@@ -273,7 +273,7 @@ export default function AboutPage() {
       {/* Our story — full-width editorial */}
       <section className="py-16 sm:py-20 lg:py-24 bg-white">
         <div className="container-custom">
-          <div className="mb-10 lg:mb-12 max-w-3xl">
+          <div className="mb-10 lg:mb-12">
             <MotionWrapper
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -283,8 +283,8 @@ export default function AboutPage() {
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
                 Our story
               </p>
-              <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 tracking-tight !leading-[1.35] pb-[0.15em] text-balance">
-                Built for better exchange — not bank fees
+              <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 tracking-tight !leading-[1.35] pb-[0.15em]">
+                Built for better exchange — not bank&nbsp;fees
               </h2>
               <p className="mt-5 text-lg sm:text-xl text-gray-600 !leading-[1.75]">
                 Founded in 2002 with one mission: fairer rates, clearer pricing, and genuine help —
