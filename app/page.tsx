@@ -7,7 +7,6 @@ import Testimonials from '@/components/Testimonials'
 import FAQ from '@/components/FAQ'
 import StructuredData from '@/components/StructuredData'
 import ZeroCommission from '@/components/ZeroCommission'
-import PopupModal from '@/components/PopupModal'
 import type { Metadata } from 'next'
 import { buildPageMetadata } from '@/lib/seo'
 
@@ -24,7 +23,6 @@ export default function Home() {
   return (
     <>
       <StructuredData />
-      <PopupModal />
       <Hero />
       <Features />
       <ZeroCommission />

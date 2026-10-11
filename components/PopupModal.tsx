@@ -9,6 +9,7 @@ import { trackEvent } from '@/lib/analytics'
 import { getCountryPortalLinks } from '@/lib/country-portals'
 import CountryAppLinks from '@/components/CountryAppLinks'
 
+/** Not currently rendered. Saved promo-popup design — see docs/POPUP_AD_TEMPLATE.md. */
 export default function PopupModal() {
   const [isOpen, setIsOpen] = useState(false)
   const { selectedCountry } = useCountry()
