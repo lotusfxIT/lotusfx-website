@@ -485,6 +485,17 @@ function CurrencyCalculatorActive({
     )
   }
 
+  if (unavailable) {
+    return (
+      <div className="flex-1 flex flex-col justify-center min-h-0 w-full min-w-0 py-2">
+        <RatesUnavailableNotice
+          message={RATES_UNAVAILABLE_MESSAGE}
+          onRetry={() => setUnavailable(false)}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="flex-1 flex flex-col min-h-0 w-full min-w-0">
       <style dangerouslySetInnerHTML={{
@@ -502,7 +513,7 @@ function CurrencyCalculatorActive({
       <motion.div
         className={`flex flex-col flex-1 h-full min-h-0 w-full min-w-0 ${
           quoteType === 'cash' ? 'justify-evenly gap-3' : 'gap-3'
-        } ${unavailable ? '[&>*:not([data-maintenance])]:hidden' : ''}`}
+        }`}
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
@@ -515,6 +526,7 @@ function CurrencyCalculatorActive({
             onClick={() => {
               setChosen(false)
               setError(null)
+              setUnavailable(false)
               setConvertedAmount('')
               setRate(0)
             }}
@@ -1114,30 +1126,19 @@ function CurrencyCalculatorActive({
           </Link>
         </div>
 
-        {unavailable ? (
-          <div data-maintenance>
-            <RatesUnavailableNotice
-              message={RATES_UNAVAILABLE_MESSAGE}
-              onRetry={() => setUnavailable(false)}
-            />
-          </div>
-        ) : null}
-
-        {error && !unavailable && (
+        {error && (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-900">
             {error}
           </div>
         )}
 
-        {/* Additional Info - only for Foreign Exchange */}
-        {quoteType === 'cash' && !unavailable && (
+        {quoteType === 'cash' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
             className="text-center text-sm text-gray-600 space-y-1.5 pb-1"
           >
-            <p className="font-medium">✓ Rates updated every 30 seconds</p>
             <p className="text-gray-500">No commission fees • Best rates guaranteed</p>
           </motion.div>
         )}
