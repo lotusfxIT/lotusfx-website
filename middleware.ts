@@ -29,6 +29,11 @@ function getCountryFromHost(hostname: string): (typeof VALID_COUNTRIES)[number] 
 }
 
 export function middleware(request: NextRequest) {
+  // Spam URLs injected into the previous site's sitemap; 410 tells Google to drop them.
+  if (request.nextUrl.pathname.startsWith('/shops/')) {
+    return new NextResponse('Gone', { status: 410, headers: { 'X-Robots-Tag': 'noindex' } })
+  }
+
   const hostname = request.nextUrl.hostname
   const country = getCountryFromHost(hostname)
 

@@ -17,12 +17,12 @@ interface FooterConfig {
   legal_links?: Array<{ name: string; href: string }>
 }
 
-const defaultSections: Record<string, Array<{ name: string; href: string }>> = {
+const footerSections: Record<string, Array<{ name: string; href: string }>> = {
   Services: [
     { name: 'Currency Exchange', href: '/currency-exchange' },
     { name: 'Money Transfer', href: '/money-transfer' },
-    { name: 'Rates', href: '/rates' },
-    { name: 'Locations', href: '/locations' },
+    { name: 'Lotus eWire', href: '/ewire' },
+    { name: 'International Wire', href: '/international-wire' },
   ],
   Partners: [
     { name: 'Western Union', href: '/western-union' },
@@ -30,14 +30,14 @@ const defaultSections: Record<string, Array<{ name: string; href: string }>> = {
     { name: 'Cash Passport', href: '/cash-passport' },
   ],
   Company: [
-    { name: 'About', href: '/about' },
-    { name: 'Careers', href: '/careers' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'About Us', href: '/about' },
+    { name: 'Locations', href: '/locations' },
+    { name: 'Contact Us', href: '/contact' },
   ],
   Resources: [
-    { name: 'FAQ', href: '/faq' },
+    { name: 'Customer Reviews', href: '/customer-reviews' },
     { name: 'Blog', href: '/blog' },
-    { name: 'Support', href: '/support' },
+    { name: 'Complaints', href: '/complaints' },
   ],
 }
 
@@ -94,7 +94,7 @@ export default function Footer() {
   // Get the current country's office location
   const currentOffice = allOfficeLocations[selectedCountry as keyof typeof allOfficeLocations] || allOfficeLocations.AU
 
-  const sections = config.sections || defaultSections
+  const sections = footerSections
   return (
   <footer className="bg-primary-600 text-white w-full">
       <div className="container-custom min-w-0">
@@ -208,36 +208,6 @@ export default function Footer() {
             </div>
           </div>
         </div>
-
-        {/* Newsletter Signup */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="border-t border-white/20 py-8 overflow-visible"
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-center min-w-0 w-full">
-            <div className="lg:col-span-4 min-w-0 w-full">
-              <h3 className="text-xl font-semibold mb-2">Stay Updated</h3>
-              <p className="text-white/90 text-sm sm:text-[0.9375rem] leading-relaxed">
-                Get the latest exchange rates and exclusive offers delivered to your inbox.
-              </p>
-            </div>
-            <div className="lg:col-span-8 min-w-0 w-full flex lg:justify-end">
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full max-w-4xl min-w-0">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="w-full min-w-0 flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:ring-2 focus:ring-white focus:border-white transition-colors duration-200"
-                />
-                <button className="bg-white text-primary-600 hover:bg-white/90 font-bold py-3 px-6 rounded-lg transition-all duration-200 whitespace-nowrap w-full sm:w-auto flex-shrink-0">
-                  Subscribe
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
 
         {/* Social Links & Legal */}
         <div className="border-t border-white/20 py-8">
