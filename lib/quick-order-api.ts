@@ -48,7 +48,7 @@ export function getQuickOrderConfig(
     const baseUrl = (
       process.env.QUICK_ORDER_API_URL_NZ ||
       process.env.EXCHANGE_RATE_API_BASE_NZ ||
-      'https://nz.app.lotusfx.com'
+      'https://nzapp.lotusfx.com'
     ).replace(/\/$/, '')
     const xKey =
       process.env.QUICK_ORDER_X_KEY_NZ || process.env.EXCHANGE_RATE_X_KEY_NZ || ''
@@ -69,7 +69,7 @@ export function getQuickOrderConfig(
     const baseUrl = (
       process.env.QUICK_ORDER_API_URL_FJ ||
       process.env.EXCHANGE_RATE_API_BASE_FJ ||
-      'https://fj.app.lotusfx.com'
+      'https://fjapp.lotusfx.com'
     ).replace(/\/$/, '')
     const xKey =
       process.env.QUICK_ORDER_X_KEY_FJ || process.env.EXCHANGE_RATE_X_KEY_FJ || ''

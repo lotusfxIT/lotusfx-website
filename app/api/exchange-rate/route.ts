@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// When the backend (au/nz/fj.app.lotusfx.com) has an invalid or self-signed SSL cert,
+// When the backend (nzapp / fjapp.lotusfx.com) has an invalid or self-signed SSL cert,
 // Node on Vercel cannot verify it. Set ALLOW_INSECURE_SSL=true to skip verification
 // for outbound requests from this route only. Prefer fixing the backend certificate.
 if (process.env.ALLOW_INSECURE_SSL === 'true') {
@@ -42,12 +42,12 @@ function getCountryApiConfig(country: string) {
       xClient: process.env.EXCHANGE_RATE_X_CLIENT_AU || process.env.EXCHANGE_RATE_X_CLIENT || 'LotusFX',
     },
     NZ: {
-      url: process.env.EXCHANGE_RATE_API_URL_NZ || 'https://nz.app.lotusfx.com/rst/Currencies/getExchangeRate',
+      url: process.env.EXCHANGE_RATE_API_URL_NZ || 'https://nzapp.lotusfx.com/rst/Currencies/getExchangeRate',
       xKey: process.env.EXCHANGE_RATE_X_KEY_NZ || '',
       xClient: process.env.EXCHANGE_RATE_X_CLIENT_NZ || '',
     },
     FJ: {
-      url: process.env.EXCHANGE_RATE_API_URL_FJ || 'https://fj.app.lotusfx.com/rst/Currencies/getExchangeRate',
+      url: process.env.EXCHANGE_RATE_API_URL_FJ || 'https://fjapp.lotusfx.com/rst/Currencies/getExchangeRate',
       xKey: process.env.EXCHANGE_RATE_X_KEY_FJ || '',
       xClient: process.env.EXCHANGE_RATE_X_CLIENT_FJ || '',
     },
