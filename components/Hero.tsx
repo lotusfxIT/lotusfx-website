@@ -133,7 +133,7 @@ export default function Hero() {
             {/* Text block — even gaps, room for descenders */}
             <div className="relative z-10 w-full min-w-0 overflow-visible space-y-4 sm:space-y-6 lg:space-y-7">
               {/* 1. Company name */}
-              <p className="font-museo font-bold uppercase text-white whitespace-nowrap !leading-[1.15] pb-1 text-[clamp(1.15rem,5.6vw,1.6rem)] sm:text-[1.9rem] lg:text-[2.15rem] xl:text-[2.4rem] tracking-[0.06em]">
+              <p className="font-museo font-bold uppercase text-white whitespace-nowrap !leading-[1.15] pb-1 text-[clamp(1rem,5.6vw,1.6rem)] sm:text-[1.9rem] lg:text-[2.15rem] xl:text-[2.4rem] tracking-[0.06em]">
                 Lotus Foreign Exchange
               </p>
 
