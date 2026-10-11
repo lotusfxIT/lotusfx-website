@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { RATES_UNAVAILABLE_MESSAGE, publicServiceError } from '@/lib/service-availability'
+import {
+  BACKEND_FETCH_TIMEOUT_MS,
+  RATES_UNAVAILABLE_MESSAGE,
+  publicServiceError,
+} from '@/lib/service-availability'
 
 // When the backend (au/nz/fj.app.lotusfx.com) has an invalid or self-signed SSL cert,
 // Node on Vercel cannot verify it. Set ALLOW_INSECURE_SSL=true to skip verification
@@ -165,6 +169,7 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify([requestPayload]), // API expects an array
         cache: 'no-store', // Don't cache API responses
+        signal: AbortSignal.timeout(BACKEND_FETCH_TIMEOUT_MS),
       }
 
       console.log('[Exchange Rate API] Making fetch request:', {

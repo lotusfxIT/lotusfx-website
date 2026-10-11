@@ -1,5 +1,9 @@
 import { getPortalLoginUrl } from './country-portals'
-import { BackendUnavailableError, isBackendUnavailable } from './service-availability'
+import {
+  BACKEND_FETCH_TIMEOUT_MS,
+  BackendUnavailableError,
+  isBackendUnavailable,
+} from './service-availability'
 
 /**
  * Server-only Quick Order API client for LotusFX 4D REST endpoints.
@@ -43,7 +47,7 @@ export function getQuickOrderConfig(
   country?: string | null
 ): QuickOrderApiConfig | { error: string } {
   const selected = normalizeCountry(country)
-  const timeoutMs = Number(process.env.QUICK_ORDER_TIMEOUT_MS) || 15000
+  const timeoutMs = Number(process.env.QUICK_ORDER_TIMEOUT_MS) || BACKEND_FETCH_TIMEOUT_MS
 
   if (selected === 'NZ') {
     const baseUrl = (

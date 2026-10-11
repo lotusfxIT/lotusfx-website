@@ -1,3 +1,6 @@
+/** How long we wait for the 4D rate / Click & Collect servers before showing maintenance. */
+export const BACKEND_FETCH_TIMEOUT_MS = 4000
+
 /** Customer-facing copy when the 4D rate / Click & Collect servers are down. */
 
 export const RATES_UNAVAILABLE_TITLE = "We'll be right back"
