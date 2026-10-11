@@ -273,7 +273,7 @@ export default function AboutPage() {
       {/* Our story — full-width editorial */}
       <section className="py-16 sm:py-20 lg:py-24 bg-white">
         <div className="container-custom">
-          <div className="mb-10 lg:mb-12 max-w-3xl mx-auto text-center">
+          <div className="mb-10 lg:mb-12 max-w-3xl">
             <MotionWrapper
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -298,7 +298,7 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.1 }}
             viewport={{ once: true }}
-            className="max-w-3xl mx-auto space-y-6 border-t border-gray-200 pt-10"
+            className="space-y-6 border-t border-gray-200 pt-10"
           >
             <p className="text-gray-700 text-base sm:text-lg !leading-[1.75] min-w-0">
               {fillStatsTemplate(siteStats.copy.aboutGrowth, siteStats)}
@@ -315,7 +315,7 @@ export default function AboutPage() {
       {/* Timeline */}
       <section className="py-16 sm:py-20 lg:py-24 bg-primary-50/40">
         <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-14">
+          <div className="max-w-3xl mb-10 sm:mb-14">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
               Milestones
             </p>
@@ -324,7 +324,7 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <div className="relative max-w-3xl mx-auto">
+          <div className="relative">
             <div
               className="absolute left-[2.15rem] sm:left-[2.4rem] top-3 bottom-3 w-px bg-primary-200"
               aria-hidden
