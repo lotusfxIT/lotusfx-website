@@ -171,17 +171,9 @@ export default function AboutPage() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="font-museo uppercase text-white leading-none mb-5 sm:mb-6"
-                aria-label="Lotus Foreign Exchange"
+                className="font-museo font-bold uppercase text-white whitespace-nowrap leading-none mb-5 sm:mb-6 text-[clamp(1rem,5.6vw,1.6rem)] sm:text-[1.9rem] lg:text-[1.6rem] xl:text-[2rem] tracking-[0.06em]"
               >
-                <span className="inline-flex flex-wrap items-baseline gap-x-[0.38em]">
-                  <span className="font-bold text-[2rem] sm:text-[2.5rem] lg:text-[2.85rem] tracking-[0.02em]">
-                    Lotus
-                  </span>
-                  <span className="font-medium text-[1.15rem] sm:text-[1.45rem] lg:text-[1.7rem] tracking-[0.14em] text-white/90">
-                    Foreign Exchange
-                  </span>
-                </span>
+                Lotus Foreign Exchange
               </motion.p>
 
               <motion.p
