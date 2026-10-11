@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
+import { isAdminRequest } from '@/lib/admin-auth'
 
 const CONFIG_FILE = path.join(process.cwd(), 'public', 'header-footer-config.json')
 
@@ -92,10 +93,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '')
-    const cookieToken = request.cookies.get('admin_token')?.value
-
-    if (!token && !cookieToken) {
+    if (!isAdminRequest(request)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isAdminRequest } from '@/lib/admin-auth'
 import { mergeSiteStats, type SiteStats } from '@/config/stats'
 import { readSiteStats, writeSiteStats } from '@/lib/site-stats-server'
 
 function isAuthed(request: NextRequest) {
-  const token = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '').trim()
-  const cookieToken =
-    request.cookies.get('admin_token')?.value || request.cookies.get('adminToken')?.value
-  return !!(token || cookieToken)
+  return isAdminRequest(request)
 }
 
 export async function GET(request: NextRequest) {

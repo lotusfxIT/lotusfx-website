@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { MapPinIcon, PhoneIcon, EnvelopeIcon, GlobeAltIcon } from '@heroicons/react/24/outline'
 import { useCountry } from '@/context/CountryContext'
+import NewsletterSignup from '@/components/NewsletterSignup'
 
 interface FooterConfig {
   company_name?: string
@@ -208,6 +209,8 @@ export default function Footer() {
             </div>
           </div>
         </div>
+
+        <NewsletterSignup />
 
         {/* Social Links & Legal */}
         <div className="border-t border-white/20 py-8">

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isAdminRequest } from '@/lib/admin-auth'
 import { normalizeCurrenciesFile, type CurrenciesDenominationsFile } from '@/lib/currencies'
 import {
   getDefaultCurrenciesFile,
@@ -7,10 +8,7 @@ import {
 } from '@/lib/currencies-server'
 
 function isAuthed(request: NextRequest) {
-  const token = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '').trim()
-  const cookieToken =
-    request.cookies.get('admin_token')?.value || request.cookies.get('adminToken')?.value
-  return !!(token || cookieToken)
+  return isAdminRequest(request)
 }
 
 export async function GET(request: NextRequest) {

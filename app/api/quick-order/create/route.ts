@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getQuickOrderConfig, quickOrderApiPost, unwrapResult } from '@/lib/quick-order-api'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
   try {
+    const limited = rateLimit(request, 'quick-order-create', 5, 30 * 60 * 1000)
+    if (limited) return limited
+
     const body = await request.json()
     const country = body?.country || 'AU'
     const config = getQuickOrderConfig(country)

@@ -124,14 +124,6 @@ function AdminLoginPage() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-600 text-center">
-            <strong>Demo Credentials:</strong><br />
-            Email: admin@lotusfx.com<br />
-            Password: LotusFX@2024
-          </p>
-        </div>
       </motion.div>
     </div>
   )

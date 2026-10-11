@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isAdminRequest } from '@/lib/admin-auth'
 import { readSiteStats, readSiteStatsFile, writeSiteStats } from '@/lib/site-stats-server'
 import { readAdminJson, writeAdminJson } from '@/lib/admin-json-store'
 
 function isAuthed(request: NextRequest) {
-  const headerToken = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '').trim()
-  const cookieToken =
-    request.cookies.get('admin_token')?.value || request.cookies.get('adminToken')?.value
-  return !!(headerToken || cookieToken)
+  return isAdminRequest(request)
 }
 
 function contentPath(country: string) {

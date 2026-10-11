@@ -41,7 +41,7 @@ export function CountryProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Priority: manual switcher → country subdomain cookie → IP/Vercel geo.
+  // Priority: country subdomain cookie → manual switcher → IP/Vercel geo.
   useEffect(() => {
     setIsClient(true)
     let cancelled = false
@@ -51,9 +51,8 @@ export function CountryProvider({ children }: { children: ReactNode }) {
       const savedCountry = localStorage.getItem(STORAGE_COUNTRY)
       const isManual = localStorage.getItem(STORAGE_MANUAL) === '1'
 
-      if (isManual && savedCountry && VALID_COUNTRIES.includes(savedCountry)) {
+      if (!fromSubdomain && isManual && savedCountry && VALID_COUNTRIES.includes(savedCountry)) {
         setSelectedCountryState(savedCountry)
-        if (fromSubdomain) setDetectedCountry(fromSubdomain)
         setCountryReady(true)
         return
       }

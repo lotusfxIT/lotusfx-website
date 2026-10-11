@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useCountry } from '@/context/CountryContext'
 import { getCountryPortalLinks } from '@/lib/country-portals'
 import { isQuickOrderEnabled } from '@/lib/quick-order-url'
+import { countrySiteUrl } from '@/lib/country-host'
 
 const countries = [
   { name: 'Australia', code: 'AU' },
@@ -30,6 +31,14 @@ export default function Header() {
   const [partnerMenuOpen, setPartnerMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { selectedCountry, setSelectedCountry } = useCountry()
+  const switchCountry = (code: string) => {
+    const url = countrySiteUrl(code)
+    if (url) {
+      window.location.assign(url)
+      return
+    }
+    setSelectedCountry(code)
+  }
   const pathname = usePathname()
 
   const partnerLinks = [
@@ -202,7 +211,7 @@ export default function Header() {
                       <button
                         key={country.code}
                         onClick={() => {
-                          setSelectedCountry(country.code)
+                          switchCountry(country.code)
                           setCountryMenuOpen(false)
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-3 text-base font-medium transition-colors duration-200 ${
@@ -266,7 +275,7 @@ export default function Header() {
                         key={country.code}
                         type="button"
                         onClick={() => {
-                          setSelectedCountry(country.code)
+                          switchCountry(country.code)
                           setCountryMenuOpen(false)
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-3 text-base font-medium transition-colors duration-200 ${
@@ -357,7 +366,7 @@ export default function Header() {
                               key={country.code}
                               type="button"
                               onClick={() => {
-                                setSelectedCountry(country.code)
+                                switchCountry(country.code)
                                 setMobileMenuOpen(false)
                               }}
                               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-200 ${

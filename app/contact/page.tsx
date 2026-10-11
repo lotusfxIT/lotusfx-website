@@ -11,26 +11,50 @@ import {
 import { useSiteStats } from '@/context/SiteStatsContext'
 import { useCountry } from '@/context/CountryContext'
 import { getSiteFaqs } from '@/data/faqs'
+import { HONEYPOT_FIELD } from '@/lib/spam-fields'
 
 export default function ContactPage() {
   const { stats: siteStats } = useSiteStats()
   const { selectedCountry } = useCountry()
   const faqs = getSiteFaqs(selectedCountry)
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-  })
+  const emptyForm = { name: '', email: '', phone: '', subject: '', message: '' }
+  const [formData, setFormData] = useState(emptyForm)
+  const [honeypot, setHoneypot] = useState('')
+  const [startedAt] = useState(() => Date.now())
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [statusMessage, setStatusMessage] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    trackEvent('form_submit', {
-      form_name: 'contact',
-      subject_category: formData.subject || 'general',
-    })
-    console.log('Form submitted:', formData)
+    if (status === 'sending') return
+    setStatus('sending')
+    setStatusMessage('')
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          country: selectedCountry,
+          [HONEYPOT_FIELD]: honeypot,
+          startedAt,
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'We could not send your message. Please try again.')
+      }
+      trackEvent('form_submit', {
+        form_name: 'contact',
+        subject_category: formData.subject || 'general',
+      })
+      setStatus('sent')
+      setStatusMessage("Thanks — your message has been sent. Our team will get back to you soon.")
+      setFormData(emptyForm)
+    } catch (err) {
+      setStatus('error')
+      setStatusMessage(err instanceof Error ? err.message : 'We could not send your message.')
+    }
   }
 
   return (
@@ -138,8 +162,37 @@ export default function ContactPage() {
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     />
                   </div>
-                  <button type="submit" className="w-full btn-primary mt-2">
-                    Send Message
+                  <div aria-hidden="true" className="absolute -left-[9999px] w-px h-px overflow-hidden">
+                    <label>
+                      Company website
+                      <input
+                        type="text"
+                        name={HONEYPOT_FIELD}
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                      />
+                    </label>
+                  </div>
+                  {statusMessage && (
+                    <p
+                      role="status"
+                      className={`text-sm rounded-lg px-4 py-3 ${
+                        status === 'sent'
+                          ? 'bg-green-50 text-green-800 border border-green-200'
+                          : 'bg-red-50 text-red-700 border border-red-200'
+                      }`}
+                    >
+                      {statusMessage}
+                    </p>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={status === 'sending'}
+                    className="w-full btn-primary mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {status === 'sending' ? 'Sending…' : 'Send Message'}
                   </button>
                 </form>
               </div>
