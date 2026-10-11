@@ -432,7 +432,7 @@ export default function AdminSiteStatsPage() {
               ['featurePartners', 'Feature 3 (partners)'],
               ['featureTrusted', 'Feature 4 (trusted since)'],
               ['featureEwire', 'Feature 5 (eWire) — desktop only'],
-              ['featureLiveRates', 'Feature 6 (live rates) — desktop only'],
+              ['featureCompetitiveRates', 'Feature 6 (rates) — desktop only'],
             ] as const
           ).map(([key, label]) => (
             <Field

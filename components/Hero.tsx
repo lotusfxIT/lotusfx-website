@@ -73,7 +73,7 @@ export default function Hero() {
     siteStats.hero.featurePartners,
     siteStats.hero.featureTrusted,
     siteStats.hero.featureEwire,
-    siteStats.hero.featureLiveRates,
+    siteStats.hero.featureCompetitiveRates,
   ].filter(Boolean)
 
   // Stable short copy — avoid long fallback flash while CMS content loads
@@ -371,7 +371,7 @@ export default function Hero() {
               </div>
               <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-center gap-4 sm:gap-5 shrink-0">
                 <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Global partners
+                  Our partners
                 </span>
                 <Link href="/moneygram" aria-label="MoneyGram" className="opacity-80 hover:opacity-100 transition-opacity">
                   <img src="/images/partners/moneygram.png" alt="MoneyGram" className="h-5 sm:h-6 w-auto" />
