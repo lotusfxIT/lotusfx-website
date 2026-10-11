@@ -12,6 +12,8 @@ import {
   SparklesIcon,
   ArrowRightIcon,
   BanknotesIcon,
+  ShoppingBagIcon,
+  InboxIcon,
 } from '@heroicons/react/24/outline'
 
 interface DashboardStats {
@@ -171,6 +173,22 @@ export default function AdminDashboard() {
   }
 
   const menuItems = [
+    {
+      icon: ShoppingBagIcon,
+      title: 'Quick Orders',
+      description: 'Order history, resend receipts, ready-for-pickup emails',
+      href: '/admin/orders',
+      color: 'from-blue-600 to-blue-700',
+      stat: 'View',
+    },
+    {
+      icon: InboxIcon,
+      title: 'Contact messages',
+      description: 'Every enquiry from the contact form',
+      href: '/admin/messages',
+      color: 'from-green-600 to-green-700',
+      stat: 'View',
+    },
     {
       icon: PencilSquareIcon,
       title: 'Country Content',

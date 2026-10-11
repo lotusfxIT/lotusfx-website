@@ -7,6 +7,7 @@ import {
   sendMail,
 } from '@/lib/mailjet'
 import { EMAIL_RE, cleanText, countLinks, guardSubmission } from '@/lib/spam-guard'
+import { newMessageId, saveMessage, type MessageRecord } from '@/lib/messages'
 
 const SUBJECTS: Record<string, string> = {
   'currency-exchange': 'Currency Exchange',
@@ -53,15 +54,36 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  const subjectLabel = SUBJECTS[subjectKey]
+  const record: MessageRecord = {
+    id: newMessageId(),
+    createdAt: new Date().toISOString(),
+    country,
+    name,
+    email,
+    phone: phone || undefined,
+    subject: subjectLabel,
+    message,
+    emailStatus: 'not-configured',
+    status: 'new',
+  }
+  const stored = await saveMessage(record).then(
+    () => true,
+    (error) => {
+      console.error('[contact] could not store message', error)
+      return false
+    }
+  )
+
   if (!mailjetConfigured()) {
-    console.error('[contact] Mailjet not configured; message not sent')
+    console.error('[contact] Mailjet not configured; message stored only:', stored)
+    if (stored) return NextResponse.json({ success: true })
     return NextResponse.json(
       { error: 'Our contact form is temporarily unavailable. Please email us directly.' },
       { status: 503 }
     )
   }
 
-  const subjectLabel = SUBJECTS[subjectKey]
   const rows: Array<[string, string]> = [
     ['Name', name],
     ['Email', email],
@@ -76,18 +98,24 @@ export async function POST(request: NextRequest) {
     message
   )}</p>`
 
+  const to = contactRecipient(country)
   try {
     const result = await sendMail({
-      to: contactRecipient(country),
+      to,
       subject: `[Website ${country}] ${subjectLabel} — ${name}`,
       text,
       html,
       replyTo: { email, name },
     })
     if (!result.ok) throw new Error(result.error)
+    if (stored) await saveMessage({ ...record, emailStatus: 'sent', emailedTo: to }).catch(() => {})
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('[contact] send error', error)
+    if (stored) {
+      await saveMessage({ ...record, emailStatus: 'failed', emailedTo: to }).catch(() => {})
+      return NextResponse.json({ success: true })
+    }
     return NextResponse.json(
       { error: 'We could not send your message right now. Please try again or email us directly.' },
       { status: 502 }

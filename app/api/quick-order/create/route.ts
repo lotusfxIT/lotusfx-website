@@ -1,6 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getQuickOrderConfig, quickOrderApiPost, unwrapResult } from '@/lib/quick-order-api'
 import { rateLimit } from '@/lib/rate-limit'
+import { mailjetConfigured } from '@/lib/mailjet'
+import {
+  addEvent,
+  buildOrderRecord,
+  saveOrder,
+  sendCustomerEmail,
+  sendStaffEmail,
+  staffNotifyEmail,
+} from '@/lib/orders'
+
+/** Never throws: the order already exists in 4D, so storage/email problems must not fail it. */
+async function recordAndNotify(
+  body: Record<string, any>,
+  result: Record<string, any>,
+  country: string
+): Promise<string | undefined> {
+  let order
+  try {
+    order = buildOrderRecord(body, result, country)
+  } catch (error) {
+    console.error('[Quick Order] could not build order record', error)
+    return undefined
+  }
+
+  if (mailjetConfigured()) {
+    if (order.customer.email) {
+      const sent = await sendCustomerEmail(order, 'receipt').catch((e) => ({ ok: false, error: String(e) }))
+      order = addEvent(
+        order,
+        sent.ok ? 'Receipt emailed to customer' : 'Receipt email FAILED',
+        sent.ok ? order.customer.email : sent.error
+      )
+    }
+    const staffTo = staffNotifyEmail(country)
+    const staff = await sendStaffEmail(order, staffTo).catch((e) => ({ ok: false, error: String(e) }))
+    order = addEvent(
+      order,
+      staff.ok ? 'Staff notified' : 'Staff email FAILED',
+      staff.ok ? staffTo : staff.error
+    )
+  }
+
+  try {
+    await saveOrder(order)
+  } catch (error) {
+    console.error('[Quick Order] could not save order record', order.id, error)
+  }
+  return order.id
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -79,7 +128,9 @@ export async function POST(request: NextRequest) {
       statusText: result.statusText,
     })
 
-    return NextResponse.json({ success: true, result, country: config.country })
+    const orderRef = await recordAndNotify(body, result, config.country)
+
+    return NextResponse.json({ success: true, result, country: config.country, orderRef })
   } catch (error) {
     console.error('[Quick Order] create error:', error)
     return NextResponse.json(
