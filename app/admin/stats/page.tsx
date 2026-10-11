@@ -423,16 +423,15 @@ export default function AdminSiteStatsPage() {
             onChange={(v) => patch({ hero: { ...stats.hero, trustedPrefix: v } })}
           />
           <p className="text-xs text-gray-500">
-            Features 1–4 show on all screens; 5–6 only on desktop. Leave a field empty to hide it.
+            Shown shortest to longest. On phones the longest one is hidden. Leave a field empty to hide it.
           </p>
           {(
             [
-              ['featureCurrencies', 'Feature 1 (currencies)'],
-              ['featureTransfers', 'Feature 2 (money transfer)'],
-              ['featurePartners', 'Feature 3 (partners)'],
-              ['featureTrusted', 'Feature 4 (trusted since)'],
-              ['featureEwire', 'Feature 5 (eWire) — desktop only'],
-              ['featureCompetitiveRates', 'Feature 6 (rates) — desktop only'],
+              ['featureTrusted', 'Trusted since'],
+              ['featureTransfers', 'Money transfer'],
+              ['featureCompetitiveRates', 'Rates'],
+              ['featurePartners', 'Partners'],
+              ['featureEwire', 'eWire'],
             ] as const
           ).map(([key, label]) => (
             <Field

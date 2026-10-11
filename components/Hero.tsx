@@ -68,13 +68,14 @@ export default function Hero() {
     siteStats.branches.australia
 
   const features = [
-    siteStats.hero.featureCurrencies,
     siteStats.hero.featureTransfers,
     siteStats.hero.featurePartners,
     siteStats.hero.featureTrusted,
     siteStats.hero.featureEwire,
     siteStats.hero.featureCompetitiveRates,
-  ].filter(Boolean)
+  ]
+    .filter(Boolean)
+    .sort((a, b) => a.length - b.length)
 
   // Stable short copy — avoid long fallback flash while CMS content loads
   const defaultHeroSubtitle =
