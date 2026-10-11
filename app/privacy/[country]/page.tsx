@@ -17,7 +17,7 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!region) return {}
   return buildPageMetadata({
     title: `Privacy Policy (${region.name})`,
-    description: `LotusFX privacy policy for ${region.name} — how Lotus Foreign Exchange collects, uses, stores and protects personal information.`,
+    description: `Official ${region.name} privacy policy for Lotus Foreign Exchange — how we collect, use, store and protect personal information.`,
     path: `/privacy/${region.code}`,
   })
 }

@@ -17,7 +17,7 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!region) return {}
   return buildPageMetadata({
     title: `Terms and Conditions (${region.name})`,
-    description: `Lotus Foreign Exchange Terms and Conditions for ${region.name} — currency exchange, remittance, Click & Collect, website and app services.`,
+    description: `Official ${region.name} Terms and Conditions for Lotus Foreign Exchange — currency exchange, remittance, website and app services.`,
     path: `/terms/${region.code}`,
   })
 }

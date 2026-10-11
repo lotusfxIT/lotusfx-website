@@ -58,13 +58,9 @@ export default function LegalDocument({ title, subtitle, lastUpdated, regions, c
                             : 'bg-white/10 text-white ring-1 ring-white/30 hover:bg-white/20'
                         }`}
                       >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={`https://flagcdn.com/${region.code}.svg`}
-                          alt=""
-                          className="h-3.5 w-5 rounded-[2px] object-cover ring-1 ring-black/10"
-                          loading="lazy"
-                        />
+                        <span aria-hidden className="text-base leading-none">
+                          {region.flag}
+                        </span>
                         {region.name}
                       </Link>
                     )
@@ -110,6 +106,7 @@ export default function LegalDocument({ title, subtitle, lastUpdated, regions, c
                 [&_p]:mb-0
                 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-3 [&_ul]:my-2 [&_ul]:marker:text-primary-500
                 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-3.5 [&_ol]:my-2 [&_ol]:marker:font-semibold [&_ol]:marker:text-primary-600
+                [&_ol.legal-a]:list-[lower-alpha] [&_ol.legal-i]:list-[lower-roman]
                 [&_li]:!leading-[1.75] [&_li]:pl-1
                 [&_a]:text-primary-700 [&_a]:font-semibold [&_a]:underline-offset-2 hover:[&_a]:underline hover:[&_a]:text-primary-900
                 [&_strong]:text-gray-900 [&_strong]:font-semibold

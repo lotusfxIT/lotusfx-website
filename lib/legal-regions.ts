@@ -5,12 +5,13 @@ export type LegalRegion = {
   name: string
   adjective: string
   email: string
+  flag: string
 }
 
 export const LEGAL_REGIONS: readonly LegalRegion[] = [
-  { code: 'au', name: 'Australia', adjective: 'Australian', email: 'aucustomercare@lotusfx.com' },
-  { code: 'nz', name: 'New Zealand', adjective: 'New Zealand', email: 'nzcustomercare@lotusfx.com' },
-  { code: 'fj', name: 'Fiji', adjective: 'Fijian', email: 'fjcustomercare@lotusfx.com' },
+  { code: 'au', name: 'Australia', adjective: 'Australian', email: 'aucustomercare@lotusfx.com', flag: '🇦🇺' },
+  { code: 'nz', name: 'New Zealand', adjective: 'New Zealand', email: 'nzcustomercare@lotusfx.com', flag: '🇳🇿' },
+  { code: 'fj', name: 'Fiji', adjective: 'Fijian', email: 'fjcustomercare@lotusfx.com', flag: '🇫🇯' },
 ]
 
 export const DEFAULT_LEGAL_REGION: LegalRegionCode = 'nz'
