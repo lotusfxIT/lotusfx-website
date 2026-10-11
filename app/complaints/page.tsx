@@ -33,7 +33,7 @@ export default function ComplaintsPage() {
         <p>To help us investigate quickly, please provide:</p>
         <ul>
           <li>Your full name and best contact details</li>
-          <li>Date, branch or channel involved (website, app, Quick Order, phone, or in store)</li>
+          <li>Date, branch or channel involved (website, app, Click & Collect, phone, or in store)</li>
           <li>Transaction, order or reference number if you have one</li>
           <li>A clear description of what happened and how you would like it resolved</li>
           <li>Any supporting documents or correspondence</li>

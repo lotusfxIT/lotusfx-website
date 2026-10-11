@@ -3,7 +3,7 @@ import { escapeHtml, sendMail } from '@/lib/mailjet'
 import { getRecord, listRecords, saveRecord } from '@/lib/records-store'
 import { getSiteUrl } from '@/lib/site-url'
 
-export const ORDER_PRODUCT_NAME = 'Quick Order'
+export const ORDER_PRODUCT_NAME = 'Click & Collect'
 
 const PREFIX = 'orders'
 
@@ -196,12 +196,12 @@ export function receiptEmail(order: OrderRecord) {
     subject: `Your Lotus FX order ${order.id} — ${money(order.purchase.foreignAmount, order.purchase.foreignCurrency)}`,
     html:
       WRAP_START +
-      `<p>Hi ${escapeHtml(first)},</p><p>Thanks for your ${ORDER_PRODUCT_NAME}. We've received it and our team is getting your currency ready. We'll email you when it's ready to collect.</p>` +
+      `<p>Hi ${escapeHtml(first)},</p><p>Thanks for your ${ORDER_PRODUCT_NAME} order. We've received it and our team is getting your currency ready. We'll email you when it's ready to collect.</p>` +
       rows.html +
       WHAT_TO_BRING_HTML +
       `<p>Questions? Just reply to this email or contact <a href="mailto:${care}">${care}</a>.</p>` +
       WRAP_END,
-    text: `Hi ${first},\n\nThanks for your ${ORDER_PRODUCT_NAME}. We've received it and our team is getting your currency ready. We'll email you when it's ready to collect.\n\n${rows.text}\n\n${WHAT_TO_BRING_TEXT}\n\nQuestions? Reply to this email or contact ${care}.`,
+    text: `Hi ${first},\n\nThanks for your ${ORDER_PRODUCT_NAME} order. We've received it and our team is getting your currency ready. We'll email you when it's ready to collect.\n\n${rows.text}\n\n${WHAT_TO_BRING_TEXT}\n\nQuestions? Reply to this email or contact ${care}.`,
     replyTo: care,
   }
 }
@@ -231,7 +231,7 @@ export function readyEmail(order: OrderRecord) {
   }
 }
 
-export function staffEmail(order: OrderRecord, heading = `New ${ORDER_PRODUCT_NAME}`) {
+export function staffEmail(order: OrderRecord, heading = `New ${ORDER_PRODUCT_NAME} order`) {
   const rows = detailRows([
     ['Customer', order.customer.name],
     ['Email', order.customer.email],

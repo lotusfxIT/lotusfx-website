@@ -28,7 +28,7 @@ export const SITE_FAQS: FaqItem[] = [
   {
     question: 'Is there a limit on how much currency I can exchange per day or month?',
     answer:
-      'Quick Order is limited to $1,000. Money transfers can be made up to $10,000 online. You can transfer more than $10,000, but we will need additional information about you — please contact us.',
+      'Click & Collect is limited to $1,000. Money transfers can be made up to $10,000 online. You can transfer more than $10,000, but we will need additional information about you — please contact us.',
   },
   {
     question: 'What documents are required for transactions?',

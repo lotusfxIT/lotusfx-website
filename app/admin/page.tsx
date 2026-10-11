@@ -175,7 +175,7 @@ export default function AdminDashboard() {
   const menuItems = [
     {
       icon: ShoppingBagIcon,
-      title: 'Quick Orders',
+      title: 'Click & Collect orders',
       description: 'Order history, resend receipts, ready-for-pickup emails',
       href: '/admin/orders',
       color: 'from-blue-600 to-blue-700',

@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         <p>
           This policy applies if you use any of our products or services or contact us (including
           online, social media, our mobile apps, over the phone, over email, in-store, or by any
-          other means) or visit our website or social media pages — including Quick Order, online
+          other means) or visit our website or social media pages — including Click & Collect, online
           customer portals, and country-specific apps where available.
         </p>
         <p>
@@ -49,7 +49,7 @@ export default function PrivacyPage() {
         <ul>
           <li>
             you, when you provide that personal information to us, whether in person, over the
-            phone, on our app, via our website and any related service (including Quick Order and
+            phone, on our app, via our website and any related service (including Click & Collect and
             customer login portals), through any registration or subscription process, through any
             contact with us (e.g. telephone call or email), or when you buy or use our services and
             products; and
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
           <li>Your bank account details</li>
           <li>If you are sending money, the recipient’s name, address and contact details</li>
           <li>Your transaction and order records and interactions with us</li>
-          <li>Details regarding your transaction or Quick Order (currency, amount, branch, pickup or delivery preference)</li>
+          <li>Details regarding your transaction or Click & Collect order (currency, amount, branch, pickup or delivery preference)</li>
           <li>The information set out in our customer registration form</li>
           <li>Your location</li>
           <li>Your computer, device or network information</li>
@@ -87,7 +87,7 @@ export default function PrivacyPage() {
         <p>We will use your personal information:</p>
         <ul>
           <li>to verify your identity</li>
-          <li>to provide services and products to you (including currency exchange, remittance, Quick Order and related services)</li>
+          <li>to provide services and products to you (including currency exchange, remittance, Click & Collect and related services)</li>
           <li>to ensure the security of your transaction or order</li>
           <li>to comply with our legal requirements</li>
           <li>
@@ -118,7 +118,7 @@ export default function PrivacyPage() {
           <li>
             any business that supports our services and products, including any person that hosts or
             maintains any underlying IT system or data centre that we use to provide the website,
-            apps, Quick Order, portals or other services and products
+            apps, Click & Collect, portals or other services and products
           </li>
           <li>
             identity verification entities in order to verify your identity for transaction security
@@ -202,19 +202,19 @@ export default function PrivacyPage() {
           so that we can recognise your browser) and similar technologies to monitor your use of the
           website, remember preferences, measure performance and improve content. You may disable
           cookies by changing the settings on your browser, although this may mean that you cannot
-          use all of the features of the website (including parts of Quick Order or quote tools).
+          use all of the features of the website (including parts of Click & Collect or quote tools).
         </p>
       </section>
 
       <section>
-        <h2>12. Lotus FX Online, apps and Quick Order</h2>
+        <h2>12. Lotus FX Online, apps and Click & Collect</h2>
         <p>
-          When you download and use our mobile app, or use Quick Order or an online customer portal,
+          When you download and use our mobile app, or use Click & Collect or an online customer portal,
           we may collect your mobile device information, browser information and location where
           relevant to provide the service.
         </p>
         <p>
-          For Quick Order, we collect the details you enter to create and fulfil your order (including
+          For Click & Collect, we collect the details you enter to create and fulfil your order (including
           guest details where you order without a full account), and may share what is needed with our
           branch systems so your order can be prepared for pickup or delivery where available.
         </p>

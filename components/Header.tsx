@@ -405,7 +405,7 @@ export default function Header() {
                       }`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      Quick Order
+                      Click & Collect
                     </Link>
                   ) : null}
                   <div className="border-t border-gray-200 pt-4">

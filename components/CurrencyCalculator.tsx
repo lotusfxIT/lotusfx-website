@@ -222,7 +222,7 @@ function CurrencyCalculatorActive({
     setError(null)
     const fromAmount = parseFloat(amount)
 
-    // Same orientation as public-purchase-standalone / Quick Order:
+    // Same orientation as public-purchase-standalone / Click & Collect:
     // fromCcy = foreign, toCcy = country base (AUD/NZD/FJD). Rate = base per 1 foreign.
     const foreignCcy =
       quoteType === 'transfer'
@@ -1066,7 +1066,7 @@ function CurrencyCalculatorActive({
               className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
             >
               <ShoppingBagIcon className="w-5 h-5" />
-              <span>Quick Order</span>
+              <span>Click & Collect</span>
             </Link>
           )}
           {(() => {

@@ -612,7 +612,7 @@ export default function QuickOrderWizard() {
           showToast(br.error || 'Unable to load store locations.', 'error')
         }
       } catch {
-        showToast('Unable to initialise Quick Order. Please try again.', 'error')
+        showToast('Unable to initialise Click & Collect. Please try again.', 'error')
         setApiReady(false)
       } finally {
         setLoadingMeta(false)
@@ -1044,7 +1044,7 @@ export default function QuickOrderWizard() {
   if (!countryReady) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-primary-100">
-        Loading Quick Order…
+        Loading Click & Collect…
       </div>
     )
   }
@@ -1052,7 +1052,7 @@ export default function QuickOrderWizard() {
   if (!quickOrderAllowed) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white px-4 text-center">
-        <p className="text-lg font-semibold">Quick Order is available for Australia only right now.</p>
+        <p className="text-lg font-semibold">Click & Collect is available for Australia only right now.</p>
         <a href="/" className="btn-primary bg-white text-primary-700 hover:bg-primary-50">
           Back to home
         </a>
@@ -1073,7 +1073,7 @@ export default function QuickOrderWizard() {
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8">
           <div className="mb-4 sm:mb-6">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
-              Quick Order
+              Click & Collect
             </h1>
             <p className="mt-2 text-primary-100 max-w-2xl text-sm sm:text-base">
               Order currency online in a few steps, then pay in store when you collect.
@@ -1137,8 +1137,8 @@ export default function QuickOrderWizard() {
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {!apiReady && !loadingMeta ? (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900 text-sm mb-4 shadow-soft">
-              Quick Order API credentials are not configured for this country yet. Ask IT to set
-              the Quick Order (or exchange-rate) keys for AU / NZ in Vercel.
+              Click & Collect API credentials are not configured for this country yet. Ask IT to set
+              the Click & Collect (or exchange-rate) keys for AU / NZ in Vercel.
             </div>
           ) : null}
 
@@ -1372,7 +1372,7 @@ export default function QuickOrderWizard() {
                         </div>
                         <p className="text-sm font-semibold text-gray-800 mb-2">Please note:</p>
                         <ul className="list-disc pl-5 space-y-1.5 text-sm text-gray-500 marker:text-primary-600">
-                          <li>No online payment is taken for quick orders.</li>
+                          <li>No online payment is taken for Click & Collect orders.</li>
                           <li>Please pay in store upon collection, we accept cash &amp; Eftpos.</li>
                           <li>
                             Bring a valid photo ID matching the details you have provided.
@@ -1821,8 +1821,8 @@ export default function QuickOrderWizard() {
                         </h3>
                         <p className="mt-1 text-sm text-gray-700 leading-relaxed">
                           {isMobile
-                            ? 'Guest Quick Order is limited on the website. Download the LotusFX app to log in or sign up and complete larger orders.'
-                            : 'Guest Quick Order is limited to this amount. Log in or sign up to continue with a larger order. On your phone, use the LotusFX app instead.'}
+                            ? 'Guest Click & Collect is limited on the website. Download the LotusFX app to log in or sign up and complete larger orders.'
+                            : 'Guest Click & Collect is limited to this amount. Log in or sign up to continue with a larger order. On your phone, use the LotusFX app instead.'}
                         </p>
                       </div>
                     </div>

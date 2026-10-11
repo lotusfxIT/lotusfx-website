@@ -140,7 +140,7 @@ export default function AdminOrdersPage() {
               <ArrowLeftIcon className="w-6 h-6" />
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Quick Orders</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Click & Collect orders</h1>
               <p className="text-sm text-gray-500">Order history, receipts and pickup notifications</p>
             </div>
           </div>

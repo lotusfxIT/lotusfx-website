@@ -6,7 +6,7 @@ import { buildPageMetadata } from '@/lib/seo'
 export const metadata: Metadata = buildPageMetadata({
   title: 'Terms and Conditions',
   description:
-    'Lotus Foreign Exchange Limited Terms and Conditions for currency exchange, remittance, Quick Order, website and app services.',
+    'Lotus Foreign Exchange Limited Terms and Conditions for currency exchange, remittance, Click & Collect, website and app services.',
   path: '/terms',
 })
 
@@ -14,7 +14,7 @@ export default function TermsPage() {
   return (
     <LegalDocument
       title="Terms and Conditions"
-      subtitle="These Terms and Conditions (Terms) govern your use of the goods and services provided by Lotus Foreign Exchange Limited (we, our, us, or Lotus), including Foreign Exchange Services and Remittance Services through our branches, website, mobile applications, Quick Order, phone-based transactions and by any other means (collectively, the Services)."
+      subtitle="These Terms and Conditions (Terms) govern your use of the goods and services provided by Lotus Foreign Exchange Limited (we, our, us, or Lotus), including Foreign Exchange Services and Remittance Services through our branches, website, mobile applications, Click & Collect, phone-based transactions and by any other means (collectively, the Services)."
       lastUpdated="28 September 2026"
     >
       <section>
@@ -41,10 +41,10 @@ export default function TermsPage() {
           </li>
           <li>
             <strong>“Foreign Exchange Services”</strong> means Lotus’ service of buying and/or
-            selling foreign currency and includes online currency purchase and Quick Order services.
+            selling foreign currency and includes online currency purchase and Click & Collect services.
           </li>
           <li>
-            <strong>“Quick Order”</strong> means the website (and related) service that allows you to
+            <strong>“Click & Collect”</strong> means the website (and related) service that allows you to
             place an order for foreign currency for branch pickup or, where offered, delivery,
             including as a guest within applicable limits.
           </li>
@@ -67,7 +67,7 @@ export default function TermsPage() {
         <ol>
           <li>
             Foreign Exchange Services are available at our physical branches. Online currency
-            purchases and Quick Orders for pickup (and delivery where offered) can be accessed
+            purchases and Click & Collect orders for pickup (and delivery where offered) can be accessed
             through our website and mobile app, and are covered in clauses 2.3 and 2.4. Foreign
             Exchange Services are subject to availability and applicable exchange rates which change
             constantly.
@@ -85,7 +85,7 @@ export default function TermsPage() {
             We may allow you to place an order for foreign currency to be picked up at a later date.
             You may be required to pay a deposit and sign a contract to confirm your order. If you do
             not sign a contract, then the terms of clauses 2.3 / 2.4 shall apply as if your order was
-            placed as an online currency purchase or Quick Order.
+            placed as an online currency purchase or Click & Collect order.
           </li>
           <li>We do not charge any commission for Foreign Exchange Services.</li>
         </ol>
@@ -179,18 +179,18 @@ export default function TermsPage() {
           </li>
         </ol>
 
-        <h3>2.4 Quick Order</h3>
+        <h3>2.4 Click & Collect</h3>
         <p>
-          This clause applies when you use Quick Order on our Website (including as a guest, where
+          This clause applies when you use Click & Collect on our Website (including as a guest, where
           offered).
         </p>
         <ol>
           <li>
-            Quick Order lets you request foreign currency for collection at a selected Lotus branch,
+            Click & Collect lets you request foreign currency for collection at a selected Lotus branch,
             or delivery where that option is enabled for your country.
           </li>
           <li>
-            Guest Quick Order may be limited to a maximum order value shown during the order flow.
+            Guest Click & Collect may be limited to a maximum order value shown during the order flow.
             Orders above that limit may require you to log in, sign up, or use the Lotus FX app
             (where available for your country).
           </li>
@@ -199,13 +199,13 @@ export default function TermsPage() {
             completed in accordance with the process we provide. Rates can change.
           </li>
           <li>
-            When you submit a Quick Order, you form a contract to purchase the currency at the rate
+            When you submit a Click & Collect order, you form a contract to purchase the currency at the rate
             and on the terms confirmed for that order, subject to stock, branch capacity, compliance
             checks and our right to refuse or cancel as set out in these Terms.
           </li>
           <li>
             Cancellation, amendment, collection, ID, fulfilment timeframes, and fees in clause 2.3
-            apply to Quick Order as far as they are relevant, unless we notify different terms during
+            apply to Click & Collect as far as they are relevant, unless we notify different terms during
             the order flow.
           </li>
           <li>
@@ -213,7 +213,7 @@ export default function TermsPage() {
             order and may require additional verification before release of currency.
           </li>
           <li>
-            Quick Order availability, delivery, and guest limits may differ by country (Australia,
+            Click & Collect availability, delivery, and guest limits may differ by country (Australia,
             New Zealand, Fiji) and may change without prior notice.
           </li>
         </ol>
@@ -304,7 +304,7 @@ export default function TermsPage() {
         <p>
           We may require you to provide identification or other documentation to verify your
           identity, address and/or the source of funds before processing any transaction or releasing
-          any Quick Order.
+          any Click & Collect order.
         </p>
         <h3>4.5 Payment</h3>
         <ol>

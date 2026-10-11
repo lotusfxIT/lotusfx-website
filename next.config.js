@@ -23,6 +23,7 @@ const nextConfig = {
       { source: '/home', destination: '/', permanent: true },
       { source: '/rates', destination: '/currency-exchange', permanent: true },
       { source: '/reviews', destination: '/customer-reviews', permanent: true },
+      { source: '/click-and-collect', destination: '/quick-order', permanent: false },
     ]
   },
   async headers() {

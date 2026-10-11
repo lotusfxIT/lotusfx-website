@@ -198,7 +198,7 @@ export default function Hero() {
                     }
                     className="hero-qo-pulse col-span-1 lg:col-span-2 w-full text-base lg:text-lg px-5 py-3.5 flex items-center justify-center gap-2 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] shadow-lg hover:shadow-xl bg-white hover:bg-gray-50 text-primary-700 relative z-[1]"
                   >
-                    <span>Quick Order</span>
+                    <span>Click & Collect</span>
                     <span className="ml-1 inline-flex items-center rounded-full bg-primary-600 px-2 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wide text-white">
                       New
                     </span>
