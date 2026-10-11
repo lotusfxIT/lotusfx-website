@@ -53,6 +53,7 @@ export default function FaqAccordion({ items, className = '' }: { items: FaqEntr
               id={panelId}
               role="region"
               aria-labelledby={buttonId}
+              aria-hidden={!open}
               className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out ${
                 open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
               }`}
