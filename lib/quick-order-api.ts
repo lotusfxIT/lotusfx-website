@@ -76,11 +76,11 @@ export function getQuickOrderConfig(
     }
   }
 
-  // AU → au.app.lotusfx.com (public-purchase keys abc123 / LotusFX).
+  // AU → au.portal.lotusfx.com (public-purchase keys abc123 / LotusFX).
   const baseUrl = (
     process.env.QUICK_ORDER_API_URL_AU ||
     process.env.QUICK_ORDER_API_URL ||
-    'http://au.app.lotusfx.com:8080'
+    'https://au.portal.lotusfx.com'
   ).replace(/\/$/, '')
   const xKey =
     process.env.QUICK_ORDER_X_KEY_AU ||

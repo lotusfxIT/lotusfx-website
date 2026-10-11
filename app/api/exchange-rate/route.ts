@@ -42,7 +42,7 @@ function getCountryApiConfig(country: string) {
     AU: {
       url:
         process.env.EXCHANGE_RATE_API_URL_AU ||
-        'http://au.app.lotusfx.com:8080/rst/Currencies/getExchangeRate',
+        'https://au.portal.lotusfx.com/rst/Currencies/getExchangeRate',
       xKey: process.env.EXCHANGE_RATE_X_KEY_AU || process.env.EXCHANGE_RATE_X_KEY || 'abc123',
       xClient: process.env.EXCHANGE_RATE_X_CLIENT_AU || process.env.EXCHANGE_RATE_X_CLIENT || 'LotusFX',
     },
