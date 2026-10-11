@@ -127,7 +127,7 @@ export default function Header() {
               <img
                 src="/images/lotus-logo-horizontal.jpg"
                 alt="LotusFX Logo"
-                className="h-9 sm:h-10 lg:h-12 w-auto object-contain"
+                className="h-7 min-[360px]:h-9 sm:h-10 lg:h-12 w-auto object-contain"
               />
             </Link>
 
