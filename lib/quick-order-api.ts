@@ -53,7 +53,7 @@ export function getQuickOrderConfig(
     const baseUrl = (
       process.env.QUICK_ORDER_API_URL_NZ ||
       process.env.EXCHANGE_RATE_API_BASE_NZ ||
-      'https://nzapp.lotusfx.com'
+      'https://nzcportal.lotusfx.com'
     ).replace(/\/$/, '')
     const xKey =
       process.env.QUICK_ORDER_X_KEY_NZ || process.env.EXCHANGE_RATE_X_KEY_NZ || ''
@@ -71,32 +71,16 @@ export function getQuickOrderConfig(
   }
 
   if (selected === 'FJ') {
-    const baseUrl = (
-      process.env.QUICK_ORDER_API_URL_FJ ||
-      process.env.EXCHANGE_RATE_API_BASE_FJ ||
-      'https://fj.app.lotusfx.com'
-    ).replace(/\/$/, '')
-    const xKey =
-      process.env.QUICK_ORDER_X_KEY_FJ || process.env.EXCHANGE_RATE_X_KEY_FJ || ''
-    const xClient =
-      process.env.QUICK_ORDER_X_CLIENT_FJ || process.env.EXCHANGE_RATE_X_CLIENT_FJ || ''
-
-    if (!xKey || !xClient) {
-      return {
-        error:
-          'FJ Quick Order credentials are not configured. Set QUICK_ORDER_X_KEY_FJ / QUICK_ORDER_X_CLIENT_FJ (or EXCHANGE_RATE_X_KEY_FJ / EXCHANGE_RATE_X_CLIENT_FJ).',
-      }
+    return {
+      error: 'Fiji Click & Collect is not available. Please visit a branch.',
     }
-
-    return { country: selected, baseUrl, xKey, xClient, timeoutMs }
   }
 
-  // AU → app server on :8080 (public-purchase keys abc123 / LotusFX).
-  // If getBranches 408s with 127.0.0.1, that is a 4D host-base misconfig on 139 — not the website.
+  // AU → au.app.lotusfx.com (public-purchase keys abc123 / LotusFX).
   const baseUrl = (
     process.env.QUICK_ORDER_API_URL_AU ||
     process.env.QUICK_ORDER_API_URL ||
-    'http://139.180.183.4:8080'
+    'https://au.app.lotusfx.com'
   ).replace(/\/$/, '')
   const xKey =
     process.env.QUICK_ORDER_X_KEY_AU ||

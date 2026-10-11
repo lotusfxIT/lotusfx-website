@@ -42,19 +42,19 @@ function getCountryApiConfig(country: string) {
     AU: {
       url:
         process.env.EXCHANGE_RATE_API_URL_AU ||
-        'http://139.180.183.4:8080/rst/Currencies/getExchangeRate',
+        'https://au.app.lotusfx.com/rst/Currencies/getExchangeRate',
       xKey: process.env.EXCHANGE_RATE_X_KEY_AU || process.env.EXCHANGE_RATE_X_KEY || 'abc123',
       xClient: process.env.EXCHANGE_RATE_X_CLIENT_AU || process.env.EXCHANGE_RATE_X_CLIENT || 'LotusFX',
     },
     NZ: {
-      url: process.env.EXCHANGE_RATE_API_URL_NZ || 'https://nzapp.lotusfx.com/rst/Currencies/getExchangeRate',
+      url: process.env.EXCHANGE_RATE_API_URL_NZ || 'https://nzcportal.lotusfx.com/rst/Currencies/getExchangeRate',
       xKey: process.env.EXCHANGE_RATE_X_KEY_NZ || '',
       xClient: process.env.EXCHANGE_RATE_X_CLIENT_NZ || '',
     },
     FJ: {
-      url: process.env.EXCHANGE_RATE_API_URL_FJ || 'https://fj.app.lotusfx.com/rst/Currencies/getExchangeRate',
-      xKey: process.env.EXCHANGE_RATE_X_KEY_FJ || '',
-      xClient: process.env.EXCHANGE_RATE_X_CLIENT_FJ || '',
+      url: '',
+      xKey: '',
+      xClient: '',
     },
   }
 
@@ -67,8 +67,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { fromCcy, toCcy, toAmount, isBuy, promoGroup, customerID, transferMode, _apiKey, _bearerToken, country } = body
 
-    // Get country-specific API configuration
-    const selectedCountry = country || 'AU' // Default to AU
+    const selectedCountry = String(country || 'AU').toUpperCase()
+    if (selectedCountry === 'FJ') {
+      return NextResponse.json(
+        { success: false, error: 'Fiji rates are available in branch only.' },
+        { status: 503 }
+      )
+    }
     const apiConfig = getCountryApiConfig(selectedCountry)
     
     console.log(`[Exchange Rate API] Using config for country: ${selectedCountry}`, {
