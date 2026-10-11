@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useCountry } from '@/context/CountryContext'
 import FijiBranchRatesCard from '@/components/FijiBranchRatesCard'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
+import RatesUnavailableNotice from '@/components/RatesUnavailableNotice'
+import { isBackendUnavailable, RATES_UNAVAILABLE_MESSAGE } from '@/lib/service-availability'
 
 // To country: display name + currency for API
 const toCountries = [
@@ -50,6 +52,7 @@ function TransferCalculatorActive() {
   const [rate, setRate] = useState(0)
   const [isCalculating, setIsCalculating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [unavailable, setUnavailable] = useState(false)
 
   /** Which field the user last edited */
   const amountSideRef = useRef<'send' | 'receive'>('send')
@@ -92,12 +95,12 @@ function TransferCalculatorActive() {
         setRate(0)
         return
       }
+      if (unavailable) return
 
       setIsCalculating(true)
       setError(null)
 
       try {
-        // Same orientation as Quick Order / standalone: foreign → base
         const response = await fetch('/api/exchange-rate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -110,37 +113,41 @@ function TransferCalculatorActive() {
           }),
         })
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ error: 'Failed to fetch rate' }))
-          throw new Error(errorData.error || errorData.details || 'Failed to fetch exchange rate')
+        const result = await response.json().catch(() => ({}))
+        if (isBackendUnavailable(result) || (!response.ok && response.status >= 500)) {
+          setUnavailable(true)
+          setError(null)
+          setReceiveAmount('')
+          setRate(0)
+          return
+        }
+        if (!response.ok || !result.success || result.rate == null) {
+          throw new Error(result.error || 'We could not get a live rate just now. Please try again.')
         }
 
-        const result = await response.json()
-        if (result.success && result.rate != null) {
-          const rateNumber = Number(result.rate)
-          const inverse =
-            result.inverse != null ? Number(result.inverse) : rateNumber > 0 ? 1 / rateNumber : 0
-          // Prefer inverse for "1 base = X foreign" display & receive = send * inverse
-          const receiveRate = inverse > 0 ? inverse : rateNumber
-          conversionRateRef.current = receiveRate
-          // Do not use proxy toAmount (it multiplies by rate, not inverse)
-          const converted = send * receiveRate
-          setReceiveAmount(Number(converted).toFixed(2))
-          setRate(receiveRate)
+        const rateNumber = Number(result.rate)
+        const inverse =
+          result.inverse != null ? Number(result.inverse) : rateNumber > 0 ? 1 / rateNumber : 0
+        const receiveRate = inverse > 0 ? inverse : rateNumber
+        conversionRateRef.current = receiveRate
+        const converted = send * receiveRate
+        setReceiveAmount(Number(converted).toFixed(2))
+        setRate(receiveRate)
+        setError(null)
+      } catch (err) {
+        if (isBackendUnavailable(err)) {
+          setUnavailable(true)
           setError(null)
         } else {
-          throw new Error(result.error || result.details || 'Invalid response')
+          setError(err instanceof Error ? err.message : 'We could not get a live rate just now. Please try again.')
         }
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : 'Failed to calculate'
-        setError(msg)
         setReceiveAmount('')
         setRate(0)
       } finally {
         setIsCalculating(false)
       }
     },
-    [sendAmount, toCurrency, transferMode, selectedCountry, baseCurrency]
+    [sendAmount, toCurrency, transferMode, selectedCountry, baseCurrency, unavailable]
   )
 
   useEffect(() => {
@@ -180,6 +187,15 @@ function TransferCalculatorActive() {
       amountSideRef.current = 'send'
       setSendAmount(send.toFixed(2))
     }, 400)
+  }
+
+  if (unavailable) {
+    return (
+      <RatesUnavailableNotice
+        message={RATES_UNAVAILABLE_MESSAGE}
+        onRetry={() => setUnavailable(false)}
+      />
+    )
   }
 
   return (
@@ -285,8 +301,8 @@ function TransferCalculatorActive() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
-          ⚠️ {error}
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-900">
+          {error}
         </div>
       )}
 

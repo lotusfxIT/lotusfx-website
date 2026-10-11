@@ -5,6 +5,7 @@ import {
   unwrapPayload,
   unwrapResult,
 } from '@/lib/quick-order-api'
+import { CLICK_COLLECT_UNAVAILABLE_MESSAGE, publicServiceError } from '@/lib/service-availability'
 
 export async function POST(request: NextRequest) {
   try {
@@ -63,12 +64,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, branches, country: config.country })
   } catch (error) {
     console.error('[Quick Order] branches error:', error)
+    const { unavailable, message } = publicServiceError(error, CLICK_COLLECT_UNAVAILABLE_MESSAGE)
     return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unable to load branches.',
-      },
-      { status: 502 }
+      { success: false, unavailable, error: message },
+      { status: unavailable ? 503 : 502 }
     )
   }
 }

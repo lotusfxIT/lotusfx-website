@@ -10,6 +10,7 @@ import {
   sendStaffEmail,
   staffNotifyEmail,
 } from '@/lib/orders'
+import { CLICK_COLLECT_UNAVAILABLE_MESSAGE, publicServiceError } from '@/lib/service-availability'
 
 /** Never throws: the order already exists in 4D, so storage/email problems must not fail it. */
 async function recordAndNotify(
@@ -133,12 +134,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, result, country: config.country, orderRef })
   } catch (error) {
     console.error('[Quick Order] create error:', error)
+    const { unavailable, message } = publicServiceError(error, CLICK_COLLECT_UNAVAILABLE_MESSAGE)
     return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unable to create purchase order.',
-      },
-      { status: 502 }
+      { success: false, unavailable, error: message },
+      { status: unavailable ? 503 : 502 }
     )
   }
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { RATES_UNAVAILABLE_MESSAGE, publicServiceError } from '@/lib/service-availability'
 
 // When the backend (au/nz/fj.app.lotusfx.com) has an invalid or self-signed SSL cert,
 // Node on Vercel cannot verify it. Set ALLOW_INSECURE_SSL=true to skip verification
@@ -187,37 +188,33 @@ export async function POST(request: NextRequest) {
       })
       
       // Provide more specific error messages
-      if (fetchError.code === 'ENOTFOUND' || fetchError.code === 'ECONNREFUSED') {
+      if (
+        fetchError.code === 'ENOTFOUND' ||
+        fetchError.code === 'ECONNREFUSED' ||
+        fetchError.name === 'AbortError' ||
+        fetchError.code === 'ETIMEDOUT' ||
+        publicServiceError(fetchError).unavailable
+      ) {
         return NextResponse.json(
-          { 
-            error: `Cannot connect to API server. Please check if ${apiConfig.url} is accessible.`,
-            details: fetchError.message,
-            success: false
-          },
+          { success: false, unavailable: true, error: RATES_UNAVAILABLE_MESSAGE },
           { status: 503 }
         )
       }
-      
-      if (fetchError.name === 'AbortError' || fetchError.code === 'ETIMEDOUT') {
-        return NextResponse.json(
-          { 
-            error: 'API request timed out. The server may be slow or unreachable.',
-            details: fetchError.message,
-            success: false
-          },
-          { status: 504 }
-        )
-      }
-      
-      // Re-throw to be caught by outer catch
+
       throw fetchError
     }
 
     if (!response.ok) {
       const errorText = await response.text()
       console.error('[Exchange Rate API] Error:', errorText)
+      if (response.status >= 500) {
+        return NextResponse.json(
+          { success: false, unavailable: true, error: RATES_UNAVAILABLE_MESSAGE },
+          { status: 503 }
+        )
+      }
       return NextResponse.json(
-        { error: 'Failed to fetch exchange rate', details: errorText },
+        { success: false, error: 'We could not get a live rate just now. Please try again.' },
         { status: response.status }
       )
     }
@@ -267,13 +264,10 @@ export async function POST(request: NextRequest) {
       type: error?.constructor?.name
     })
     
+    const { unavailable, message } = publicServiceError(error, RATES_UNAVAILABLE_MESSAGE)
     return NextResponse.json(
-      { 
-        error: 'Internal server error', 
-        details: errorMessage,
-        success: false
-      },
-      { status: 500 }
+      { success: false, unavailable, error: message },
+      { status: unavailable ? 503 : 500 }
     )
   }
 }

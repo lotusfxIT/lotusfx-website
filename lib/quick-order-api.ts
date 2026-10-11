@@ -1,4 +1,5 @@
 import { getPortalLoginUrl } from './country-portals'
+import { BackendUnavailableError, isBackendUnavailable } from './service-availability'
 
 /**
  * Server-only Quick Order API client for LotusFX 4D REST endpoints.
@@ -182,12 +183,17 @@ export async function quickOrderApiPost(
     }
 
     if (!response.ok) {
+      if (response.status >= 500) throw new BackendUnavailableError()
       const detail =
         body && typeof body === 'object' ? JSON.stringify(body) : String(body || '')
       throw new Error(`HTTP ${response.status} ${response.statusText}${detail ? ` - ${detail}` : ''}`)
     }
 
     return body
+  } catch (error) {
+    if (error instanceof BackendUnavailableError) throw error
+    if (isBackendUnavailable(error)) throw new BackendUnavailableError()
+    throw error
   } finally {
     clearTimeout(timeout)
   }

@@ -6,6 +6,7 @@ import {
   unwrapResult,
 } from '@/lib/quick-order-api'
 import { enrichSoldCurrency } from '@/lib/currencies'
+import { CLICK_COLLECT_UNAVAILABLE_MESSAGE, publicServiceError } from '@/lib/service-availability'
 
 export async function POST(request: NextRequest) {
   try {
@@ -65,12 +66,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, currencies, country: config.country })
   } catch (error) {
     console.error('[Quick Order] currencies error:', error)
+    const { unavailable, message } = publicServiceError(error, CLICK_COLLECT_UNAVAILABLE_MESSAGE)
     return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unable to load currencies.',
-      },
-      { status: 502 }
+      { success: false, unavailable, error: message },
+      { status: unavailable ? 503 : 502 }
     )
   }
 }

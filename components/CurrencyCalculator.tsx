@@ -11,6 +11,8 @@ import { trackEvent } from '@/lib/analytics'
 import { buildQuickOrderUrl, isQuickOrderEnabled } from '@/lib/quick-order-url'
 import { getCountryPortalLinks } from '@/lib/country-portals'
 import CountryAppLinks from '@/components/CountryAppLinks'
+import RatesUnavailableNotice from '@/components/RatesUnavailableNotice'
+import { isBackendUnavailable, RATES_UNAVAILABLE_MESSAGE } from '@/lib/service-availability'
 
 // Currency code → ISO country code for flag images (flagcdn.com)
 const currencyToCountry: Record<string, string> = {
@@ -163,6 +165,7 @@ function CurrencyCalculatorActive({
   const [rate, setRate] = useState(0)
   const [isCalculating, setIsCalculating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [unavailable, setUnavailable] = useState(false)
   /** Which side the user last edited: foreign (You Buy/Sell / recipient) or base (You Pay/Get / you send) */
   const amountSideRef = useRef<'foreign' | 'base'>('foreign')
   /** base = foreign * conversionRate (cash buy/sell) OR receive = send * conversionRate (transfer) */
@@ -218,6 +221,7 @@ function CurrencyCalculatorActive({
       return
     }
 
+    if (unavailable) return
     setIsCalculating(true)
     setError(null)
     const fromAmount = parseFloat(amount)
@@ -247,13 +251,17 @@ function CurrencyCalculatorActive({
         }),
       })
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Failed to fetch exchange rate' }))
-        throw new Error(errorData.error || errorData.details || 'Failed to fetch exchange rate')
+      const result = await response.json().catch(() => ({}))
+      if (isBackendUnavailable(result) || (!response.ok && response.status >= 500)) {
+        setUnavailable(true)
+        setError(null)
+        setConvertedAmount('')
+        setRate(0)
+        return
       }
-
-      const result = await response.json()
-      if (!result.success || result.rate == null) throw new Error(result.error || result.details || 'Invalid response')
+      if (!response.ok || !result.success || result.rate == null) {
+        throw new Error(result.error || 'We could not get a live rate just now. Please try again.')
+      }
 
       let converted: number
       let displayRate: number
@@ -291,11 +299,16 @@ function CurrencyCalculatorActive({
         country: selectedCountry,
       })
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to calculate conversion'
-      setError(errorMessage)
-      const fallbackRate = exchangeRates[quoteType === 'transfer' ? baseCurrency : fromCurrency]?.[toCurrency] || 1
-      setConvertedAmount((fromAmount * fallbackRate).toFixed(2))
-      setRate(fallbackRate)
+      if (isBackendUnavailable(err)) {
+        setUnavailable(true)
+        setError(null)
+        setConvertedAmount('')
+        setRate(0)
+      } else {
+        setError(err instanceof Error ? err.message : 'We could not get a live rate just now. Please try again.')
+        setConvertedAmount('')
+        setRate(0)
+      }
     } finally {
       setIsCalculating(false)
     }
@@ -306,7 +319,7 @@ function CurrencyCalculatorActive({
     // When user edits base/pay side, that handler drives the quote
     if (amountSideRef.current === 'base') return
     calculateConversion()
-  }, [fromCurrency, toCurrency, amount, selectedCountry, quoteType, transferMode, buyOrSell, chosen, forceCashOnly])
+  }, [fromCurrency, toCurrency, amount, selectedCountry, quoteType, transferMode, buyOrSell, chosen, forceCashOnly, unavailable])
 
   const onForeignAmountChange = (value: string) => {
     amountSideRef.current = 'foreign'
@@ -489,7 +502,7 @@ function CurrencyCalculatorActive({
       <motion.div
         className={`flex flex-col flex-1 h-full min-h-0 w-full min-w-0 ${
           quoteType === 'cash' ? 'justify-evenly gap-3' : 'gap-3'
-        }`}
+        } ${unavailable ? '[&>*:not([data-maintenance])]:hidden' : ''}`}
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
@@ -1101,19 +1114,23 @@ function CurrencyCalculatorActive({
           </Link>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700"
-          >
-            ⚠️ {error} (Using estimated rates)
-          </motion.div>
+        {unavailable ? (
+          <div data-maintenance>
+            <RatesUnavailableNotice
+              message={RATES_UNAVAILABLE_MESSAGE}
+              onRetry={() => setUnavailable(false)}
+            />
+          </div>
+        ) : null}
+
+        {error && !unavailable && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-900">
+            {error}
+          </div>
         )}
 
         {/* Additional Info - only for Foreign Exchange */}
-        {quoteType === 'cash' && (
+        {quoteType === 'cash' && !unavailable && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

@@ -23,6 +23,8 @@ import type { SiteStats } from '@/config/stats'
 import { useCountry } from '@/context/CountryContext'
 import { isQuickOrderEnabled } from '@/lib/quick-order-url'
 import { getCountryPortalLinks } from '@/lib/country-portals'
+import { CLICK_COLLECT_UNAVAILABLE_MESSAGE, isBackendUnavailable } from '@/lib/service-availability'
+import RatesUnavailableNotice from '@/components/RatesUnavailableNotice'
 
 type StepId = 'purchase' | 'fulfillment' | 'details' | 'payment'
 
@@ -255,6 +257,8 @@ export default function QuickOrderWizard() {
   const [guestLimit, setGuestLimit] = useState(1000)
   const [enableDelivery, setEnableDelivery] = useState(false)
   const [apiReady, setApiReady] = useState(true)
+  const [serviceDown, setServiceDown] = useState(false)
+  const [reloadTick, setReloadTick] = useState(0)
   const [loadingMeta, setLoadingMeta] = useState(true)
   const [baseCurrency, setBaseCurrency] = useState(() => defaultBaseCurrency(marketCountry))
   const portal = getCountryPortalLinks(marketCountry)
@@ -547,6 +551,7 @@ export default function QuickOrderWizard() {
     if (!countryReady || !isQuickOrderEnabled(marketCountry)) return
     const load = async () => {
       setLoadingMeta(true)
+      setServiceDown(false)
       setPaymentResult(null)
       setCollectionPlace(null)
       setSelectedBranch(null)
@@ -582,9 +587,12 @@ export default function QuickOrderWizard() {
             })
           }
           if (cfg.portalLoginUrl !== undefined) setPortalLoginUrl(cfg.portalLoginUrl || '')
-          if (!cfg.configured && cfg.configError) {
+          if (!cfg.configured && cfg.configError && !isBackendUnavailable(cfg)) {
             showToast(cfg.configError, 'error')
           }
+        } else if (isBackendUnavailable(cfg)) {
+          setServiceDown(true)
+          setApiReady(false)
         }
 
         if (cur.success && Array.isArray(cur.currencies) && cur.currencies.length) {
@@ -603,16 +611,30 @@ export default function QuickOrderWizard() {
             flag: getCurrencyFlagCode(preferred.currency),
           })
         } else if (!cur.success) {
-          showToast(cur.error || 'Unable to load currencies.', 'error')
+          if (isBackendUnavailable(cur)) {
+            setServiceDown(true)
+            setApiReady(false)
+          } else {
+            showToast(cur.error || 'Unable to load currencies.', 'error')
+          }
         }
 
         if (br.success && Array.isArray(br.branches)) {
           setBranches(br.branches)
         } else if (!br.success) {
-          showToast(br.error || 'Unable to load store locations.', 'error')
+          if (isBackendUnavailable(br)) {
+            setServiceDown(true)
+            setApiReady(false)
+          } else {
+            showToast(br.error || 'Unable to load store locations.', 'error')
+          }
         }
-      } catch {
-        showToast('Unable to initialise Click & Collect. Please try again.', 'error')
+      } catch (error) {
+        if (isBackendUnavailable(error)) {
+          setServiceDown(true)
+        } else {
+          showToast('Unable to start Click & Collect. Please try again.', 'error')
+        }
         setApiReady(false)
       } finally {
         setLoadingMeta(false)
@@ -620,12 +642,13 @@ export default function QuickOrderWizard() {
     }
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [marketCountry, countryReady])
+  }, [marketCountry, countryReady, reloadTick])
 
   const lookupRate = useCallback(
     async (amountOverride?: number) => {
       const amount = amountOverride != null ? amountOverride : parseFloat(localAmount || '0')
       if (!Number.isFinite(amount) || amount <= 0) return
+      if (serviceDown) return
 
       setIsCalculating(true)
       try {
@@ -644,7 +667,12 @@ export default function QuickOrderWizard() {
         const data = await response.json()
         if (!data.success) {
           clearRateAmounts()
-          showToast(data.error || 'Exchange rate request failed.', 'error')
+          if (isBackendUnavailable(data)) {
+            setServiceDown(true)
+            setApiReady(false)
+          } else {
+            showToast(data.error || 'We could not get a live rate just now. Please try again.', 'error')
+          }
           return
         }
 
@@ -683,18 +711,23 @@ export default function QuickOrderWizard() {
           to_currency: baseCurrency.code,
           location: 'quick_order',
         })
-      } catch {
+      } catch (error) {
         clearRateAmounts()
-        showToast('Exchange rate request failed.', 'error')
+        if (isBackendUnavailable(error)) {
+          setServiceDown(true)
+          setApiReady(false)
+        } else {
+          showToast('We could not get a live rate just now. Please try again.', 'error')
+        }
       } finally {
         setIsCalculating(false)
       }
     },
-    [localAmount, selectedCurrency.code, baseCurrency.code, marketCountry, clearRateAmounts, showToast]
+    [localAmount, selectedCurrency.code, baseCurrency.code, marketCountry, serviceDown, clearRateAmounts, showToast]
   )
 
   useEffect(() => {
-    if (loadingMeta) return
+    if (loadingMeta || serviceDown) return
     if (amountSide.current === 'pay') return
     if (lookupTimer.current) clearTimeout(lookupTimer.current)
     lookupTimer.current = setTimeout(() => {
@@ -864,7 +897,12 @@ export default function QuickOrderWizard() {
       const data = await response.json()
 
       if (!data.success) {
-        showToast(data.error || 'Unable to create purchase order.', 'error')
+        if (isBackendUnavailable(data)) {
+          setServiceDown(true)
+          setApiReady(false)
+        } else {
+          showToast(data.error || 'Unable to create purchase order.', 'error')
+        }
         return
       }
 
@@ -948,8 +986,13 @@ export default function QuickOrderWizard() {
         foreign_currency: selectedCurrency.code,
         has_order_id: !!ref,
       })
-    } catch {
-      showToast('Unable to create purchase order.', 'error')
+    } catch (error) {
+      if (isBackendUnavailable(error)) {
+        setServiceDown(true)
+        setApiReady(false)
+      } else {
+        showToast('Unable to create purchase order.', 'error')
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -1080,7 +1123,7 @@ export default function QuickOrderWizard() {
             </p>
           </div>
 
-          {!paymentResult ? (
+          {!paymentResult && !serviceDown ? (
             <div className="mt-8 sm:mt-12 lg:mt-16 flex w-full gap-2 sm:gap-3">
               {STEPS.map((step, idx) => {
                 const Icon = step.icon
@@ -1135,16 +1178,21 @@ export default function QuickOrderWizard() {
         </div>
 
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {!apiReady && !loadingMeta ? (
+          {!apiReady && !loadingMeta && !serviceDown ? (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900 text-sm mb-4 shadow-soft">
-              Click & Collect API credentials are not configured for this country yet. Ask IT to set
-              the Click & Collect (or exchange-rate) keys for AU / NZ in Vercel.
+              Click & Collect is not configured for this country yet. Please visit a branch, or try
+              Australia.
             </div>
           ) : null}
 
           <div className="bg-white rounded-2xl shadow-strong border border-gray-100 p-5 sm:p-7 lg:p-8">
             {loadingMeta ? (
               <div className="py-16 text-center text-gray-500">Loading…</div>
+            ) : serviceDown ? (
+              <RatesUnavailableNotice
+                message={CLICK_COLLECT_UNAVAILABLE_MESSAGE}
+                onRetry={() => setReloadTick((n) => n + 1)}
+              />
             ) : paymentResult ? (
               <div className="space-y-6">
                 <div className="flex items-start gap-3">
@@ -1950,7 +1998,7 @@ export default function QuickOrderWizard() {
         </div>
       </div>
 
-      {!loadingMeta && !paymentResult ? (
+      {!loadingMeta && !paymentResult && !serviceDown ? (
         <div className="fixed bottom-0 inset-x-0 z-40 border-t-2 border-white/25 bg-primary-800/95 backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.35)]">
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex items-center justify-between gap-3 sm:gap-4">
             <button
