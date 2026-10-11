@@ -281,13 +281,12 @@ export default function AboutPage() {
       {/* Our story — full-width editorial */}
       <section className="py-16 sm:py-20 lg:py-24 bg-white">
         <div className="container-custom">
-          <div className="mb-10 lg:mb-12">
+          <div className="mb-10 lg:mb-12 max-w-3xl mx-auto text-center">
             <MotionWrapper
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55 }}
               viewport={{ once: true }}
-              className="max-w-4xl"
             >
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
                 Our story
@@ -295,7 +294,7 @@ export default function AboutPage() {
               <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 tracking-tight !leading-[1.35] pb-[0.15em] text-balance">
                 Built for better exchange — not bank fees
               </h2>
-              <p className="mt-5 text-lg sm:text-xl text-gray-600 !leading-[1.75] max-w-3xl">
+              <p className="mt-5 text-lg sm:text-xl text-gray-600 !leading-[1.75]">
                 Founded in 2002 with one mission: fairer rates, clearer pricing, and genuine help —
                 the opposite of bank foreign exchange.
               </p>
@@ -307,7 +306,7 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.1 }}
             viewport={{ once: true }}
-            className="grid md:grid-cols-2 gap-8 lg:gap-14 border-t border-gray-200 pt-10"
+            className="max-w-3xl mx-auto space-y-6 border-t border-gray-200 pt-10"
           >
             <p className="text-gray-700 text-base sm:text-lg !leading-[1.75] min-w-0">
               {fillStatsTemplate(siteStats.copy.aboutGrowth, siteStats)}
@@ -324,7 +323,7 @@ export default function AboutPage() {
       {/* Timeline */}
       <section className="py-16 sm:py-20 lg:py-24 bg-primary-50/40">
         <div className="container-custom">
-          <div className="max-w-2xl mb-10 sm:mb-14">
+          <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-14">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-3">
               Milestones
             </p>
@@ -333,7 +332,7 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <div className="relative max-w-4xl">
+          <div className="relative max-w-3xl mx-auto">
             <div
               className="absolute left-[2.15rem] sm:left-[2.4rem] top-3 bottom-3 w-px bg-primary-200"
               aria-hidden
