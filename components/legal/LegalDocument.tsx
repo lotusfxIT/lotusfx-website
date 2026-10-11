@@ -44,13 +44,12 @@ export default function LegalDocument({ title, subtitle, lastUpdated, regions, c
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
                   Country version
                 </p>
-                <div className="flex flex-wrap gap-2" role="list">
+                <nav aria-label="Country version" className="flex flex-wrap gap-2">
                   {LEGAL_REGIONS.map((region) => {
                     const isCurrent = region.code === regions.current
                     return (
                       <Link
                         key={region.code}
-                        role="listitem"
                         href={`${regions.basePath}/${region.code}`}
                         aria-current={isCurrent ? 'page' : undefined}
                         className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
@@ -70,7 +69,7 @@ export default function LegalDocument({ title, subtitle, lastUpdated, regions, c
                       </Link>
                     )
                   })}
-                </div>
+                </nav>
               </div>
             ) : null}
           </div>
