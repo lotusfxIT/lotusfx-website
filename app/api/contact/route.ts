@@ -10,6 +10,8 @@ import {
 import { EMAIL_RE, cleanText, countLinks, guardSubmission } from '@/lib/spam-guard'
 import { newMessageId, saveMessage, type MessageRecord } from '@/lib/messages'
 
+export const dynamic = 'force-dynamic'
+
 const SUBJECTS: Record<string, string> = {
   'currency-exchange': 'Currency Exchange',
   'money-transfer': 'Money Transfer',
@@ -74,15 +76,17 @@ export async function POST(request: NextRequest) {
     emailStatus: 'not-configured',
     status: 'new',
   }
-  const stored = await saveMessage(record).then(
-    () => true,
-    (error) => {
-      console.error('[contact] could not store message', error)
-      return false
-    }
-  )
+  const persist = () =>
+    saveMessage(record).then(
+      () => true,
+      (error) => {
+        console.error('[contact] could not store message', error)
+        return false
+      }
+    )
 
   if (!mailjetConfigured()) {
+    const stored = await persist()
     console.error('[contact] Mailjet not configured; message stored only:', stored)
     if (stored) return NextResponse.json({ success: true })
     return NextResponse.json(
@@ -106,33 +110,24 @@ export async function POST(request: NextRequest) {
   )}</p>`
 
   const to = contactRecipient(country)
-  const notify = async (): Promise<boolean> => {
-    try {
-      const result = await sendMail({
-        to,
-        subject: `[Website ${country}] ${subjectLabel} — ${name}`,
-        text,
-        html,
-        replyTo: { email, name },
-      })
-      if (!result.ok) throw new Error(result.error)
-      if (stored) await saveMessage({ ...record, emailStatus: 'sent', emailedTo: to }).catch(() => {})
-      return true
-    } catch (error) {
-      console.error('[contact] send error', error)
-      if (stored) await saveMessage({ ...record, emailStatus: 'failed', emailedTo: to }).catch(() => {})
-      return false
-    }
-  }
-
-  // Once stored, staff can see it in admin, so the visitor needn't wait for the email.
-  if (stored) {
-    waitUntil(notify())
-    return NextResponse.json({ success: true })
-  }
-  if (await notify()) return NextResponse.json({ success: true })
-  return NextResponse.json(
-    { error: 'We could not send your message right now. Please try again or email us directly.' },
-    { status: 502 }
+  waitUntil(
+    (async () => {
+      const stored = await persist()
+      try {
+        const result = await sendMail({
+          to,
+          subject: `[Website ${country}] ${subjectLabel} — ${name}`,
+          text,
+          html,
+          replyTo: { email, name },
+        })
+        if (!result.ok) throw new Error(result.error)
+        if (stored) await saveMessage({ ...record, emailStatus: 'sent', emailedTo: to }).catch(() => {})
+      } catch (error) {
+        console.error('[contact] send error', error)
+        if (stored) await saveMessage({ ...record, emailStatus: 'failed', emailedTo: to }).catch(() => {})
+      }
+    })()
   )
+  return NextResponse.json({ success: true })
 }

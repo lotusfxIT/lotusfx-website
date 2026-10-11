@@ -92,32 +92,38 @@ export default function ContactPage() {
             >
               <div className="bg-white rounded-[1.5rem] shadow-strong border border-gray-100 p-5 sm:p-8 h-full flex flex-col">
                 {status === 'sent' ? (
-                  <div role="status" className="flex-1 flex flex-col items-center justify-center text-center py-10 sm:py-14 animate-fade-in">
+                  <div
+                    role="status"
+                    className="flex-1 flex flex-col items-center justify-center text-center py-8 sm:py-12 px-2 animate-fade-in"
+                  >
                     <div className="relative mb-6">
-                      <span className="absolute inset-0 rounded-full bg-green-400/30 animate-ping [animation-iteration-count:2]" aria-hidden />
-                      <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-green-500 text-white shadow-lg shadow-green-500/30">
-                        <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3} aria-hidden>
+                      <span className="absolute inset-0 rounded-full bg-primary-400/25 animate-ping [animation-iteration-count:2]" aria-hidden />
+                      <span className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-primary-600 text-white shadow-lg shadow-primary-600/25">
+                        <svg className="h-8 w-8 sm:h-10 sm:w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3} aria-hidden>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                       </span>
                     </div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600 mb-2">
+                      Message sent
+                    </p>
                     <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-                      {sentTo.name ? `Thanks, ${sentTo.name}!` : 'Thank you!'}
+                      {sentTo.name ? `Thanks, ${sentTo.name}` : 'Thank you'}
                     </h2>
-                    <p className="text-lg text-gray-700 mb-1">Your message has been sent.</p>
                     <p className="text-gray-600 !leading-relaxed max-w-sm">
-                      Our customer care team will get back to you
+                      We have received your message
                       {sentTo.email ? (
                         <>
-                          {' '}at <span className="font-semibold text-gray-900 break-all">{sentTo.email}</span>
+                          {' '}and will reply to{' '}
+                          <span className="font-semibold text-gray-900 break-all">{sentTo.email}</span>
                         </>
-                      ) : null}{' '}
-                      as soon as possible.
+                      ) : null}
+                      . Our team usually gets back within 24 hours.
                     </p>
                     <button
                       type="button"
                       onClick={() => setStatus('idle')}
-                      className="mt-8 inline-flex items-center gap-2 rounded-lg border-2 border-primary-600 px-5 py-2.5 text-sm font-semibold text-primary-700 hover:bg-primary-50 transition"
+                      className="mt-8 inline-flex items-center rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 transition"
                     >
                       Send another message
                     </button>
