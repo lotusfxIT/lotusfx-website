@@ -80,7 +80,7 @@ export function getQuickOrderConfig(
   const baseUrl = (
     process.env.QUICK_ORDER_API_URL_AU ||
     process.env.QUICK_ORDER_API_URL ||
-    'https://au.app.lotusfx.com'
+    'http://au.app.lotusfx.com:8080'
   ).replace(/\/$/, '')
   const xKey =
     process.env.QUICK_ORDER_X_KEY_AU ||
