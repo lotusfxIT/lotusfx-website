@@ -16,5 +16,5 @@ export function buildQuickOrderUrl(params: QuickOrderParams = {}): string {
   if (params.amount != null && params.amount !== '') q.set('amount', String(params.amount))
   if (params.isBuy !== undefined) q.set('isBuy', params.isBuy ? '1' : '0')
   const query = q.toString()
-  return query ? `/quick-order?${query}` : '/quick-order'
+  return query ? `/click-and-collect?${query}` : '/click-and-collect'
 }

@@ -47,7 +47,7 @@ export default function Footer() {
   const [config, setConfig] = useState<FooterConfig>({})
   const [loading, setLoading] = useState(true)
   const { selectedCountry } = useCountry() // Move hook call before any conditional returns
-  const hideFooter = pathname === '/quick-order' || pathname?.startsWith('/quick-order/')
+  const hideFooter = pathname === '/click-and-collect' || pathname?.startsWith('/click-and-collect/')
 
   useEffect(() => {
     if (hideFooter) return

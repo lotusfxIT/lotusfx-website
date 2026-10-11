@@ -104,7 +104,7 @@ export default function LocationsPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              href="/quick-order"
+              href="/click-and-collect"
               className="inline-flex items-center justify-center bg-white text-primary-700 hover:bg-gray-50 font-semibold py-3 px-7 rounded-xl transition"
             >
               Order currency online

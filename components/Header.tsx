@@ -397,9 +397,9 @@ export default function Header() {
                   ))}
                   {isQuickOrderEnabled(selectedCountry) ? (
                     <Link
-                      href="/quick-order"
+                      href="/click-and-collect"
                       className={`block text-base font-medium transition-colors duration-200 ${
-                        pathname === '/quick-order'
+                        pathname === '/click-and-collect'
                           ? 'text-primary-600'
                           : 'text-gray-700 hover:text-primary-600'
                       }`}

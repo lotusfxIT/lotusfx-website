@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata({
   title: 'Click & Collect',
   description:
     'Order foreign currency online with LotusFX and pay in store when you collect. Guest Click & Collect across Australia.',
-  path: '/quick-order',
+  path: '/click-and-collect',
   keywords: ['quick order', 'buy currency online', 'currency pickup', 'LotusFX order'],
 })
 

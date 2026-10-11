@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.4 },
     { url: `${baseUrl}/complaints`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.4 },
     { url: `${baseUrl}/delete-account`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${baseUrl}/quick-order`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${baseUrl}/click-and-collect`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
   ]
 
   const currencyPages: MetadataRoute.Sitemap = ALL_CURRENCIES.map((c) => ({
