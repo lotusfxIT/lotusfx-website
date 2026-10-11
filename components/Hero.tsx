@@ -133,18 +133,8 @@ export default function Hero() {
             {/* Text block — even gaps, room for descenders */}
             <div className="relative z-10 w-full min-w-0 overflow-visible space-y-4 sm:space-y-6 lg:space-y-7">
               {/* 1. Company name */}
-              <p
-                className="font-museo uppercase text-white !leading-[1.15] pb-1"
-                aria-label="Lotus Foreign Exchange"
-              >
-                <span className="inline-flex max-w-full flex-wrap items-baseline gap-x-[0.4em] gap-y-0 sm:flex-nowrap">
-                  <span className="font-bold text-[2.15rem] sm:text-[3.1rem] lg:text-[3.6rem] tracking-[0.02em]">
-                    Lotus
-                  </span>
-                  <span className="font-medium text-[1.2rem] sm:text-[1.95rem] lg:text-[2.25rem] tracking-[0.14em] text-white/90">
-                    Foreign Exchange
-                  </span>
-                </span>
+              <p className="font-museo font-bold uppercase text-white whitespace-nowrap !leading-[1.15] pb-1 text-[clamp(1.15rem,5.6vw,1.6rem)] sm:text-[1.9rem] lg:text-[2.15rem] xl:text-[2.4rem] tracking-[0.06em]">
+                Lotus Foreign Exchange
               </p>
 
               {/* 2. Slogan — wraps on mobile; one line on tablet+ */}
