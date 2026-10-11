@@ -20,6 +20,14 @@
   font-display: swap;
 }
 
+/* Windows has no flag glyphs — this font only covers country-flag emoji. */
+@font-face {
+  font-family: 'Twemoji Country Flags';
+  unicode-range: U+1F1E6-1F1FF, U+1F3F4, U+E0062-E0063, U+E0065, U+E0067, U+E006C, U+E006E, U+E0073-E0074, U+E0077, U+E007F;
+  src: url('/fonts/TwemojiCountryFlags.woff2') format('woff2');
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --mobile-ink: #172126;
@@ -34,7 +42,7 @@
   }
   
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Twemoji Country Flags', 'Inter', system-ui, sans-serif;
     overflow-x: clip;
     width: 100%;
     overscroll-behavior-x: none;
