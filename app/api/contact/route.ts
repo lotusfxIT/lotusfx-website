@@ -41,11 +41,17 @@ export async function POST(request: NextRequest) {
   const message = cleanText(body.message, 5000)
   const country = normalizeCountry(body.country)
 
-  if (!name || !EMAIL_RE.test(email) || !SUBJECTS[subjectKey] || message.length < 5) {
-    return NextResponse.json(
-      { error: 'Please fill in your name, a valid email, a subject and your message.' },
-      { status: 400 }
-    )
+  const invalid = !name
+    ? 'Please enter your name.'
+    : !EMAIL_RE.test(email)
+      ? 'Please enter a valid email address.'
+      : !SUBJECTS[subjectKey]
+        ? 'Please choose a subject.'
+        : message.length < 2
+          ? 'Please enter your message.'
+          : null
+  if (invalid) {
+    return NextResponse.json({ error: invalid }, { status: 400 })
   }
   if (countLinks(message) > 3) {
     return NextResponse.json(
