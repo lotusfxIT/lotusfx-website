@@ -307,14 +307,3 @@ export function StepCard({
     </MotionWrapper>
   )
 }
-
-export function FaqItem({ question, answer }: { question: string; answer: string }) {
-  return (
-    <div className="rounded-xl border border-gray-200 border-l-4 border-l-primary-500 bg-white shadow-soft">
-      <div className="px-6 py-5">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">{question}</h3>
-        <p className="text-gray-600 leading-relaxed">{answer}</p>
-      </div>
-    </div>
-  )
-}

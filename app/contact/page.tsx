@@ -11,6 +11,7 @@ import {
 import { useSiteStats } from '@/context/SiteStatsContext'
 import { useCountry } from '@/context/CountryContext'
 import { getSiteFaqs } from '@/data/faqs'
+import FaqAccordion from '@/components/FaqAccordion'
 import { HONEYPOT_FIELD } from '@/lib/spam-fields'
 
 export default function ContactPage() {
@@ -302,24 +303,7 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="max-w-3xl mx-auto space-y-4">
-            {faqs.map((faq, index) => (
-              <MotionWrapper
-                key={faq.question}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                viewport={{ once: true }}
-              >
-                <details className="bg-white rounded-xl p-6 cursor-pointer border border-gray-100 hover:border-primary-200 transition-colors">
-                  <summary className="font-semibold text-gray-900 text-lg">
-                    {faq.question}
-                  </summary>
-                  <p className="mt-3 text-gray-600 leading-relaxed">{faq.answer}</p>
-                </details>
-              </MotionWrapper>
-            ))}
-          </div>
+          <FaqAccordion items={faqs} className="max-w-4xl mx-auto" />
         </div>
       </section>
     </>

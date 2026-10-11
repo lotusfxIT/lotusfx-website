@@ -6,6 +6,7 @@ import fs from 'fs'
 import path from 'path'
 import { useCountry } from '@/context/CountryContext'
 import { getSiteFaqs } from '@/data/faqs'
+import FaqAccordion from '@/components/FaqAccordion'
 
 interface PageData {
   title?: string
@@ -205,27 +206,10 @@ export default function DynamicPage({ params }: { params: { slug: string } }) {
             viewport={{ once: true }}
             className="py-16 md:py-24 border-t border-gray-200"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-700 mb-12 text-center">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-12 text-center">
               {pageData.faq.title || 'Frequently Asked Questions'}
             </h2>
-            <div className="max-w-2xl mx-auto space-y-4">
-              {faqs.map((item) => (
-                <motion.details
-                  key={item.question}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  className="bg-gray-50 p-4 rounded-lg border border-gray-200 cursor-pointer"
-                >
-                  <summary className="font-bold text-primary-700 hover:text-primary-800">
-                    {item.question}
-                  </summary>
-                  <p className="text-gray-600 mt-3">
-                    {item.answer}
-                  </p>
-                </motion.details>
-              ))}
-            </div>
+            <FaqAccordion items={faqs} className="max-w-4xl mx-auto" />
           </motion.section>
         )}
       </div>
