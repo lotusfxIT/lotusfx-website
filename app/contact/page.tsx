@@ -245,21 +245,21 @@ export default function ContactPage() {
                   <div className="space-y-5">
                     {[
                       {
-                        flag: '🇦🇺',
+                        flag: 'au',
                         country: 'Australia',
                         email: siteStats.emails.australia,
                         branches: `${siteStats.branches.australia} branches across major cities`,
                         hours: siteStats.businessHours.australia,
                       },
                       {
-                        flag: '🇳🇿',
+                        flag: 'nz',
                         country: 'New Zealand',
                         email: siteStats.emails.newZealand,
                         branches: `${siteStats.branches.newZealand} branches nationwide`,
                         hours: siteStats.businessHours.newZealand,
                       },
                       {
-                        flag: '🇫🇯',
+                        flag: 'fj',
                         country: 'Fiji',
                         email: siteStats.emails.fiji,
                         branches: `${siteStats.branches.fiji} branches across islands`,
@@ -271,9 +271,12 @@ export default function ContactPage() {
                         className="rounded-2xl bg-gradient-to-br from-primary-50 to-white p-5 sm:p-6 border border-primary-100"
                       >
                         <div className="flex items-center gap-3 mb-4">
-                          <span className="text-3xl" aria-hidden>
-                            {region.flag}
-                          </span>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={`https://flagcdn.com/${region.flag}.svg`}
+                            alt=""
+                            className="h-6 w-9 rounded-sm object-cover shadow-sm ring-1 ring-black/10"
+                          />
                           <h3 className="text-xl font-bold text-gray-900">{region.country}</h3>
                         </div>
                         <div className="space-y-2.5 text-sm text-gray-600">
