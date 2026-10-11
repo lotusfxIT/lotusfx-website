@@ -180,9 +180,9 @@ export default function AboutPage() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.08 }}
-                className="text-sm font-semibold uppercase tracking-[0.2em] text-white/70 mb-4"
+                className="text-xs sm:text-sm font-semibold uppercase tracking-[0.14em] sm:tracking-[0.2em] text-white/70 mb-4"
               >
-                Since 2002 · Australia · New Zealand · Fiji
+                Since&nbsp;2002 · Australia · New&nbsp;Zealand · Fiji
               </motion.p>
 
               <motion.h1
