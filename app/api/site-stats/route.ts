@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { mergeSiteStats } from '@/config/stats'
 import { readSiteStats } from '@/lib/site-stats-server'
 
+export const dynamic = 'force-dynamic'
+
 /** Public read — used by the live site. */
 export async function GET() {
   try {

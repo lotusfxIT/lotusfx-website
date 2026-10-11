@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isAdminRequest } from '@/lib/admin-auth'
 import { readAdminJson, writeAdminJson } from '@/lib/admin-json-store'
 
+export const dynamic = 'force-dynamic'
+
 const PAGES_RELATIVE = 'public/pages-content.json'
 
 const DEFAULT_PAGES = {

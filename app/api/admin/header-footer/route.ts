@@ -3,6 +3,8 @@ import fs from 'fs'
 import path from 'path'
 import { isAdminRequest } from '@/lib/admin-auth'
 
+export const dynamic = 'force-dynamic'
+
 const CONFIG_FILE = path.join(process.cwd(), 'public', 'header-footer-config.json')
 
 const DEFAULT_CONFIG = {
