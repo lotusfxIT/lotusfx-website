@@ -68,15 +68,17 @@ export default function Hero() {
     siteStats.branches.australia
 
   const features = [
-    siteStats.hero.featureCompetitiveRates,
     siteStats.hero.featureCurrencies,
+    siteStats.hero.featureTransfers,
     siteStats.hero.featurePartners,
     siteStats.hero.featureTrusted,
+    siteStats.hero.featureEwire,
+    siteStats.hero.featureLiveRates,
   ].filter(Boolean)
 
   // Stable short copy — avoid long fallback flash while CMS content loads
   const defaultHeroSubtitle =
-    'Travel money and international money transfers, with 50+ branches across Australia, New Zealand and Fiji.'
+    'Market-leading exchange rates, no commission on currency exchange, and 50+ locations across Australia, New Zealand and Fiji.'
   const heroTitle =
     (!loading && content?.heroTitle) ||
     'Get more holiday out of your travel money'
@@ -157,7 +159,7 @@ export default function Hero() {
                     initial={{ opacity: 0, x: -24 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.45, delay: 0.35 + index * 0.08, ease: 'easeOut' }}
-                    className="flex items-start gap-3 min-w-0"
+                    className={`${index >= 4 ? 'hidden lg:flex' : 'flex'} items-start gap-3 min-w-0`}
                   >
                     <CheckCircleIcon className="w-5 h-5 sm:w-7 sm:h-7 text-white/90 flex-shrink-0 mt-0.5" />
                     <span className="text-white font-medium text-base sm:text-xl !leading-[1.4] pb-0.5">
@@ -371,11 +373,11 @@ export default function Hero() {
                 <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gray-400">
                   Global partners
                 </span>
-                <Link href="/western-union" aria-label="Western Union" className="opacity-80 hover:opacity-100 transition-opacity">
-                  <img src="/images/partners/western-union.png" alt="Western Union" className="h-5 sm:h-6 w-auto" />
-                </Link>
                 <Link href="/moneygram" aria-label="MoneyGram" className="opacity-80 hover:opacity-100 transition-opacity">
                   <img src="/images/partners/moneygram.png" alt="MoneyGram" className="h-5 sm:h-6 w-auto" />
+                </Link>
+                <Link href="/western-union" aria-label="Western Union" className="opacity-80 hover:opacity-100 transition-opacity">
+                  <img src="/images/partners/western-union.png" alt="Western Union" className="h-5 sm:h-6 w-auto" />
                 </Link>
               </div>
             </div>

@@ -32,11 +32,14 @@ export type SiteStats = {
   }
   hero: {
     trustedPrefix: string
-    featureCompetitiveRates: string
     featureCurrencies: string
+    featureTransfers: string
     featurePartners: string
     featureTrusted: string
+    featureEwire: string
+    featureLiveRates: string
     /** Legacy bullets — no longer shown (duplicated the hero subtitle). */
+    featureCompetitiveRates?: string
     featureNoCommission?: string
     featureLocations?: string
   }
@@ -79,10 +82,12 @@ export const DEFAULT_SITE_STATS: SiteStats = {
   },
   hero: {
     trustedPrefix: 'Trusted by',
-    featureCompetitiveRates: 'Competitive rates with no commission',
     featureCurrencies: '30+ currencies available',
-    featurePartners: 'Global partners: Western Union & MoneyGram',
+    featureTransfers: 'Send money to 200+ countries',
+    featurePartners: 'Global partners: MoneyGram & Western Union',
     featureTrusted: 'Trusted since 2002',
+    featureEwire: 'Lotus eWire transfers between Australia, New Zealand & Fiji',
+    featureLiveRates: 'Live rates on our website & app',
   },
   copy: {
     featuresLocationsDescription:

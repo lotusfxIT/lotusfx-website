@@ -101,7 +101,7 @@ function getDefaultContent(country: string) {
       flag: '🇦🇺',
       heroTitle: 'Get more holiday out of your travel money',
       heroSubtitle:
-        'Travel money and international money transfers, with 50+ branches across Australia, New Zealand and Fiji.',
+        'Market-leading exchange rates, no commission on currency exchange, and 50+ locations across Australia, New Zealand and Fiji.',
       exchangeRates: 'Competitive rates updated in real-time',
       branches: stats.branches.australia,
       customers: stats.customers.australia,
@@ -112,7 +112,7 @@ function getDefaultContent(country: string) {
       flag: '🇳🇿',
       heroTitle: 'Get more holiday out of your travel money',
       heroSubtitle:
-        'Travel money and international money transfers, with 50+ branches across Australia, New Zealand and Fiji.',
+        'Market-leading exchange rates, no commission on currency exchange, and 50+ locations across Australia, New Zealand and Fiji.',
       exchangeRates: 'Competitive rates updated in real-time',
       branches: stats.branches.newZealand,
       customers: stats.customers.newZealand,
@@ -123,7 +123,7 @@ function getDefaultContent(country: string) {
       flag: '🇫🇯',
       heroTitle: 'Get more holiday out of your travel money',
       heroSubtitle:
-        'Travel money and international money transfers, with 50+ branches across Australia, New Zealand and Fiji.',
+        'Market-leading exchange rates, no commission on currency exchange, and 50+ locations across Australia, New Zealand and Fiji.',
       exchangeRates: 'Competitive rates updated in real-time',
       branches: stats.branches.fiji,
       customers: stats.customers.fiji,

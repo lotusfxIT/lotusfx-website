@@ -422,26 +422,26 @@ export default function AdminSiteStatsPage() {
             value={stats.hero.trustedPrefix}
             onChange={(v) => patch({ hero: { ...stats.hero, trustedPrefix: v } })}
           />
-          <Field
-            label="Feature 1"
-            value={stats.hero.featureCompetitiveRates}
-            onChange={(v) => patch({ hero: { ...stats.hero, featureCompetitiveRates: v } })}
-          />
-          <Field
-            label="Feature 2 (currencies)"
-            value={stats.hero.featureCurrencies}
-            onChange={(v) => patch({ hero: { ...stats.hero, featureCurrencies: v } })}
-          />
-          <Field
-            label="Feature 3 (partners)"
-            value={stats.hero.featurePartners}
-            onChange={(v) => patch({ hero: { ...stats.hero, featurePartners: v } })}
-          />
-          <Field
-            label="Feature 4 (trusted since)"
-            value={stats.hero.featureTrusted}
-            onChange={(v) => patch({ hero: { ...stats.hero, featureTrusted: v } })}
-          />
+          <p className="text-xs text-gray-500">
+            Features 1–4 show on all screens; 5–6 only on desktop. Leave a field empty to hide it.
+          </p>
+          {(
+            [
+              ['featureCurrencies', 'Feature 1 (currencies)'],
+              ['featureTransfers', 'Feature 2 (money transfer)'],
+              ['featurePartners', 'Feature 3 (partners)'],
+              ['featureTrusted', 'Feature 4 (trusted since)'],
+              ['featureEwire', 'Feature 5 (eWire) — desktop only'],
+              ['featureLiveRates', 'Feature 6 (live rates) — desktop only'],
+            ] as const
+          ).map(([key, label]) => (
+            <Field
+              key={key}
+              label={label}
+              value={stats.hero[key]}
+              onChange={(v) => patch({ hero: { ...stats.hero, [key]: v } })}
+            />
+          ))}
         </motion.section>
 
         <motion.section
