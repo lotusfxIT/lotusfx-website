@@ -24,6 +24,7 @@ export default function ContactPage() {
   const [startedAt] = useState(() => Date.now())
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const [statusMessage, setStatusMessage] = useState('')
+  const [sentTo, setSentTo] = useState({ name: '', email: '' })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,8 +50,8 @@ export default function ContactPage() {
         form_name: 'contact',
         subject_category: formData.subject || 'general',
       })
+      setSentTo({ name: formData.name.trim().split(/\s+/)[0] ?? '', email: formData.email.trim() })
       setStatus('sent')
-      setStatusMessage("Thanks — your message has been sent. Our team will get back to you soon.")
       setFormData(emptyForm)
     } catch (err) {
       setStatus('error')
@@ -90,6 +91,39 @@ export default function ContactPage() {
               className="h-full"
             >
               <div className="bg-white rounded-[1.5rem] shadow-strong border border-gray-100 p-5 sm:p-8 h-full flex flex-col">
+                {status === 'sent' ? (
+                  <div role="status" className="flex-1 flex flex-col items-center justify-center text-center py-10 sm:py-14 animate-fade-in">
+                    <div className="relative mb-6">
+                      <span className="absolute inset-0 rounded-full bg-green-400/30 animate-ping [animation-iteration-count:2]" aria-hidden />
+                      <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-green-500 text-white shadow-lg shadow-green-500/30">
+                        <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3} aria-hidden>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                      {sentTo.name ? `Thanks, ${sentTo.name}!` : 'Thank you!'}
+                    </h2>
+                    <p className="text-lg text-gray-700 mb-1">Your message has been sent.</p>
+                    <p className="text-gray-600 !leading-relaxed max-w-sm">
+                      Our customer care team will get back to you
+                      {sentTo.email ? (
+                        <>
+                          {' '}at <span className="font-semibold text-gray-900 break-all">{sentTo.email}</span>
+                        </>
+                      ) : null}{' '}
+                      as soon as possible.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setStatus('idle')}
+                      className="mt-8 inline-flex items-center gap-2 rounded-lg border-2 border-primary-600 px-5 py-2.5 text-sm font-semibold text-primary-700 hover:bg-primary-50 transition"
+                    >
+                      Send another message
+                    </button>
+                  </div>
+                ) : (
+                <>
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
                 <form onSubmit={handleSubmit} className="space-y-5 flex-1 flex flex-col">
                   <div>
@@ -100,7 +134,6 @@ export default function ContactPage() {
                       type="text"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="John Smith"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
@@ -113,7 +146,6 @@ export default function ContactPage() {
                       type="email"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="john@example.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     />
@@ -125,7 +157,6 @@ export default function ContactPage() {
                     <input
                       type="tel"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="+61 400 000 000"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     />
@@ -158,7 +189,6 @@ export default function ContactPage() {
                       required
                       rows={5}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 flex-1 min-h-[8rem]"
-                      placeholder="How can we help you?"
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     />
@@ -176,15 +206,8 @@ export default function ContactPage() {
                       />
                     </label>
                   </div>
-                  {statusMessage && (
-                    <p
-                      role="status"
-                      className={`text-sm rounded-lg px-4 py-3 ${
-                        status === 'sent'
-                          ? 'bg-green-50 text-green-800 border border-green-200'
-                          : 'bg-red-50 text-red-700 border border-red-200'
-                      }`}
-                    >
+                  {status === 'error' && statusMessage && (
+                    <p role="alert" className="text-sm rounded-lg px-4 py-3 bg-red-50 text-red-700 border border-red-200">
                       {statusMessage}
                     </p>
                   )}
@@ -196,6 +219,8 @@ export default function ContactPage() {
                     {status === 'sending' ? 'Sending…' : 'Send Message'}
                   </button>
                 </form>
+                </>
+                )}
               </div>
             </MotionWrapper>
 

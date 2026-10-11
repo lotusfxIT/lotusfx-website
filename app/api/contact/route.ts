@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { waitUntil } from '@vercel/functions'
 import {
   contactRecipient,
   escapeHtml,
@@ -105,26 +106,33 @@ export async function POST(request: NextRequest) {
   )}</p>`
 
   const to = contactRecipient(country)
-  try {
-    const result = await sendMail({
-      to,
-      subject: `[Website ${country}] ${subjectLabel} — ${name}`,
-      text,
-      html,
-      replyTo: { email, name },
-    })
-    if (!result.ok) throw new Error(result.error)
-    if (stored) await saveMessage({ ...record, emailStatus: 'sent', emailedTo: to }).catch(() => {})
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('[contact] send error', error)
-    if (stored) {
-      await saveMessage({ ...record, emailStatus: 'failed', emailedTo: to }).catch(() => {})
-      return NextResponse.json({ success: true })
+  const notify = async (): Promise<boolean> => {
+    try {
+      const result = await sendMail({
+        to,
+        subject: `[Website ${country}] ${subjectLabel} — ${name}`,
+        text,
+        html,
+        replyTo: { email, name },
+      })
+      if (!result.ok) throw new Error(result.error)
+      if (stored) await saveMessage({ ...record, emailStatus: 'sent', emailedTo: to }).catch(() => {})
+      return true
+    } catch (error) {
+      console.error('[contact] send error', error)
+      if (stored) await saveMessage({ ...record, emailStatus: 'failed', emailedTo: to }).catch(() => {})
+      return false
     }
-    return NextResponse.json(
-      { error: 'We could not send your message right now. Please try again or email us directly.' },
-      { status: 502 }
-    )
   }
+
+  // Once stored, staff can see it in admin, so the visitor needn't wait for the email.
+  if (stored) {
+    waitUntil(notify())
+    return NextResponse.json({ success: true })
+  }
+  if (await notify()) return NextResponse.json({ success: true })
+  return NextResponse.json(
+    { error: 'We could not send your message right now. Please try again or email us directly.' },
+    { status: 502 }
+  )
 }
