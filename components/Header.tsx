@@ -88,9 +88,14 @@ export default function Header() {
       const data = await response.json()
       if (data.header) {
         const items = (data.header.nav_items || [])
-          .filter((item: { name: string }) => {
+          .filter((item: { name: string; href?: string }) => {
             const lower = item.name.toLowerCase()
-            return lower !== 'rates' && lower !== 'reviews'
+            return (
+              lower !== 'rates' &&
+              lower !== 'reviews' &&
+              lower !== 'click & collect' &&
+              !item.href?.includes('click-and-collect')
+            )
           })
           .map((item: { name: string; href: string }) => {
             const lower = item.name.toLowerCase()

@@ -1095,7 +1095,7 @@ export default function QuickOrderWizard() {
   if (!quickOrderAllowed) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white px-4 text-center">
-        <p className="text-lg font-semibold">Click & Collect is available for Australia only right now.</p>
+        <p className="text-lg font-semibold">Click & Collect is temporarily unavailable. Please visit a branch, or check back soon.</p>
         <a href="/" className="btn-primary bg-white text-primary-700 hover:bg-primary-50">
           Back to home
         </a>

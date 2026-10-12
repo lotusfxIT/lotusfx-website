@@ -5,6 +5,7 @@ import GoogleMyBusiness from '@/components/GoogleMyBusiness'
 import CurrencySymbolsBg from '@/components/CurrencySymbolsBg'
 import { useCountry } from '@/context/CountryContext'
 import { countStaticLocations } from '@/data/locations-static'
+import { isQuickOrderEnabled } from '@/lib/quick-order-url'
 
 const FLAG_CDN = 'https://flagcdn.com'
 
@@ -100,15 +101,19 @@ export default function LocationsPage() {
             Can&apos;t find a branch near you?
           </h2>
           <p className="text-primary-100 mb-7 leading-relaxed">
-            Order currency online for pickup, or contact us for help with your travel money.
+            {isQuickOrderEnabled(selectedCountry)
+              ? 'Order currency online for pickup, or contact us for help with your travel money.'
+              : 'Visit a branch for travel money, or contact us and we will help you.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/click-and-collect"
-              className="inline-flex items-center justify-center bg-white text-primary-700 hover:bg-gray-50 font-semibold py-3 px-7 rounded-xl transition"
-            >
-              Order currency online
-            </Link>
+            {isQuickOrderEnabled(selectedCountry) ? (
+              <Link
+                href="/click-and-collect"
+                className="inline-flex items-center justify-center bg-white text-primary-700 hover:bg-gray-50 font-semibold py-3 px-7 rounded-xl transition"
+              >
+                Order currency online
+              </Link>
+            ) : null}
             <Link
               href="/contact"
               className="inline-flex items-center justify-center border-2 border-white text-white hover:bg-white/10 font-semibold py-3 px-7 rounded-xl transition"

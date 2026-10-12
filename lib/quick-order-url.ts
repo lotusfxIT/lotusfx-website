@@ -4,9 +4,11 @@ export type QuickOrderParams = {
   isBuy?: boolean
 }
 
-/** Guest Quick Order is AU-only for now (NZ/FJ hidden until go-live). */
+/** Countries where guest Click & Collect is shown. Empty = hidden (bring AU back with `['AU']`). */
+const QUICK_ORDER_LIVE_COUNTRIES: readonly string[] = []
+
 export function isQuickOrderEnabled(country?: string | null): boolean {
-  return String(country || '').toUpperCase() === 'AU'
+  return QUICK_ORDER_LIVE_COUNTRIES.includes(String(country || '').toUpperCase())
 }
 
 /** Build in-site Quick Order URL with optional calculator prefill. */
