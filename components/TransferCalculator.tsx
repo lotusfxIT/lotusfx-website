@@ -6,28 +6,17 @@ import FijiBranchRatesCard from '@/components/FijiBranchRatesCard'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
 import RatesUnavailableNotice from '@/components/RatesUnavailableNotice'
 import { isBackendUnavailable, RATES_UNAVAILABLE_MESSAGE } from '@/lib/service-availability'
-
-// To country: display name + currency for API
-const toCountries = [
-  { country: 'Australia', currency: 'AUD', flag: '🇦🇺' },
-  { country: 'New Zealand', currency: 'NZD', flag: '🇳🇿' },
-  { country: 'Fiji', currency: 'FJD', flag: '🇫🇯' },
-  { country: 'United States', currency: 'USD', flag: '🇺🇸' },
-  { country: 'United Kingdom', currency: 'GBP', flag: '🇬🇧' },
-  { country: 'Eurozone', currency: 'EUR', flag: '🇪🇺' },
-  { country: 'Japan', currency: 'JPY', flag: '🇯🇵' },
-  { country: 'Canada', currency: 'CAD', flag: '🇨🇦' },
-  { country: 'Switzerland', currency: 'CHF', flag: '🇨🇭' },
-  { country: 'Singapore', currency: 'SGD', flag: '🇸🇬' },
-]
+import { getTransferDestinations, getTransferModeFlags } from '@/lib/transfer-destinations'
 
 const transferModes = [
   { value: 'Wire', label: 'Wire Transfer', description: 'To any bank account worldwide' },
   { value: 'eWire', label: 'eWire', description: 'Fast between LotusFX AU/NZ/FJ' },
+  { value: 'Moneygram', label: 'Moneygram', description: 'Send via Moneygram' },
+  { value: 'Western Union', label: 'Western Union', description: 'Send via Western Union' },
   { value: 'Wallet', label: 'Wallet', description: 'LotusFX wallet transfer' },
 ] as const
 
-type TransferMode = 'Wire' | 'eWire' | 'Wallet'
+type TransferMode = 'Wire' | 'eWire' | 'Moneygram' | 'Western Union' | 'Wallet'
 
 function getBaseCurrency(country: string): string {
   if (country === 'NZ') return 'NZD'
@@ -61,26 +50,39 @@ function TransferCalculatorActive() {
   const receiveLookupTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const baseCurrency = getBaseCurrency(selectedCountry)
-  const toCountryOptions = toCountries.filter((c) => c.currency !== baseCurrency)
-
-  const allowEWire = toCurrency === 'NZD' || toCurrency === 'FJD'
-  const allowWallet = toCurrency === 'FJD'
-
-  useEffect(() => {
-    if (transferMode === 'Wallet' && !allowWallet) {
-      setTransferMode('Wire')
-    } else if (transferMode === 'eWire' && !allowEWire) {
-      setTransferMode('Wire')
-    }
-  }, [allowEWire, allowWallet, transferMode])
+  const toCountryOptions = getTransferDestinations(selectedCountry)
+  const { allowEWire, allowWire, allowMoneygram, allowWesternUnion, allowWallet } =
+    getTransferModeFlags(selectedCountry, toCurrency)
 
   useEffect(() => {
-    const options = toCountries.filter((c) => c.currency !== baseCurrency)
+    const invalid =
+      (transferMode === 'Wallet' && !allowWallet) ||
+      (transferMode === 'eWire' && !allowEWire) ||
+      (transferMode === 'Wire' && !allowWire) ||
+      (transferMode === 'Moneygram' && !allowMoneygram) ||
+      (transferMode === 'Western Union' && !allowWesternUnion)
+    if (!invalid) return
+    if (allowEWire) setTransferMode('eWire')
+    else if (allowWire) setTransferMode('Wire')
+    else if (allowMoneygram) setTransferMode('Moneygram')
+    else if (allowWesternUnion) setTransferMode('Western Union')
+    else if (allowWallet) setTransferMode('Wallet')
+  }, [
+    allowEWire,
+    allowWallet,
+    allowWire,
+    allowMoneygram,
+    allowWesternUnion,
+    transferMode,
+  ])
+
+  useEffect(() => {
+    const options = getTransferDestinations(selectedCountry)
     const valid = options.some((c) => c.currency === toCurrency)
     if (!valid && options.length > 0) {
       setToCurrency(options[0].currency)
     }
-  }, [baseCurrency, toCurrency])
+  }, [selectedCountry, toCurrency])
 
   const calculateTransfer = useCallback(
     async (sendOverride?: number) => {
@@ -258,7 +260,7 @@ function TransferCalculatorActive() {
         >
           {toCountryOptions.map((c) => (
             <option key={c.currency} value={c.currency}>
-              {c.flag} {c.country}
+              {c.country} ({c.currency})
             </option>
           ))}
         </select>
@@ -269,8 +271,10 @@ function TransferCalculatorActive() {
         <div className="space-y-2">
           {transferModes.map((mode) => {
             const isVisible =
-              mode.value === 'Wire' ||
+              (mode.value === 'Wire' && allowWire) ||
               (mode.value === 'eWire' && allowEWire) ||
+              (mode.value === 'Moneygram' && allowMoneygram) ||
+              (mode.value === 'Western Union' && allowWesternUnion) ||
               (mode.value === 'Wallet' && allowWallet)
 
             if (!isVisible) return null

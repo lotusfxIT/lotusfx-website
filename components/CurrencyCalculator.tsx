@@ -13,6 +13,7 @@ import { getCountryPortalLinks } from '@/lib/country-portals'
 import CountryAppLinks from '@/components/CountryAppLinks'
 import RatesUnavailableNotice from '@/components/RatesUnavailableNotice'
 import { isBackendUnavailable, RATES_UNAVAILABLE_MESSAGE } from '@/lib/service-availability'
+import { getTransferDestinations, getTransferModeFlags } from '@/lib/transfer-destinations'
 
 // Currency code → ISO country code for flag images (flagcdn.com)
 const currencyToCountry: Record<string, string> = {
@@ -71,19 +72,6 @@ const currencies = [
   { code: 'ZAR', name: 'South African Rand' },
 ]
 
-// Money Transfer: "To country" options (country name → currency for API)
-const toCountries = [
-  { country: 'Australia', currency: 'AUD', countryCode: 'au' },
-  { country: 'New Zealand', currency: 'NZD', countryCode: 'nz' },
-  { country: 'Fiji', currency: 'FJD', countryCode: 'fj' },
-  { country: 'United States', currency: 'USD', countryCode: 'us' },
-  { country: 'United Kingdom', currency: 'GBP', countryCode: 'gb' },
-  { country: 'Eurozone', currency: 'EUR', countryCode: 'eu' },
-  { country: 'Japan', currency: 'JPY', countryCode: 'jp' },
-  { country: 'Canada', currency: 'CAD', countryCode: 'ca' },
-  { country: 'Switzerland', currency: 'CHF', countryCode: 'ch' },
-  { country: 'Singapore', currency: 'SGD', countryCode: 'sg' },
-]
 
 const transferModes = [
   { value: 'Wire', label: 'Wire', description: 'To any bank account worldwide' },
@@ -193,13 +181,9 @@ function CurrencyCalculatorActive({
     }
   }, [lockedForeign, buyOrSell, baseCurrency])
 
-  const toCountryOptions = toCountries.filter((c) => c.currency !== baseCurrency)
-  const allowEWire = toCurrency === 'NZD' || toCurrency === 'FJD' || toCurrency === 'AUD'
-  const allowWallet = toCurrency === 'FJD'
-  const allowWire = !['AUD', 'NZD', 'FJD'].includes(toCurrency)
-  // Moneygram / Western Union not offered for NZ or Fiji destinations
-  const allowMoneygram = toCurrency !== 'NZD' && toCurrency !== 'FJD'
-  const allowWesternUnion = allowMoneygram
+  const toCountryOptions = getTransferDestinations(selectedCountry)
+  const { allowEWire, allowWire, allowMoneygram, allowWesternUnion, allowWallet } =
+    getTransferModeFlags(selectedCountry, toCurrency)
 
   const defaultTransferMode = (): TransferMode => {
     if (allowEWire) return 'eWire'
@@ -373,10 +357,10 @@ function CurrencyCalculatorActive({
   // Money Transfer: if "to country" equals base, pick first available
   useEffect(() => {
     if (quoteType !== 'transfer') return
-    const options = toCountries.filter((c) => c.currency !== baseCurrency)
+    const options = getTransferDestinations(selectedCountry)
     if (toCurrency !== baseCurrency) return
     if (options.length > 0) setToCurrency(options[0].currency)
-  }, [quoteType, baseCurrency, toCurrency])
+  }, [quoteType, baseCurrency, toCurrency, selectedCountry])
 
   const swapCurrencies = () => {
     setFromCurrency(toCurrency)
