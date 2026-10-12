@@ -16,7 +16,7 @@ export type CountryPortalLinks = {
 }
 
 const AU: CountryPortalLinks = {
-  web: 'https://au.web.lotusfx.com/',
+  web: 'https://au.app.lotusfx.com/customers/login.shtml',
   appStore: 'https://apps.apple.com/au/app/lotus-foreign-exchange/id6805316280',
   playStore: 'https://play.google.com/store/apps/details?id=com.au.lotusfx.cxr',
   showLogin: true,
@@ -24,7 +24,7 @@ const AU: CountryPortalLinks = {
 }
 
 const NZ: CountryPortalLinks = {
-  web: 'https://nzcportal.lotusfx.com/login.shtml',
+  web: 'https://nzcportal.lotusfx.com/customers/login.shtml',
   appStore: 'https://apps.apple.com/nz/app/lotus-fx-online/id1575632583',
   playStore: 'https://play.google.com/store/apps/details?id=com.app.lotusfx2',
   showLogin: true,
