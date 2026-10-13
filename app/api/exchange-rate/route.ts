@@ -185,9 +185,32 @@ export async function POST(request: NextRequest) {
         headers: Object.keys(headers),
         bodyLength: JSON.stringify([requestPayload]).length
       })
-      
-      // Try the fetch
-      response = await fetch(apiConfig.url, fetchOptions)
+
+      const started = Date.now()
+      try {
+        response = await fetch(apiConfig.url, fetchOptions)
+        console.log('[Exchange Rate API] 4D timing', {
+          country: selectedCountry,
+          fromCcy,
+          toCcy,
+          isBuy: isBuy === true,
+          transferMode: transferMode || null,
+          status: response.status,
+          ms: Date.now() - started,
+        })
+      } catch (timed) {
+        console.error('[Exchange Rate API] 4D timing', {
+          country: selectedCountry,
+          fromCcy,
+          toCcy,
+          isBuy: isBuy === true,
+          transferMode: transferMode || null,
+          ms: Date.now() - started,
+          timedOut: true,
+          error: timed instanceof Error ? timed.name : 'fetch_error',
+        })
+        throw timed
+      }
       
       console.log('[Exchange Rate API] Fetch completed, status:', response.status)
     } catch (fetchError: any) {
@@ -198,7 +221,7 @@ export async function POST(request: NextRequest) {
         cause: fetchError.cause,
         name: fetchError.name
       })
-      
+
       // Provide more specific error messages
       if (
         fetchError.code === 'ENOTFOUND' ||
