@@ -765,7 +765,7 @@ function CurrencyCalculatorActive({
               whileTap={{ scale: 0.99 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
-              You Buy
+              Lotus Buy
             </motion.button>
             <motion.button
               type="button"
@@ -788,7 +788,7 @@ function CurrencyCalculatorActive({
               whileTap={{ scale: 0.99 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
-              You Sell
+              Lotus Sell
             </motion.button>
           </div>
 
@@ -796,7 +796,7 @@ function CurrencyCalculatorActive({
             /* Buy: You Buy = dropdown + amount input (what they want); You Pay = AUD + result only */
             <>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-2">
-                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">You Buy</label>
+                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">Lotus Buy</label>
                 <div className="flex space-x-3">
                   <div className="flex-1 relative" ref={buyDropdownRef}>
                     {lockedForeign ? (
@@ -917,7 +917,7 @@ function CurrencyCalculatorActive({
             /* Sell: You Sell = dropdown + amount. You Get = editable AUD */
             <>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-2">
-                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">You Sell</label>
+                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">Lotus Sell</label>
                 <div className="flex space-x-3">
                   <div className="flex-1 relative" ref={sellDropdownRef}>
                     {lockedForeign ? (
