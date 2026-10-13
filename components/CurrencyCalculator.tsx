@@ -1086,17 +1086,18 @@ function CurrencyCalculatorActive({
             </Link>
           )}
           {(() => {
-            const transferPortal = getCountryPortalLinks(selectedCountry)
-            return quoteType === 'transfer' && transferPortal.showLogin && transferPortal.web ? (
+            const portal = getCountryPortalLinks(selectedCountry)
+            return portal.showLogin && portal.web ? (
               <a
-                href={transferPortal.web}
+                href={portal.web}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() =>
                   trackEvent('order_initiation', {
                     cta_name: 'portal_login',
-                    quote_type: 'transfer',
+                    quote_type: quoteType,
                     country: selectedCountry,
+                    location: 'calculator',
                   })
                 }
                 className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"

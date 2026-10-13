@@ -270,8 +270,8 @@ export const TRANSFER_DESTINATIONS: readonly TransferDestination[] = RAW.map(
 )
 
 const NZ_EWIRE_COUNTRIES = new Set(['au', 'fj'])
-const NZ_WIRE_COUNTRIES = new Set(['in', 'us', 'cn', 'np', 'bd'])
-const AU_EWIRE_COUNTRIES = new Set(['nz', 'fj', 'au'])
+const AU_EWIRE_COUNTRIES = new Set(['nz', 'fj'])
+const WIRE_COUNTRIES = new Set(['in', 'us', 'cn', 'np', 'bd'])
 
 function originCountryCode(fromCountry: string): string {
   if (fromCountry === 'NZ') return 'nz'
@@ -296,40 +296,31 @@ export function matchesTransferDestination(dest: TransferDestination, query: str
 
 export function getTransferModeFlags(fromCountry: string, destCountryCode: string): TransferModeFlags {
   const dest = destCountryCode.toLowerCase()
+  const ewireCountries = fromCountry === 'NZ' ? NZ_EWIRE_COUNTRIES : AU_EWIRE_COUNTRIES
 
-  if (fromCountry === 'NZ') {
-    if (NZ_EWIRE_COUNTRIES.has(dest)) {
-      return {
-        allowEWire: true,
-        allowWire: false,
-        allowMoneygram: false,
-        allowWesternUnion: false,
-        allowWallet: false,
-      }
-    }
-    if (NZ_WIRE_COUNTRIES.has(dest)) {
-      return {
-        allowEWire: false,
-        allowWire: true,
-        allowMoneygram: false,
-        allowWesternUnion: false,
-        allowWallet: false,
-      }
-    }
+  if (ewireCountries.has(dest)) {
     return {
-      allowEWire: false,
+      allowEWire: true,
       allowWire: false,
-      allowMoneygram: true,
-      allowWesternUnion: true,
+      allowMoneygram: false,
+      allowWesternUnion: false,
       allowWallet: false,
     }
   }
-
+  if (WIRE_COUNTRIES.has(dest)) {
+    return {
+      allowEWire: false,
+      allowWire: true,
+      allowMoneygram: false,
+      allowWesternUnion: false,
+      allowWallet: false,
+    }
+  }
   return {
-    allowEWire: AU_EWIRE_COUNTRIES.has(dest),
-    allowWire: !AU_EWIRE_COUNTRIES.has(dest),
-    allowMoneygram: dest !== 'nz' && dest !== 'fj',
-    allowWesternUnion: dest !== 'nz' && dest !== 'fj',
-    allowWallet: dest === 'fj',
+    allowEWire: false,
+    allowWire: false,
+    allowMoneygram: true,
+    allowWesternUnion: true,
+    allowWallet: false,
   }
 }
