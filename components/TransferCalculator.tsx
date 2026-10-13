@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useCountry } from '@/context/CountryContext'
 import FijiBranchRatesCard from '@/components/FijiBranchRatesCard'
+import NzCalculatorMaintenanceCard from '@/components/NzCalculatorMaintenanceCard'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
 import { getTransferDestinations, getTransferModeFlags } from '@/lib/transfer-destinations'
 
@@ -26,6 +27,9 @@ export default function TransferCalculator() {
   const { selectedCountry } = useCountry()
   if (selectedCountry === 'FJ') {
     return <FijiBranchRatesCard variant="transfer" />
+  }
+  if (selectedCountry === 'NZ') {
+    return <NzCalculatorMaintenanceCard variant="transfer" />
   }
   return <TransferCalculatorActive />
 }

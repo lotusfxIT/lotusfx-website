@@ -356,12 +356,18 @@ export default function Hero() {
               {showQuoteHeading && (
                 <div className="text-center mb-5 sm:mb-6 shrink-0">
                   <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
-                    {selectedCountry === 'FJ' ? 'Exchange in branch' : 'Get Instant Quote'}
+                    {selectedCountry === 'FJ'
+                      ? 'Exchange in branch'
+                      : selectedCountry === 'NZ'
+                        ? 'Temporarily unavailable'
+                        : 'Get Instant Quote'}
                   </h3>
                   <p className="text-sm sm:text-base text-gray-600">
                     {selectedCountry === 'FJ'
                       ? 'Live Fiji rates are available at our branches'
-                      : 'Compare rates and get the best deal'}
+                      : selectedCountry === 'NZ'
+                        ? 'Online calculator is under maintenance'
+                        : 'Compare rates and get the best deal'}
                   </p>
                 </div>
               )}

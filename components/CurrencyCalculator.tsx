@@ -6,6 +6,7 @@ import { ArrowsRightLeftIcon, ArrowLeftIcon, BanknotesIcon, PaperAirplaneIcon, C
 import { useCountry } from '@/context/CountryContext'
 import { useSiteStats } from '@/context/SiteStatsContext'
 import FijiBranchRatesCard from '@/components/FijiBranchRatesCard'
+import NzCalculatorMaintenanceCard from '@/components/NzCalculatorMaintenanceCard'
 import Link from 'next/link'
 import { trackEvent } from '@/lib/analytics'
 import { buildQuickOrderUrl, isQuickOrderEnabled } from '@/lib/quick-order-url'
@@ -115,6 +116,9 @@ export default function CurrencyCalculator(props: CurrencyCalculatorProps) {
   const { selectedCountry } = useCountry()
   if (selectedCountry === 'FJ') {
     return <FijiBranchRatesCard variant="cash" />
+  }
+  if (selectedCountry === 'NZ') {
+    return <NzCalculatorMaintenanceCard variant="cash" />
   }
   return <CurrencyCalculatorActive {...props} />
 }

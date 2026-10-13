@@ -3,6 +3,7 @@
 import { useCountry } from '@/context/CountryContext'
 import TransferCalculator from '@/components/TransferCalculator'
 import FijiBranchRatesCard from '@/components/FijiBranchRatesCard'
+import NzCalculatorMaintenanceCard from '@/components/NzCalculatorMaintenanceCard'
 
 /** Money transfer page side panel — calculator or Fiji branch message. */
 export default function TransferCalculatorSection() {
@@ -10,6 +11,9 @@ export default function TransferCalculatorSection() {
 
   if (selectedCountry === 'FJ') {
     return <FijiBranchRatesCard variant="transfer" />
+  }
+  if (selectedCountry === 'NZ') {
+    return <NzCalculatorMaintenanceCard variant="transfer" />
   }
 
   return (

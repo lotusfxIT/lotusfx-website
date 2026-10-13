@@ -76,6 +76,12 @@ export async function POST(request: NextRequest) {
         { status: 503 }
       )
     }
+    if (selectedCountry === 'NZ') {
+      return NextResponse.json(
+        { success: false, error: 'New Zealand rates are temporarily unavailable while the calculator is under maintenance.' },
+        { status: 503 }
+      )
+    }
     const apiConfig = getCountryApiConfig(selectedCountry)
     
     console.log(`[Exchange Rate API] Using config for country: ${selectedCountry}`, {
