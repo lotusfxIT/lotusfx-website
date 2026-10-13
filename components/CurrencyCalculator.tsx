@@ -259,9 +259,10 @@ function CurrencyCalculatorActive({
         setConvertedAmount(Number(converted).toFixed(2))
         setRate(displayRate)
       } else if (quoteType === 'cash' && buyOrSell === 'sell') {
-        // Sell: rate = AUD per 1 foreign; You Receive = amount * rate
+        // Sell: convert with AUD-per-1-foreign; display as 1 AUD = X foreign
         const normalRate = Number(result.rate)
-        displayRate = normalRate
+        const inverseRate = result.inverse != null ? Number(result.inverse) : 1 / normalRate
+        displayRate = inverseRate
         conversionRateRef.current = normalRate
         converted = fromAmount * normalRate
         setConvertedAmount(Number(converted).toFixed(2))
@@ -1049,7 +1050,8 @@ function CurrencyCalculatorActive({
               <span className="text-white/70">…</span>
             ) : rate > 0 ? (
               <>
-                1 {fromCurrency} = {rate.toFixed(4)} {toCurrency}
+                1 {baseCurrency} = {rate.toFixed(4)}{' '}
+                {buyOrSell === 'buy' ? toCurrency : fromCurrency}
               </>
             ) : (
               <span className="text-white/70">—</span>
