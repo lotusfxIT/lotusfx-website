@@ -272,18 +272,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Return the rate data
+    // AU 4D: rate = local per 1 foreign, inverse = foreign per 1 local.
+    // NZ 4D returns those two fields swapped. Normalize so the calculator
+    // can always do: you pay/get = amount * rate, display 1 local = inverse foreign.
+    let rate = result.rate
+    let inverse = result.inverse
+    if (selectedCountry === 'NZ' && rate != null && inverse != null) {
+      const localPerForeign = inverse
+      inverse = rate
+      rate = localPerForeign
+    }
+
     return NextResponse.json({
       success: true,
-      rate: result.rate,
-      inverse: result.inverse,
+      rate,
+      inverse,
       base: result.base,
       fee: result.fee,
       margin: result.margin,
       group: result.group,
-      // Calculate converted amount
       fromAmount: toAmount,
-      toAmount: toAmount * (result.rate || 0),
+      toAmount: toAmount * (rate || 0),
       fromCcy,
       toCcy
     })
