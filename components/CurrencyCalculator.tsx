@@ -144,7 +144,7 @@ function CurrencyCalculatorActive({
   })()
   const [chosen, setChosen] = useState<boolean>(forceCashOnly ? true : false)
   const [quoteType, setQuoteType] = useState<'cash' | 'transfer'>('cash')
-  const [buyOrSell, setBuyOrSell] = useState<'buy' | 'sell'>('buy') // Foreign Exchange: You Buy / You Sell → isBuy in API
+  const [buyOrSell, setBuyOrSell] = useState<'buy' | 'sell'>('buy') // buy = customer buy (Lotus Sell); sell = customer sell (Lotus Buy)
   const baseCurrency = getBaseCurrency(selectedCountry)
   const lockedForeign = lockForeignCurrency && defaultToCurrency ? defaultToCurrency : null
   const [fromCurrency, setFromCurrency] = useState(baseCurrency)
@@ -230,15 +230,15 @@ function CurrencyCalculatorActive({
           toAmount: fromAmount,
           country: selectedCountry,
           ...(quoteType === 'transfer' ? { transferMode } : {}),
-          // Lotus Buy = customer buying foreign = isBuy true.
-          // AU standalone/C&C uses transferMode "booking". On NZ that flag
-          // returns the mid/base rate (margin 0) instead of the cash sell rate.
-          ...(quoteType === 'cash' && buyOrSell === 'buy'
-            ? {
-                isBuy: true,
-                ...(selectedCountry === 'AU' ? { transferMode: 'booking' } : {}),
-              }
-            : {}),
+          // AU desk: Lotus Sell = customer buy → booking only.
+          // Lotus Buy = customer sell → isBuy true only.
+          ...(quoteType === 'cash' && selectedCountry === 'AU'
+            ? buyOrSell === 'buy'
+              ? { transferMode: 'booking' }
+              : { isBuy: true }
+            : quoteType === 'cash' && buyOrSell === 'buy'
+              ? { isBuy: true }
+              : {}),
         }),
       })
 
@@ -746,7 +746,7 @@ function CurrencyCalculatorActive({
               whileTap={{ scale: 0.99 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
-              Lotus Buy
+              Lotus Sell
             </motion.button>
             <motion.button
               type="button"
@@ -769,7 +769,7 @@ function CurrencyCalculatorActive({
               whileTap={{ scale: 0.99 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
-              Lotus Sell
+              Lotus Buy
             </motion.button>
           </div>
 
@@ -777,7 +777,7 @@ function CurrencyCalculatorActive({
             /* Buy: You Buy = dropdown + amount input (what they want); You Pay = AUD + result only */
             <>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-2">
-                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">Lotus Buy</label>
+                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">Lotus Sell</label>
                 <div className="flex space-x-3">
                   <div className="flex-1 relative" ref={buyDropdownRef}>
                     {lockedForeign ? (
@@ -895,10 +895,10 @@ function CurrencyCalculatorActive({
               </motion.div>
             </>
           ) : (
-            /* Sell: You Sell = dropdown + amount. You Get = editable AUD */
+            /* Sell: customer sells foreign (Lotus Buy). You Get = editable AUD */
             <>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-2">
-                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">Lotus Sell</label>
+                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">Lotus Buy</label>
                 <div className="flex space-x-3">
                   <div className="flex-1 relative" ref={sellDropdownRef}>
                     {lockedForeign ? (
@@ -1055,7 +1055,7 @@ function CurrencyCalculatorActive({
               href={buildQuickOrderUrl({
                 to: buyOrSell === 'buy' ? toCurrency : fromCurrency,
                 amount,
-                isBuy: buyOrSell === 'buy',
+                isBuy: buyOrSell === 'sell',
               })}
               onClick={() =>
                 trackEvent('order_initiation', {

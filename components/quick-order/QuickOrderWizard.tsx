@@ -660,7 +660,6 @@ export default function QuickOrderWizard() {
             fromCcy: selectedCurrency.code,
             toCcy: baseCurrency.code,
             toAmount: amount,
-            isBuy: true,
             transferMode: 'booking',
           }),
         })
