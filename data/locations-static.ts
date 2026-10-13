@@ -333,6 +333,14 @@ const RAW_LOCATIONS: Omit<StaticLocation, 'slug'>[] = [
     lng: 174.6861742,
   },
   {
+    id: 'accounts/101281606270379913163/locations/15174804344242760600',
+    name: 'Lotus Foreign Exchange - WestCity Henderson Branch',
+    country: 'NZ',
+    region: 'Auckland Region',
+    lat: -36.8809573,
+    lng: 174.6327788,
+  },
+  {
     id: 'accounts/101281606270379913163/locations/1055726243448749938',
     name: 'Lotus Foreign Exchange - 32 Queen Street',
     country: 'NZ',

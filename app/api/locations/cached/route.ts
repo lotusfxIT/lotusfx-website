@@ -63,6 +63,7 @@ const REGION_BY_TITLE: Record<string, string> = {
   'Lotus Foreign Exchange - Pakuranga': 'Auckland Region',
   'Lotus Foreign Exchange - St Lukes Mall': 'Auckland Region',
   'Lotus Foreign Exchange - Sylvia Park': 'Auckland Region',
+  'Lotus Foreign Exchange - WestCity Henderson Branch': 'Auckland Region',
 
   // New Zealand - Christchurch
   'Lotus Foreign Exchange - Northlands Mall': 'Christchurch Region',
