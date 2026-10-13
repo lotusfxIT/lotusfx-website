@@ -2,6 +2,7 @@ export type TransferDestination = {
   country: string
   currency: string
   countryCode: string
+  aliases?: string
 }
 
 export type TransferModeFlags = {
@@ -12,35 +13,292 @@ export type TransferModeFlags = {
   allowWallet: boolean
 }
 
-/** Send-money destination list. Expand when a 4D country API exists or a manual list is supplied. */
-export const TRANSFER_DESTINATIONS: readonly TransferDestination[] = [
-  { country: 'Australia', currency: 'AUD', countryCode: 'au' },
-  { country: 'New Zealand', currency: 'NZD', countryCode: 'nz' },
-  { country: 'Fiji', currency: 'FJD', countryCode: 'fj' },
-  { country: 'United States', currency: 'USD', countryCode: 'us' },
-  { country: 'India', currency: 'INR', countryCode: 'in' },
-  { country: 'China', currency: 'CNY', countryCode: 'cn' },
-  { country: 'Nepal', currency: 'NPR', countryCode: 'np' },
-  { country: 'Bangladesh', currency: 'BDT', countryCode: 'bd' },
-  { country: 'United Kingdom', currency: 'GBP', countryCode: 'gb' },
-  { country: 'Eurozone', currency: 'EUR', countryCode: 'eu' },
-  { country: 'Japan', currency: 'JPY', countryCode: 'jp' },
-  { country: 'Canada', currency: 'CAD', countryCode: 'ca' },
-  { country: 'Switzerland', currency: 'CHF', countryCode: 'ch' },
-  { country: 'Singapore', currency: 'SGD', countryCode: 'sg' },
+/** [country, currency, iso2, optional search aliases] */
+const RAW: ReadonlyArray<readonly [string, string, string, string?]> = [
+  ['Afghanistan', 'AFN', 'af'],
+  ['Åland Islands', 'EUR', 'ax', 'Aland'],
+  ['Albania', 'ALL', 'al'],
+  ['Algeria', 'DZD', 'dz'],
+  ['American Samoa', 'USD', 'as'],
+  ['Andorra', 'EUR', 'ad'],
+  ['Angola', 'AOA', 'ao'],
+  ['Anguilla', 'XCD', 'ai'],
+  ['Antarctica', 'USD', 'aq'],
+  ['Antigua and Barbuda', 'XCD', 'ag'],
+  ['Argentina', 'ARS', 'ar'],
+  ['Armenia', 'AMD', 'am'],
+  ['Aruba', 'AWG', 'aw'],
+  ['Australia', 'AUD', 'au'],
+  ['Austria', 'EUR', 'at'],
+  ['Azerbaijan', 'AZN', 'az'],
+  ['Bahamas', 'BSD', 'bs'],
+  ['Bahrain', 'BHD', 'bh'],
+  ['Bangladesh', 'BDT', 'bd'],
+  ['Barbados', 'BBD', 'bb'],
+  ['Belarus', 'BYN', 'by'],
+  ['Belgium', 'EUR', 'be'],
+  ['Belize', 'BZD', 'bz'],
+  ['Benin', 'XOF', 'bj'],
+  ['Bermuda', 'BMD', 'bm'],
+  ['Bhutan', 'BTN', 'bt'],
+  ['Bolivia', 'BOB', 'bo'],
+  ['Bosnia and Herzegovina', 'BAM', 'ba'],
+  ['Botswana', 'BWP', 'bw'],
+  ['Bouvet Island', 'NOK', 'bv'],
+  ['Brazil', 'BRL', 'br'],
+  ['British Indian Ocean Territory', 'USD', 'io'],
+  ['Brunei', 'BND', 'bn', 'Brunei Darussalam'],
+  ['Bulgaria', 'EUR', 'bg'],
+  ['Burkina Faso', 'XOF', 'bf'],
+  ['Burundi', 'BIF', 'bi'],
+  ['Cambodia', 'KHR', 'kh'],
+  ['Cameroon', 'XAF', 'cm'],
+  ['Canada', 'CAD', 'ca'],
+  ['Cape Verde', 'CVE', 'cv', 'Cabo Verde'],
+  ['Cayman Islands', 'KYD', 'ky'],
+  ['Central African Republic', 'XAF', 'cf'],
+  ['Chad', 'XAF', 'td'],
+  ['Chile', 'CLP', 'cl'],
+  ['China', 'CNY', 'cn'],
+  ['Christmas Island', 'AUD', 'cx'],
+  ['Cocos (Keeling) Islands', 'AUD', 'cc'],
+  ['Colombia', 'COP', 'co'],
+  ['Comoros', 'KMF', 'km'],
+  ['Congo', 'XAF', 'cg'],
+  ['Democratic Republic of the Congo', 'CDF', 'cd', 'DRC, Congo'],
+  ['Cook Islands', 'NZD', 'ck'],
+  ['Costa Rica', 'CRC', 'cr'],
+  ["Côte d'Ivoire", 'XOF', 'ci', 'Ivory Coast, Cote dIvoire'],
+  ['Croatia', 'EUR', 'hr'],
+  ['Cuba', 'CUP', 'cu'],
+  ['Curaçao', 'ANG', 'cw', 'Curacao'],
+  ['Cyprus', 'EUR', 'cy'],
+  ['Czech Republic', 'CZK', 'cz', 'Czechia'],
+  ['Denmark', 'DKK', 'dk'],
+  ['Djibouti', 'DJF', 'dj'],
+  ['Dominica', 'XCD', 'dm'],
+  ['Dominican Republic', 'DOP', 'do'],
+  ['Ecuador', 'USD', 'ec'],
+  ['Egypt', 'EGP', 'eg'],
+  ['El Salvador', 'USD', 'sv'],
+  ['Equatorial Guinea', 'XAF', 'gq'],
+  ['Eritrea', 'ERN', 'er'],
+  ['Estonia', 'EUR', 'ee'],
+  ['Ethiopia', 'ETB', 'et'],
+  ['Europe', 'EUR', 'eu', 'Eurozone, EU'],
+  ['Falkland Islands', 'FKP', 'fk', 'Malvinas'],
+  ['Faroe Islands', 'DKK', 'fo'],
+  ['Fiji', 'FJD', 'fj'],
+  ['Finland', 'EUR', 'fi'],
+  ['France', 'EUR', 'fr'],
+  ['French Guiana', 'EUR', 'gf'],
+  ['French Polynesia', 'XPF', 'pf'],
+  ['French Southern Territories', 'EUR', 'tf'],
+  ['Gabon', 'XAF', 'ga'],
+  ['Gambia', 'GMD', 'gm'],
+  ['Georgia', 'GEL', 'ge'],
+  ['Germany', 'EUR', 'de'],
+  ['Ghana', 'GHS', 'gh'],
+  ['Gibraltar', 'GIP', 'gi'],
+  ['Greece', 'EUR', 'gr'],
+  ['Greenland', 'DKK', 'gl'],
+  ['Grenada', 'XCD', 'gd'],
+  ['Guadeloupe', 'EUR', 'gp'],
+  ['Guam', 'USD', 'gu'],
+  ['Guatemala', 'GTQ', 'gt'],
+  ['Guernsey', 'GBP', 'gg'],
+  ['Guinea', 'GNF', 'gn'],
+  ['Guinea-Bissau', 'XOF', 'gw'],
+  ['Guyana', 'GYD', 'gy'],
+  ['Haiti', 'HTG', 'ht'],
+  ['Heard Island and McDonald Islands', 'AUD', 'hm'],
+  ['Hong Kong', 'HKD', 'hk', 'HK'],
+  ['Vatican City', 'EUR', 'va', 'Holy See'],
+  ['Honduras', 'HNL', 'hn'],
+  ['Hungary', 'HUF', 'hu'],
+  ['Iceland', 'ISK', 'is'],
+  ['India', 'INR', 'in'],
+  ['Indonesia', 'IDR', 'id'],
+  ['Iraq', 'IQD', 'iq'],
+  ['Ireland', 'EUR', 'ie'],
+  ['Isle of Man', 'GBP', 'im'],
+  ['Israel', 'ILS', 'il'],
+  ['Italy', 'EUR', 'it'],
+  ['Jamaica', 'JMD', 'jm'],
+  ['Japan', 'JPY', 'jp'],
+  ['Jersey', 'GBP', 'je'],
+  ['Jordan', 'JOD', 'jo'],
+  ['Kazakhstan', 'KZT', 'kz'],
+  ['Kenya', 'KES', 'ke'],
+  ['Kiribati', 'AUD', 'ki'],
+  ['North Korea', 'KPW', 'kp', "Korea Democratic, DPRK"],
+  ['South Korea', 'KRW', 'kr', 'Korea Republic'],
+  ['Kosovo', 'EUR', 'xk'],
+  ['Kuwait', 'KWD', 'kw'],
+  ['Kyrgyzstan', 'KGS', 'kg'],
+  ['Laos', 'LAK', 'la', 'Lao'],
+  ['Latvia', 'EUR', 'lv'],
+  ['Lebanon', 'LBP', 'lb'],
+  ['Lesotho', 'LSL', 'ls'],
+  ['Liberia', 'LRD', 'lr'],
+  ['Libya', 'LYD', 'ly'],
+  ['Liechtenstein', 'CHF', 'li'],
+  ['Lithuania', 'EUR', 'lt'],
+  ['Luxembourg', 'EUR', 'lu'],
+  ['Macao', 'MOP', 'mo', 'Macau'],
+  ['North Macedonia', 'MKD', 'mk', 'Macedonia'],
+  ['Madagascar', 'MGA', 'mg'],
+  ['Malawi', 'MWK', 'mw'],
+  ['Malaysia', 'MYR', 'my'],
+  ['Maldives', 'MVR', 'mv'],
+  ['Mali', 'XOF', 'ml'],
+  ['Malta', 'EUR', 'mt'],
+  ['Marshall Islands', 'USD', 'mh'],
+  ['Martinique', 'EUR', 'mq'],
+  ['Mauritania', 'MRU', 'mr'],
+  ['Mauritius', 'MUR', 'mu'],
+  ['Mayotte', 'EUR', 'yt'],
+  ['Mexico', 'MXN', 'mx'],
+  ['Micronesia', 'USD', 'fm'],
+  ['Moldova', 'MDL', 'md'],
+  ['Monaco', 'EUR', 'mc'],
+  ['Mongolia', 'MNT', 'mn'],
+  ['Montenegro', 'EUR', 'me'],
+  ['Montserrat', 'XCD', 'ms'],
+  ['Morocco', 'MAD', 'ma'],
+  ['Mozambique', 'MZN', 'mz'],
+  ['Namibia', 'NAD', 'na'],
+  ['Nauru', 'AUD', 'nr'],
+  ['Nepal', 'NPR', 'np', 'NPL'],
+  ['Netherlands', 'EUR', 'nl', 'Holland'],
+  ['New Caledonia', 'XPF', 'nc'],
+  ['New Zealand', 'NZD', 'nz'],
+  ['Nicaragua', 'NIO', 'ni'],
+  ['Niger', 'XOF', 'ne'],
+  ['Nigeria', 'NGN', 'ng'],
+  ['Niue', 'NZD', 'nu'],
+  ['Norfolk Island', 'AUD', 'nf'],
+  ['Northern Mariana Islands', 'USD', 'mp'],
+  ['Norway', 'NOK', 'no'],
+  ['Oman', 'OMR', 'om'],
+  ['Pakistan', 'PKR', 'pk'],
+  ['Palau', 'USD', 'pw'],
+  ['Palestine', 'ILS', 'ps'],
+  ['Panama', 'PAB', 'pa'],
+  ['Papua New Guinea', 'PGK', 'pg'],
+  ['Paraguay', 'PYG', 'py'],
+  ['Peru', 'PEN', 'pe'],
+  ['Philippines', 'PHP', 'ph'],
+  ['Pitcairn', 'NZD', 'pn'],
+  ['Poland', 'PLN', 'pl'],
+  ['Portugal', 'EUR', 'pt'],
+  ['Puerto Rico', 'USD', 'pr'],
+  ['Qatar', 'QAR', 'qa'],
+  ['Réunion', 'EUR', 're', 'Reunion'],
+  ['Romania', 'RON', 'ro'],
+  ['Russia', 'RUB', 'ru', 'Russian Federation'],
+  ['Rwanda', 'RWF', 'rw'],
+  ['South Africa', 'ZAR', 'za', 'SA'],
+  ['Saint Barthélemy', 'EUR', 'bl', 'Saint Barthelemy'],
+  ['Saint Helena', 'SHP', 'sh'],
+  ['Saint Kitts and Nevis', 'XCD', 'kn'],
+  ['Saint Lucia', 'XCD', 'lc'],
+  ['Saint Martin', 'EUR', 'mf'],
+  ['Saint Pierre and Miquelon', 'EUR', 'pm'],
+  ['Saint Vincent and the Grenadines', 'XCD', 'vc'],
+  ['Samoa', 'WST', 'ws'],
+  ['San Marino', 'EUR', 'sm'],
+  ['Sao Tome and Principe', 'STN', 'st'],
+  ['Saudi Arabia', 'SAR', 'sa'],
+  ['Senegal', 'XOF', 'sn'],
+  ['Serbia', 'RSD', 'rs'],
+  ['Seychelles', 'SCR', 'sc'],
+  ['Sierra Leone', 'SLE', 'sl'],
+  ['Singapore', 'SGD', 'sg'],
+  ['Sint Maarten', 'ANG', 'sx'],
+  ['Slovakia', 'EUR', 'sk'],
+  ['Slovenia', 'EUR', 'si'],
+  ['Solomon Islands', 'SBD', 'sb'],
+  ['Somalia', 'SOS', 'so'],
+  ['South Georgia and the South Sandwich Islands', 'GBP', 'gs'],
+  ['South Sudan', 'SSP', 'ss'],
+  ['Spain', 'EUR', 'es'],
+  ['Sri Lanka', 'LKR', 'lk'],
+  ['Sudan', 'SDG', 'sd'],
+  ['Suriname', 'SRD', 'sr'],
+  ['Svalbard and Jan Mayen', 'NOK', 'sj'],
+  ['Swaziland', 'SZL', 'sz', 'Eswatini'],
+  ['Sweden', 'SEK', 'se'],
+  ['Switzerland', 'CHF', 'ch'],
+  ['Syria', 'SYP', 'sy'],
+  ['Taiwan', 'TWD', 'tw'],
+  ['Tajikistan', 'TJS', 'tj'],
+  ['Tanzania', 'TZS', 'tz'],
+  ['Thailand', 'THB', 'th'],
+  ['Timor-Leste', 'USD', 'tl', 'East Timor'],
+  ['Togo', 'XOF', 'tg'],
+  ['Tokelau', 'NZD', 'tk'],
+  ['Tonga', 'TOP', 'to'],
+  ['Trinidad and Tobago', 'TTD', 'tt'],
+  ['Tunisia', 'TND', 'tn'],
+  ['Turkey', 'TRY', 'tr'],
+  ['Turkmenistan', 'TMT', 'tm'],
+  ['Turks and Caicos Islands', 'USD', 'tc'],
+  ['Tuvalu', 'AUD', 'tv'],
+  ['Uganda', 'UGX', 'ug'],
+  ['United Kingdom', 'GBP', 'gb', 'UK, Britain, England'],
+  ['Ukraine', 'UAH', 'ua'],
+  ['United Arab Emirates', 'AED', 'ae', 'UAE'],
+  ['United States Minor Outlying Islands', 'USD', 'um'],
+  ['Uruguay', 'UYU', 'uy'],
+  ['United States', 'USD', 'us', 'USA, US, America'],
+  ['Uzbekistan', 'UZS', 'uz'],
+  ['Vanuatu', 'VUV', 'vu'],
+  ['Venezuela', 'VES', 've'],
+  ['Vietnam', 'VND', 'vn', 'Viet Nam'],
+  ['British Virgin Islands', 'USD', 'vg'],
+  ['U.S. Virgin Islands', 'USD', 'vi'],
+  ['Wallis and Futuna', 'XPF', 'wf'],
+  ['Western Sahara', 'MAD', 'eh'],
+  ['Yemen', 'YER', 'ye'],
+  ['Zambia', 'ZMW', 'zm'],
+  ['Zimbabwe', 'ZWG', 'zw'],
 ]
 
-const NZ_EWIRE = new Set(['AUD', 'FJD'])
-const NZ_WIRE = new Set(['INR', 'USD', 'CNY', 'NPR', 'BDT'])
+export const TRANSFER_DESTINATIONS: readonly TransferDestination[] = RAW.map(
+  ([country, currency, countryCode, aliases]) => ({ country, currency, countryCode, aliases })
+)
 
-export function getTransferDestinations(fromCountry: string): TransferDestination[] {
-  const base = fromCountry === 'NZ' ? 'NZD' : fromCountry === 'FJ' ? 'FJD' : 'AUD'
-  return TRANSFER_DESTINATIONS.filter((c) => c.currency !== base)
+const NZ_EWIRE_COUNTRIES = new Set(['au', 'fj'])
+const NZ_WIRE_COUNTRIES = new Set(['in', 'us', 'cn', 'np', 'bd'])
+const AU_EWIRE_COUNTRIES = new Set(['nz', 'fj', 'au'])
+
+function originCountryCode(fromCountry: string): string {
+  if (fromCountry === 'NZ') return 'nz'
+  if (fromCountry === 'FJ') return 'fj'
+  return 'au'
 }
 
-export function getTransferModeFlags(fromCountry: string, toCurrency: string): TransferModeFlags {
+export function getTransferDestinations(fromCountry: string): TransferDestination[] {
+  const origin = originCountryCode(fromCountry)
+  return TRANSFER_DESTINATIONS.filter((c) => c.countryCode !== origin)
+}
+
+export function matchesTransferDestination(dest: TransferDestination, query: string): boolean {
+  const q = query.trim().toLowerCase()
+  if (!q) return true
+  return (
+    dest.country.toLowerCase().includes(q) ||
+    dest.currency.toLowerCase().includes(q) ||
+    (dest.aliases || '').toLowerCase().includes(q)
+  )
+}
+
+export function getTransferModeFlags(fromCountry: string, destCountryCode: string): TransferModeFlags {
+  const dest = destCountryCode.toLowerCase()
+
   if (fromCountry === 'NZ') {
-    if (NZ_EWIRE.has(toCurrency)) {
+    if (NZ_EWIRE_COUNTRIES.has(dest)) {
       return {
         allowEWire: true,
         allowWire: false,
@@ -49,7 +307,7 @@ export function getTransferModeFlags(fromCountry: string, toCurrency: string): T
         allowWallet: false,
       }
     }
-    if (NZ_WIRE.has(toCurrency)) {
+    if (NZ_WIRE_COUNTRIES.has(dest)) {
       return {
         allowEWire: false,
         allowWire: true,
@@ -68,10 +326,10 @@ export function getTransferModeFlags(fromCountry: string, toCurrency: string): T
   }
 
   return {
-    allowEWire: toCurrency === 'NZD' || toCurrency === 'FJD' || toCurrency === 'AUD',
-    allowWire: !['AUD', 'NZD', 'FJD'].includes(toCurrency),
-    allowMoneygram: toCurrency !== 'NZD' && toCurrency !== 'FJD',
-    allowWesternUnion: toCurrency !== 'NZD' && toCurrency !== 'FJD',
-    allowWallet: toCurrency === 'FJD',
+    allowEWire: AU_EWIRE_COUNTRIES.has(dest),
+    allowWire: !AU_EWIRE_COUNTRIES.has(dest),
+    allowMoneygram: dest !== 'nz' && dest !== 'fj',
+    allowWesternUnion: dest !== 'nz' && dest !== 'fj',
+    allowWallet: dest === 'fj',
   }
 }

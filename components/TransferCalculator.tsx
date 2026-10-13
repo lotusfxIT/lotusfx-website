@@ -37,6 +37,7 @@ function TransferCalculatorActive() {
   const [sendAmount, setSendAmount] = useState('500')
   const [receiveAmount, setReceiveAmount] = useState('')
   const [toCurrency, setToCurrency] = useState('USD')
+  const [toCountryCode, setToCountryCode] = useState('us')
   const [transferMode, setTransferMode] = useState<TransferMode>('Wire')
   const [rate, setRate] = useState(0)
   const [isCalculating, setIsCalculating] = useState(false)
@@ -52,7 +53,7 @@ function TransferCalculatorActive() {
   const baseCurrency = getBaseCurrency(selectedCountry)
   const toCountryOptions = getTransferDestinations(selectedCountry)
   const { allowEWire, allowWire, allowMoneygram, allowWesternUnion, allowWallet } =
-    getTransferModeFlags(selectedCountry, toCurrency)
+    getTransferModeFlags(selectedCountry, toCountryCode)
 
   useEffect(() => {
     const invalid =
@@ -78,11 +79,17 @@ function TransferCalculatorActive() {
 
   useEffect(() => {
     const options = getTransferDestinations(selectedCountry)
-    const valid = options.some((c) => c.currency === toCurrency)
-    if (!valid && options.length > 0) {
-      setToCurrency(options[0].currency)
+    const current = options.find((c) => c.countryCode === toCountryCode)
+    if (current) {
+      if (current.currency !== toCurrency) setToCurrency(current.currency)
+      return
     }
-  }, [selectedCountry, toCurrency])
+    const byCurrency = options.find((c) => c.currency === toCurrency)
+    const next = byCurrency || options[0]
+    if (!next) return
+    setToCountryCode(next.countryCode)
+    setToCurrency(next.currency)
+  }, [selectedCountry, toCountryCode, toCurrency])
 
   const calculateTransfer = useCallback(
     async (sendOverride?: number) => {
@@ -254,12 +261,17 @@ function TransferCalculatorActive() {
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">To country</label>
         <select
-          value={toCurrency}
-          onChange={(e) => setToCurrency(e.target.value)}
+          value={toCountryCode}
+          onChange={(e) => {
+            const dest = toCountryOptions.find((c) => c.countryCode === e.target.value)
+            if (!dest) return
+            setToCountryCode(dest.countryCode)
+            setToCurrency(dest.currency)
+          }}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
         >
           {toCountryOptions.map((c) => (
-            <option key={c.currency} value={c.currency}>
+            <option key={c.countryCode} value={c.countryCode}>
               {c.country} ({c.currency})
             </option>
           ))}

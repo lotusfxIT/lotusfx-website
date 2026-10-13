@@ -13,7 +13,7 @@ import { getCountryPortalLinks } from '@/lib/country-portals'
 import CountryAppLinks from '@/components/CountryAppLinks'
 import RatesUnavailableNotice from '@/components/RatesUnavailableNotice'
 import { isBackendUnavailable, RATES_UNAVAILABLE_MESSAGE } from '@/lib/service-availability'
-import { getTransferDestinations, getTransferModeFlags } from '@/lib/transfer-destinations'
+import { getTransferDestinations, getTransferModeFlags, matchesTransferDestination } from '@/lib/transfer-destinations'
 
 // Currency code → ISO country code for flag images (flagcdn.com)
 const currencyToCountry: Record<string, string> = {
@@ -147,6 +147,7 @@ function CurrencyCalculatorActive({
   const lockedForeign = lockForeignCurrency && defaultToCurrency ? defaultToCurrency : null
   const [fromCurrency, setFromCurrency] = useState(baseCurrency)
   const [toCurrency, setToCurrency] = useState(defaultToCurrency || 'USD')
+  const [toCountryCode, setToCountryCode] = useState('us')
   const [transferMode, setTransferMode] = useState<TransferMode>('Wire')
   const [amount, setAmount] = useState('1000')
   const [convertedAmount, setConvertedAmount] = useState('')
@@ -183,7 +184,7 @@ function CurrencyCalculatorActive({
 
   const toCountryOptions = getTransferDestinations(selectedCountry)
   const { allowEWire, allowWire, allowMoneygram, allowWesternUnion, allowWallet } =
-    getTransferModeFlags(selectedCountry, toCurrency)
+    getTransferModeFlags(selectedCountry, toCountryCode)
 
   const defaultTransferMode = (): TransferMode => {
     if (allowEWire) return 'eWire'
@@ -352,15 +353,23 @@ function CurrencyCalculatorActive({
       (transferMode === 'Moneygram' && !allowMoneygram) ||
       (transferMode === 'Western Union' && !allowWesternUnion)
     if (invalid) setTransferMode(defaultTransferMode())
-  }, [quoteType, transferMode, allowWallet, allowEWire, allowWire, allowMoneygram, allowWesternUnion, toCurrency])
+  }, [quoteType, transferMode, allowWallet, allowEWire, allowWire, allowMoneygram, allowWesternUnion, toCountryCode])
 
-  // Money Transfer: if "to country" equals base, pick first available
+  // Money Transfer: keep a valid destination when the origin country changes
   useEffect(() => {
     if (quoteType !== 'transfer') return
     const options = getTransferDestinations(selectedCountry)
-    if (toCurrency !== baseCurrency) return
-    if (options.length > 0) setToCurrency(options[0].currency)
-  }, [quoteType, baseCurrency, toCurrency, selectedCountry])
+    const current = options.find((c) => c.countryCode === toCountryCode)
+    if (current) {
+      if (current.currency !== toCurrency) setToCurrency(current.currency)
+      return
+    }
+    const byCurrency = options.find((c) => c.currency === toCurrency)
+    const next = byCurrency || options[0]
+    if (!next) return
+    setToCountryCode(next.countryCode)
+    setToCurrency(next.currency)
+  }, [quoteType, selectedCountry, toCountryCode, toCurrency])
 
   const swapCurrencies = () => {
     setFromCurrency(toCurrency)
@@ -581,7 +590,7 @@ function CurrencyCalculatorActive({
                 className="w-full h-12 px-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 bg-white font-medium hover:border-primary-300 flex items-center justify-center gap-3 text-left"
               >
                 {(() => {
-                  const c = toCountryOptions.find((x) => x.currency === toCurrency) || toCountryOptions[0]
+                  const c = toCountryOptions.find((x) => x.countryCode === toCountryCode) || toCountryOptions[0]
                   if (!c) return <span className="text-gray-500">Select country</span>
                   return (
                     <>
@@ -613,17 +622,15 @@ function CurrencyCalculatorActive({
                   </div>
                   <div className="overflow-auto max-h-52 py-1">
                     {(() => {
-                      const filtered = toCountryOptions.filter((c) => {
-                        const q = dropdownSearch.trim().toLowerCase()
-                        return !q || c.country.toLowerCase().includes(q) || c.currency.toLowerCase().includes(q)
-                      })
+                      const filtered = toCountryOptions.filter((c) => matchesTransferDestination(c, dropdownSearch))
                       if (filtered.length === 0)
                         return <p className="px-4 py-3 text-gray-500 text-sm text-center">No countries match</p>
                       return filtered.map((c) => (
                         <button
-                          key={c.currency}
+                          key={c.countryCode}
                           type="button"
                           onClick={() => {
+                            setToCountryCode(c.countryCode)
                             setToCurrency(c.currency)
                             setOpenDropdown(null)
                             setDropdownSearch('')
