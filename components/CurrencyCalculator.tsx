@@ -144,7 +144,7 @@ function CurrencyCalculatorActive({
   })()
   const [chosen, setChosen] = useState<boolean>(forceCashOnly ? true : false)
   const [quoteType, setQuoteType] = useState<'cash' | 'transfer'>('cash')
-  const [buyOrSell, setBuyOrSell] = useState<'buy' | 'sell'>('buy') // buy = customer buy (Lotus Sell); sell = customer sell (Lotus Buy)
+  const [buyOrSell, setBuyOrSell] = useState<'buy' | 'sell'>('buy') // You Buy = customer buy; You Sell = customer sell
   const baseCurrency = getBaseCurrency(selectedCountry)
   const lockedForeign = lockForeignCurrency && defaultToCurrency ? defaultToCurrency : null
   const [fromCurrency, setFromCurrency] = useState(baseCurrency)
@@ -230,8 +230,8 @@ function CurrencyCalculatorActive({
           toAmount: fromAmount,
           country: selectedCountry,
           ...(quoteType === 'transfer' ? { transferMode } : {}),
-          // AU desk: Lotus Sell = customer buy → booking only.
-          // Lotus Buy = customer sell → isBuy true only.
+          // AU desk: You Buy (customer buy / Lotus sell) → booking only.
+          // You Sell (customer sell / Lotus buy) → isBuy true only.
           ...(quoteType === 'cash' && selectedCountry === 'AU'
             ? buyOrSell === 'buy'
               ? { transferMode: 'booking' }
@@ -746,7 +746,7 @@ function CurrencyCalculatorActive({
               whileTap={{ scale: 0.99 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
-              Lotus Sell
+              You Buy
             </motion.button>
             <motion.button
               type="button"
@@ -769,7 +769,7 @@ function CurrencyCalculatorActive({
               whileTap={{ scale: 0.99 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
-              Lotus Buy
+              You Sell
             </motion.button>
           </div>
 
@@ -777,7 +777,7 @@ function CurrencyCalculatorActive({
             /* Buy: You Buy = dropdown + amount input (what they want); You Pay = AUD + result only */
             <>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-2">
-                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">Lotus Sell</label>
+                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">You Buy</label>
                 <div className="flex space-x-3">
                   <div className="flex-1 relative" ref={buyDropdownRef}>
                     {lockedForeign ? (
@@ -895,10 +895,10 @@ function CurrencyCalculatorActive({
               </motion.div>
             </>
           ) : (
-            /* Sell: customer sells foreign (Lotus Buy). You Get = editable AUD */
+            /* You Sell: customer sells foreign. You Get = editable AUD */
             <>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-2">
-                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">Lotus Buy</label>
+                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">You Sell</label>
                 <div className="flex space-x-3">
                   <div className="flex-1 relative" ref={sellDropdownRef}>
                     {lockedForeign ? (
@@ -1071,27 +1071,36 @@ function CurrencyCalculatorActive({
               <span>Click & Collect</span>
             </Link>
           )}
-          {(() => {
-            const portal = getCountryPortalLinks(selectedCountry)
-            return portal.showLogin && portal.web ? (
-              <a
-                href={portal.web}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  trackEvent('order_initiation', {
-                    cta_name: 'portal_login',
-                    quote_type: quoteType,
-                    country: selectedCountry,
-                    location: 'calculator',
-                  })
-                }
-                className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
-              >
-                <span>Login / Sign Up</span>
-              </a>
-            ) : null
-          })()}
+          {quoteType === 'cash' && buyOrSell === 'sell' ? (
+            <div
+              className="w-full btn-primary flex items-center justify-center text-center py-3 pointer-events-none"
+              aria-disabled="true"
+            >
+              Visit our branch to sell
+            </div>
+          ) : (
+            (() => {
+              const portal = getCountryPortalLinks(selectedCountry)
+              return portal.showLogin && portal.web ? (
+                <a
+                  href={portal.web}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('order_initiation', {
+                      cta_name: 'portal_login',
+                      quote_type: quoteType,
+                      country: selectedCountry,
+                      location: 'calculator',
+                    })
+                  }
+                  className="w-full btn-primary flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-shadow duration-200 py-3"
+                >
+                  <span>Login / Sign Up</span>
+                </a>
+              ) : null
+            })()
+          )}
           <Link
             href="/locations"
             onClick={() =>
