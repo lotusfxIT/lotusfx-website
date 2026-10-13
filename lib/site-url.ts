@@ -11,3 +11,22 @@ export function absoluteUrl(path: string): string {
   const normalized = path.startsWith('/') ? path : `/${path}`
   return `${base}${normalized}`
 }
+
+/**
+ * Host the crawler actually requested. Search Console rejects a sitemap whose
+ * <loc> URLs are on a different host than the property (e.g. nz sitemap listing lotusfx.com).
+ */
+export function getRequestSiteUrl(hostHeader?: string | null): string {
+  const host = String(hostHeader || '')
+    .split(',')[0]
+    .trim()
+    .toLowerCase()
+    .replace(/:\d+$/, '')
+  if (!host || host.includes('localhost') || host.startsWith('127.')) return getSiteUrl()
+  if (host === 'www.lotusfx.com' || host === 'lotusfx.com') return 'https://lotusfx.com'
+  if (host === 'www.stafflotusfx.com' || host === 'stafflotusfx.com') return 'https://stafflotusfx.com'
+  if (host.endsWith('.lotusfx.com') || host.endsWith('.stafflotusfx.com')) {
+    return `https://${host.replace(/^www\./, '')}`
+  }
+  return getSiteUrl()
+}

@@ -1,10 +1,14 @@
 import { MetadataRoute } from 'next'
+import { headers } from 'next/headers'
 import { STATIC_LOCATIONS } from '@/data/locations-static'
 import { ALL_CURRENCIES, currencySlug } from '@/lib/currencies'
-import { getSiteUrl } from '@/lib/site-url'
+import { getRequestSiteUrl } from '@/lib/site-url'
+
+export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = getSiteUrl()
+  const headerStore = headers()
+  const baseUrl = getRequestSiteUrl(headerStore.get('x-forwarded-host') || headerStore.get('host'))
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },

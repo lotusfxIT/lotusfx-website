@@ -1,8 +1,12 @@
 import type { MetadataRoute } from 'next'
-import { getSiteUrl } from '@/lib/site-url'
+import { headers } from 'next/headers'
+import { getRequestSiteUrl } from '@/lib/site-url'
+
+export const dynamic = 'force-dynamic'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = getSiteUrl()
+  const headerStore = headers()
+  const baseUrl = getRequestSiteUrl(headerStore.get('x-forwarded-host') || headerStore.get('host'))
 
   return {
     rules: [
