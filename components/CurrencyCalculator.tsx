@@ -226,8 +226,14 @@ function CurrencyCalculatorActive({
           toAmount: fromAmount,
           country: selectedCountry,
           ...(quoteType === 'transfer' ? { transferMode } : {}),
+          // Lotus Buy = customer buying foreign = isBuy true.
+          // AU standalone/C&C uses transferMode "booking". On NZ that flag
+          // returns the mid/base rate (margin 0) instead of the cash sell rate.
           ...(quoteType === 'cash' && buyOrSell === 'buy'
-            ? { isBuy: true, transferMode: 'booking' }
+            ? {
+                isBuy: true,
+                ...(selectedCountry === 'AU' ? { transferMode: 'booking' } : {}),
+              }
             : {}),
         }),
       })
