@@ -1017,7 +1017,11 @@ function CurrencyCalculatorActive({
           </div>
           <div className="text-2xl font-bold text-white tabular-nums leading-tight min-h-[1.75rem] flex items-center justify-center">
             {isCalculating ? (
-              <span className="text-white/70">…</span>
+              <span
+                className="inline-block h-7 w-7 rounded-full border-2 border-white/35 border-t-white animate-spin"
+                role="status"
+                aria-label="Loading exchange rate"
+              />
             ) : rate > 0 ? (
               <>
                 1 {baseCurrency} = {rate.toFixed(4)}{' '}
