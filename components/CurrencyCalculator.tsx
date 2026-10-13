@@ -11,8 +11,6 @@ import { trackEvent } from '@/lib/analytics'
 import { buildQuickOrderUrl, isQuickOrderEnabled } from '@/lib/quick-order-url'
 import { getCountryPortalLinks } from '@/lib/country-portals'
 import CountryAppLinks from '@/components/CountryAppLinks'
-import RatesUnavailableNotice from '@/components/RatesUnavailableNotice'
-import { isBackendUnavailable, RATES_UNAVAILABLE_MESSAGE } from '@/lib/service-availability'
 import { getTransferDestinations, getTransferModeFlags, matchesTransferDestination } from '@/lib/transfer-destinations'
 
 // Currency code → ISO country code for flag images (flagcdn.com)
@@ -154,7 +152,6 @@ function CurrencyCalculatorActive({
   const [rate, setRate] = useState(0)
   const [isCalculating, setIsCalculating] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [unavailable, setUnavailable] = useState(false)
   /** Which side the user last edited: foreign (You Buy/Sell / recipient) or base (You Pay/Get / you send) */
   const amountSideRef = useRef<'foreign' | 'base'>('foreign')
   /** base = foreign * conversionRate (cash buy/sell) OR receive = send * conversionRate (transfer) */
@@ -206,7 +203,6 @@ function CurrencyCalculatorActive({
       return
     }
 
-    if (unavailable) return
     setIsCalculating(true)
     setError(null)
     const fromAmount = parseFloat(amount)
@@ -237,15 +233,8 @@ function CurrencyCalculatorActive({
       })
 
       const result = await response.json().catch(() => ({}))
-      if (isBackendUnavailable(result) || (!response.ok && response.status >= 500)) {
-        setUnavailable(true)
-        setError(null)
-        setConvertedAmount('')
-        setRate(0)
-        return
-      }
       if (!response.ok || !result.success || result.rate == null) {
-        throw new Error(result.error || 'We could not get a live rate just now. Please try again.')
+        throw new Error('We could not get a live rate just now. Please try again.')
       }
 
       let converted: number
@@ -285,16 +274,9 @@ function CurrencyCalculatorActive({
         country: selectedCountry,
       })
     } catch (err) {
-      if (isBackendUnavailable(err)) {
-        setUnavailable(true)
-        setError(null)
-        setConvertedAmount('')
-        setRate(0)
-      } else {
-        setError(err instanceof Error ? err.message : 'We could not get a live rate just now. Please try again.')
-        setConvertedAmount('')
-        setRate(0)
-      }
+      setError(err instanceof Error ? err.message : 'We could not get a live rate just now. Please try again.')
+      setConvertedAmount('')
+      setRate(0)
     } finally {
       setIsCalculating(false)
     }
@@ -305,7 +287,7 @@ function CurrencyCalculatorActive({
     // When user edits base/pay side, that handler drives the quote
     if (amountSideRef.current === 'base') return
     calculateConversion()
-  }, [fromCurrency, toCurrency, amount, selectedCountry, quoteType, transferMode, buyOrSell, chosen, forceCashOnly, unavailable])
+  }, [fromCurrency, toCurrency, amount, selectedCountry, quoteType, transferMode, buyOrSell, chosen, forceCashOnly])
 
   const onForeignAmountChange = (value: string) => {
     amountSideRef.current = 'foreign'
@@ -479,17 +461,6 @@ function CurrencyCalculatorActive({
     )
   }
 
-  if (unavailable) {
-    return (
-      <div className="flex-1 flex flex-col justify-center min-h-0 w-full min-w-0 py-2">
-        <RatesUnavailableNotice
-          message={RATES_UNAVAILABLE_MESSAGE}
-          onRetry={() => setUnavailable(false)}
-        />
-      </div>
-    )
-  }
-
   return (
     <div className="flex-1 flex flex-col min-h-0 w-full min-w-0">
       <style dangerouslySetInnerHTML={{
@@ -520,7 +491,6 @@ function CurrencyCalculatorActive({
             onClick={() => {
               setChosen(false)
               setError(null)
-              setUnavailable(false)
               setConvertedAmount('')
               setRate(0)
             }}

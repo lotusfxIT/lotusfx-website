@@ -4,8 +4,6 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useCountry } from '@/context/CountryContext'
 import FijiBranchRatesCard from '@/components/FijiBranchRatesCard'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
-import RatesUnavailableNotice from '@/components/RatesUnavailableNotice'
-import { isBackendUnavailable, RATES_UNAVAILABLE_MESSAGE } from '@/lib/service-availability'
 import { getTransferDestinations, getTransferModeFlags } from '@/lib/transfer-destinations'
 
 const transferModes = [
@@ -42,7 +40,6 @@ function TransferCalculatorActive() {
   const [rate, setRate] = useState(0)
   const [isCalculating, setIsCalculating] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [unavailable, setUnavailable] = useState(false)
 
   /** Which field the user last edited */
   const amountSideRef = useRef<'send' | 'receive'>('send')
@@ -104,8 +101,6 @@ function TransferCalculatorActive() {
         setRate(0)
         return
       }
-      if (unavailable) return
-
       setIsCalculating(true)
       setError(null)
 
@@ -123,15 +118,8 @@ function TransferCalculatorActive() {
         })
 
         const result = await response.json().catch(() => ({}))
-        if (isBackendUnavailable(result) || (!response.ok && response.status >= 500)) {
-          setUnavailable(true)
-          setError(null)
-          setReceiveAmount('')
-          setRate(0)
-          return
-        }
         if (!response.ok || !result.success || result.rate == null) {
-          throw new Error(result.error || 'We could not get a live rate just now. Please try again.')
+          throw new Error('We could not get a live rate just now. Please try again.')
         }
 
         const rateNumber = Number(result.rate)
@@ -144,19 +132,14 @@ function TransferCalculatorActive() {
         setRate(receiveRate)
         setError(null)
       } catch (err) {
-        if (isBackendUnavailable(err)) {
-          setUnavailable(true)
-          setError(null)
-        } else {
-          setError(err instanceof Error ? err.message : 'We could not get a live rate just now. Please try again.')
-        }
+        setError(err instanceof Error ? err.message : 'We could not get a live rate just now. Please try again.')
         setReceiveAmount('')
         setRate(0)
       } finally {
         setIsCalculating(false)
       }
     },
-    [sendAmount, toCurrency, transferMode, selectedCountry, baseCurrency, unavailable]
+    [sendAmount, toCurrency, transferMode, selectedCountry, baseCurrency]
   )
 
   useEffect(() => {
@@ -196,15 +179,6 @@ function TransferCalculatorActive() {
       amountSideRef.current = 'send'
       setSendAmount(send.toFixed(2))
     }, 400)
-  }
-
-  if (unavailable) {
-    return (
-      <RatesUnavailableNotice
-        message={RATES_UNAVAILABLE_MESSAGE}
-        onRetry={() => setUnavailable(false)}
-      />
-    )
   }
 
   return (

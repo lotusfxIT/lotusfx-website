@@ -5,6 +5,8 @@ import {
   publicServiceError,
 } from '@/lib/service-availability'
 
+export const maxDuration = 30
+
 // When the backend (au/nz/fj.app.lotusfx.com) has an invalid or self-signed SSL cert,
 // Node on Vercel cannot verify it. Set ALLOW_INSECURE_SSL=true to skip verification
 // for outbound requests from this route only. Prefer fixing the backend certificate.
