@@ -7,6 +7,7 @@ import {
   PhoneIcon,
   EnvelopeIcon,
   MapPinIcon,
+  ClockIcon,
 } from '@heroicons/react/24/outline'
 import { useSiteStats } from '@/context/SiteStatsContext'
 import { useCountry } from '@/context/CountryContext'
@@ -248,6 +249,7 @@ export default function ContactPage() {
                         flag: '🇦🇺',
                         country: 'Australia',
                         email: siteStats.emails.australia,
+                        phones: ['(61) 410 663 726', '(61) 415 099 933'],
                         branches: `${siteStats.branches.australia} branches across major cities`,
                         hours: siteStats.businessHours.australia,
                       },
@@ -255,6 +257,7 @@ export default function ContactPage() {
                         flag: '🇳🇿',
                         country: 'New Zealand',
                         email: siteStats.emails.newZealand,
+                        phones: ['0800 442288'],
                         branches: `${siteStats.branches.newZealand} branches nationwide`,
                         hours: siteStats.businessHours.newZealand,
                       },
@@ -262,6 +265,7 @@ export default function ContactPage() {
                         flag: '🇫🇯',
                         country: 'Fiji',
                         email: siteStats.emails.fiji,
+                        phones: ['(679) 992 1755'],
                         branches: `${siteStats.branches.fiji} branches across islands`,
                         hours: siteStats.businessHours.fiji,
                       },
@@ -278,6 +282,22 @@ export default function ContactPage() {
                         </div>
                         <div className="space-y-2.5 text-sm text-gray-600">
                           <p className="flex items-start gap-2">
+                            <PhoneIcon className="w-5 h-5 flex-shrink-0 text-primary-600 mt-0.5" />
+                            <span className="flex flex-wrap items-center gap-x-1">
+                              {region.phones.map((phone, i) => (
+                                <span key={phone} className="inline-flex items-center">
+                                  {i > 0 ? <span className="text-gray-400 mr-1">/</span> : null}
+                                  <a
+                                    href={`tel:${phone.replace(/[^\d+]/g, '')}`}
+                                    className="hover:text-primary-700 font-medium text-gray-800"
+                                  >
+                                    {phone}
+                                  </a>
+                                </span>
+                              ))}
+                            </span>
+                          </p>
+                          <p className="flex items-start gap-2">
                             <EnvelopeIcon className="w-5 h-5 flex-shrink-0 text-primary-600 mt-0.5" />
                             <a
                               href={`mailto:${region.email}`}
@@ -291,7 +311,7 @@ export default function ContactPage() {
                             <span>{region.branches}</span>
                           </p>
                           <p className="flex items-start gap-2">
-                            <PhoneIcon className="w-5 h-5 flex-shrink-0 text-primary-600 mt-0.5" />
+                            <ClockIcon className="w-5 h-5 flex-shrink-0 text-primary-600 mt-0.5" />
                             <span>{region.hours}</span>
                           </p>
                         </div>
