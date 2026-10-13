@@ -1107,7 +1107,7 @@ function CurrencyCalculatorActive({
             transition={{ delay: 0.3 }}
             className="text-center text-sm text-gray-600 space-y-1.5 pb-1"
           >
-            <p className="text-gray-500">No commission fees • Best rates guaranteed</p>
+            <p className="text-gray-500">No commission fees • Most competitive rates</p>
           </motion.div>
         )}
       </div>
