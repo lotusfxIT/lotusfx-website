@@ -603,7 +603,15 @@ export default function LocationPage() {
                           'MoneyGram',
                           'Western Union',
                           'Cash Passport',
-                        ].map((service, idx) => (
+                        ]
+                          .filter((service) => {
+                            if (service !== 'Western Union') return true
+                            const slug =
+                              STATIC_LOCATIONS.find((l) => l.id === locationId)?.slug ??
+                              pathSegment
+                            return slug !== 'westcity-henderson-branch'
+                          })
+                          .map((service, idx) => (
                           <div
                             key={idx}
                             className="flex items-center gap-3 bg-white rounded-xl px-3 py-2.5 shadow-soft"
