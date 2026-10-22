@@ -93,42 +93,59 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const guestOnlyKeys = new Set([
-      'guestName',
-      'guestPhone',
-      'guestDateOfBirth',
-      'fulfillmentMethod',
-      'deliveryLocation',
+    const purchaseAllow = new Set([
+      'transactionType',
+      'customerReference',
+      'sourceCurrency',
+      'debitCurrency',
+      'foreignCurrency',
+      'foreignAmount',
+      'exchangeRate',
+      'feeAmount',
+      'totalDebitAmount',
+      'rateQuotedAt',
+      'rateExpiresAt',
+      'notes',
     ])
     const purchaseFor4d = Object.fromEntries(
-      Object.entries(purchase).filter(([key]) => !guestOnlyKeys.has(key))
+      Object.entries(purchase).filter(([key, value]) => purchaseAllow.has(key) && value !== undefined)
     )
 
-    // Book against the branch walk-in profile (e.g. 000-PM for Parramatta).
-    // Guest details stay on `body` for emails; they are not the 4D customer.
+    const paymentCode = String(paymentMethod.paymentMethod || paymentMethod.type || 'PAYINSTORE')
+      .trim()
+      .toUpperCase() || 'PAYINSTORE'
+
+    // Match createPurchaseOrder PAYINSTORE: gateway must be set or 4D defaults to Monoova
+    // and can treat the booking as already paid (amount due 0.00).
     const payload = {
+      gateway: paymentCode,
       ...(walkInCustomerID
         ? { customerID: walkInCustomerID, customerUUID: walkInCustomerID }
         : {}),
       purchase: {
         ...purchaseFor4d,
-        ...(walkInCustomerID ? { customerName: walkInCustomerID } : {}),
+        ...(walkInCustomerID ? { customerID: walkInCustomerID } : {}),
+        amountPaid: 0,
       },
-      paymentMethod,
-      ...(body?.payer ? { payer: body.payer } : {}),
-      ...(body?.consent ? { consent: body.consent } : {}),
+      paymentMethod: {
+        type: paymentCode,
+        paymentMethod: paymentCode,
+        ...(paymentMethod.branchId ? { branchId: paymentMethod.branchId } : {}),
+        ...(paymentMethod.branchName ? { branchName: paymentMethod.branchName } : {}),
+      },
     }
 
     console.log('[Quick Order] create attempt', {
       country: config.country,
       baseUrl: config.baseUrl,
+      gateway: payload.gateway,
+      customerID: walkInCustomerID || null,
       foreignCurrency: purchase.foreignCurrency,
       foreignAmount: purchase.foreignAmount,
       totalDebitAmount: purchase.totalDebitAmount,
-      paymentMethod: paymentMethod.paymentMethod || paymentMethod.type,
+      amountPaid: 0,
+      paymentMethod: paymentCode,
       branchId: paymentMethod.branchId,
-      walkInCustomerID: walkInCustomerID || null,
-      // email for ops logs only — never sent to analytics
       hasCustomerRef: !!purchase.customerReference,
     })
 
