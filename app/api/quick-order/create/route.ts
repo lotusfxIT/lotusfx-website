@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import {
   attachWalkInCustomerToWebEwire,
+  bookingPaymentData,
   getQuickOrderConfig,
   quickOrderApiPost,
   unwrapResult,
@@ -120,6 +121,17 @@ export async function POST(request: NextRequest) {
       .trim()
       .toUpperCase() || 'PAYINSTORE'
 
+    const branchId = String(paymentMethod.branchId || paymentMethod.branch?.BranchID || '').trim()
+    const branchName = String(
+      paymentMethod.branchName || paymentMethod.branch?.BranchName || ''
+    ).trim()
+    const amountDue = Number(purchase.totalDebitAmount) || 0
+    const paymentData = bookingPaymentData({
+      branchId,
+      branchName,
+      amountDue,
+    })
+
     // Match createPurchaseOrder PAYINSTORE: gateway must be set or 4D defaults to Monoova
     // and can treat the booking as already paid (amount due 0.00).
     const payload = {
@@ -132,16 +144,10 @@ export async function POST(request: NextRequest) {
       paymentMethod: {
         type: paymentCode,
         paymentMethod: paymentCode,
-        ...(paymentMethod.branchId
-          ? { branchId: paymentMethod.branchId }
-          : paymentMethod.branch?.BranchID
-            ? { branchId: paymentMethod.branch.BranchID }
-            : {}),
-        ...(paymentMethod.branchName
-          ? { branchName: paymentMethod.branchName }
-          : paymentMethod.branch?.BranchName
-            ? { branchName: paymentMethod.branch.BranchName }
-            : {}),
+        bookingType: 'booking',
+        ...(branchId ? { branchId } : {}),
+        ...(branchName ? { branchName } : {}),
+        paymentData,
       },
     }
 
@@ -193,7 +199,9 @@ export async function POST(request: NextRequest) {
           webEwireID,
           orderUUID,
           customerID: walkInCustomerID,
-          amountDue: Number(purchase.totalDebitAmount) || 0,
+          amountDue,
+          branchId,
+          branchName,
           country: config.country,
         })
         console.log('[Quick Order] walk-in attached', {

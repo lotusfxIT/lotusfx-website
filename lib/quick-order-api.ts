@@ -254,16 +254,39 @@ async function quickOrderApiGet(
  * Head Office then books it with a blank customer and treats PAYINSTORE as paid.
  * Stamp CustomerID + AmountPaid=0 immediately after create.
  */
+export function bookingPaymentData(input: {
+  branchId?: string | null
+  branchName?: string | null
+  amountDue?: number | null
+}): Record<string, unknown> {
+  return {
+    deliveryLocation: String(input.branchId || ''),
+    deliveryLocationName: String(input.branchName || ''),
+    promotionCode: '',
+    payInFull: false,
+    payInFullDeposit: Number(input.amountDue) || 0,
+  }
+}
+
 export async function attachWalkInCustomerToWebEwire(input: {
   webEwireID?: string | null
   orderUUID?: string | null
   customerID: string
   amountDue?: number
+  branchId?: string | null
+  branchName?: string | null
   country?: string | null
 }): Promise<{ CustomerID?: string; AmountPaid?: unknown } | null> {
   const webEwireID = String(input.webEwireID || '').trim()
   const orderUUID = String(input.orderUUID || '').trim()
   if (!webEwireID && !orderUUID) return null
+
+  const amountDue = Number(input.amountDue) || 0
+  const paymentData = bookingPaymentData({
+    branchId: input.branchId,
+    branchName: input.branchName,
+    amountDue,
+  })
 
   const filter = webEwireID
     ? `"WebEwireID='${webEwireID.replace(/'/g, "''")}'"`
@@ -288,7 +311,9 @@ export async function attachWalkInCustomerToWebEwire(input: {
           CustomerID: input.customerID,
           paymentInfo: {
             AmountPaid: 0,
-            PaymentAmount: Number(input.amountDue) || 0,
+            PaymentAmount: amountDue,
+            bookingType: 'booking',
+            paymentData,
           },
         },
       ],
@@ -298,10 +323,31 @@ export async function attachWalkInCustomerToWebEwire(input: {
     return { CustomerID: updated?.CustomerID, AmountPaid: updated?.paymentInfo?.AmountPaid }
   }
 
+  const existingPayment =
+    rec.paymentInfo && typeof rec.paymentInfo === 'object' ? rec.paymentInfo : {}
+  const existingData =
+    existingPayment.paymentData && typeof existingPayment.paymentData === 'object'
+      ? (existingPayment.paymentData as Record<string, unknown>)
+      : {}
   const paymentInfo: Record<string, unknown> = {
-    ...(rec.paymentInfo && typeof rec.paymentInfo === 'object' ? rec.paymentInfo : {}),
+    ...existingPayment,
     AmountPaid: 0,
-    PaymentAmount: Number(input.amountDue ?? rec.fromAmount) || 0,
+    PaymentAmount: amountDue || Number(rec.fromAmount) || 0,
+    bookingType: existingPayment.bookingType || 'booking',
+    paymentData: {
+      ...existingData,
+      ...paymentData,
+      deliveryLocation:
+        paymentData.deliveryLocation ||
+        existingData.deliveryLocation ||
+        existingPayment.deliveryLocation ||
+        '',
+      deliveryLocationName:
+        paymentData.deliveryLocationName ||
+        existingData.deliveryLocationName ||
+        existingPayment.deliveryLocationName ||
+        '',
+    },
   }
 
   const saved = await quickOrderApiPost(
