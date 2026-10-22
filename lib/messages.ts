@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { getRecord, listRecords, saveRecord } from '@/lib/records-store'
+import { deleteRecord, getRecord, listRecords, saveRecord } from '@/lib/records-store'
 
 const PREFIX = 'messages'
 
@@ -27,3 +27,4 @@ export function newMessageId(): string {
 export const saveMessage = (m: MessageRecord) => saveRecord(PREFIX, m.id, m)
 export const getMessage = (id: string) => getRecord<MessageRecord>(PREFIX, id)
 export const listMessages = () => listRecords<MessageRecord>(PREFIX)
+export const deleteMessage = (id: string) => deleteRecord(PREFIX, id)

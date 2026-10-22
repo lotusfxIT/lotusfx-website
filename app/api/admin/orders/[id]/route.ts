@@ -1,25 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { isAdminRequest } from '@/lib/admin-auth'
+import { canAccessCountry, canAccessModule, getAdminSession } from '@/lib/admin-auth'
 import { mailjetConfigured } from '@/lib/mailjet'
 import {
   addEvent,
+  deleteOrder,
   getOrder,
   saveOrder,
   sendCustomerEmail,
   sendStaffEmail,
+  type OrderRecord,
   type OrderStatus,
 } from '@/lib/orders'
 import { EMAIL_RE } from '@/lib/spam-guard'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-  if (!isAdminRequest(request)) {
+function deny(session: ReturnType<typeof getAdminSession>, order?: OrderRecord | null) {
+  if (!session || !canAccessModule(session, 'orders')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  if (order && !canAccessCountry(session, order.country)) {
+    return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+  }
+  return null
+}
+
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const session = getAdminSession(request)
+  const order = await getOrder(params.id)
+  const blocked = deny(session, order)
+  if (blocked) return blocked
+  if (!order) return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+  return NextResponse.json({ order, canDelete: session!.role === 'full' })
+}
+
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  const session = getAdminSession(request)
+  if (!session || session.role !== 'full') {
+    return NextResponse.json({ error: 'Only the full admin can delete orders.' }, { status: 403 })
   }
   const order = await getOrder(params.id)
   if (!order) return NextResponse.json({ error: 'Order not found' }, { status: 404 })
-  return NextResponse.json({ order })
+  await deleteOrder(params.id)
+  return NextResponse.json({ success: true })
 }
 
 /**
@@ -27,10 +50,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
  * email), status (collected / cancelled / received, no email).
  */
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
-  if (!isAdminRequest(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const session = getAdminSession(request)
   let order = await getOrder(params.id)
+  const blocked = deny(session, order)
+  if (blocked) return blocked
   if (!order) return NextResponse.json({ error: 'Order not found' }, { status: 404 })
 
   const body = await request.json().catch(() => ({}))
@@ -42,18 +65,31 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   }
 
   if (action === 'resend' || action === 'ready') {
-    if (!order.customer.email) {
-      return NextResponse.json({ error: 'This order has no customer email.' }, { status: 400 })
+    const to = String(body.to || order.customer.email || '')
+      .trim()
+      .toLowerCase()
+    if (!EMAIL_RE.test(to)) {
+      return NextResponse.json({ error: 'Enter a valid email address to send to.' }, { status: 400 })
     }
     const kind = action === 'ready' ? 'ready' : 'receipt'
-    const sent = await sendCustomerEmail(order, kind)
+    const sent = await sendCustomerEmail(order, kind, to)
     if (!sent.ok) {
       return NextResponse.json({ error: `Email failed: ${sent.error}` }, { status: 502 })
     }
     if (action === 'ready') {
-      order = { ...addEvent(order, 'Marked ready — customer emailed', order.customer.email), status: 'ready' }
+      const alreadySent = !!(order.readyEmailedAt || order.status === 'ready')
+      order = {
+        ...addEvent(
+          order,
+          alreadySent ? 'Ready pickup email sent again' : 'Marked ready — customer emailed',
+          to
+        ),
+        status: 'ready',
+        readyEmailedAt: new Date().toISOString(),
+        readyEmailedTo: to,
+      }
     } else {
-      order = addEvent(order, 'Receipt re-sent to customer', order.customer.email)
+      order = addEvent(order, 'Receipt re-sent to customer', to)
     }
   } else if (action === 'forward') {
     const to = String(body.to || '').trim().toLowerCase()

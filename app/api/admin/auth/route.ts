@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import {
   adminCredentialsConfigured,
-  checkAdminCredentials,
+  authenticateAdmin,
   createAdminToken,
-  isAdminRequest,
+  getAdminSession,
+  publicSession,
 } from '@/lib/admin-auth'
 import { rateLimit } from '@/lib/rate-limit'
 
 export async function GET(request: NextRequest) {
-  if (!isAdminRequest(request)) {
+  const session = getAdminSession(request)
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  return NextResponse.json({ authenticated: true })
+  return NextResponse.json({ authenticated: true, session: publicSession(session) })
 }
 
 export async function POST(request: NextRequest) {
@@ -27,12 +29,13 @@ export async function POST(request: NextRequest) {
     }
 
     const { email, password } = await request.json()
-    if (!checkAdminCredentials(email, password)) {
+    const session = authenticateAdmin(email, password)
+    if (!session) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
-    const token = createAdminToken()
-    const response = NextResponse.json({ success: true, token })
+    const token = createAdminToken(session)
+    const response = NextResponse.json({ success: true, token, session: publicSession(session) })
     response.cookies.set('admin_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

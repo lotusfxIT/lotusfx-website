@@ -2,8 +2,17 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeftIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
+import { ArrowLeftIcon, ArrowPathIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
+import DateToolbar from '@/components/admin/DateToolbar'
 import type { OrderRecord, OrderStatus } from '@/lib/orders'
+import {
+  dayKey,
+  groupByDay,
+  inDatePreset,
+  monthKey,
+  uniqueMonths,
+  type DatePreset,
+} from '@/lib/admin-list'
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
   received: 'bg-amber-100 text-amber-800',
@@ -34,18 +43,30 @@ function money(amount: number, ccy: string) {
   return `${amount.toLocaleString('en-AU', { maximumFractionDigits: 2 })} ${ccy}`
 }
 
+function lastReady(order: OrderRecord) {
+  if (order.readyEmailedTo) return { at: order.readyEmailedAt, to: order.readyEmailedTo }
+  const ev = [...order.events].reverse().find((e) => /ready/i.test(e.action) && /email/i.test(e.action))
+  return ev ? { at: ev.at, to: ev.detail } : null
+}
+
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<OrderRecord[]>([])
+  const [canDelete, setCanDelete] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [unauthorized, setUnauthorized] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all')
   const [query, setQuery] = useState('')
+  const [datePreset, setDatePreset] = useState<DatePreset>('all')
+  const [month, setMonth] = useState('')
+  const [openDays, setOpenDays] = useState<Record<string, boolean>>({})
   const [busy, setBusy] = useState('')
   const [notice, setNotice] = useState('')
   const [forwardTo, setForwardTo] = useState('')
   const [forwardNote, setForwardNote] = useState('')
+  const [changeReceiver, setChangeReceiver] = useState(false)
+  const [readyTo, setReadyTo] = useState('')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -59,6 +80,7 @@ export default function AdminOrdersPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Could not load orders')
       setOrders(data.orders || [])
+      setCanDelete(!!data.canDelete)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not load orders')
     } finally {
@@ -76,14 +98,19 @@ export default function AdminOrdersPage() {
     const q = query.trim().toLowerCase()
     return orders.filter((o) => {
       if (statusFilter !== 'all' && o.status !== statusFilter) return false
+      if (month && monthKey(o.createdAt) !== month) return false
+      if (!month && !inDatePreset(o.createdAt, datePreset)) return false
       if (!q) return true
       return [o.id, o.customer.name, o.customer.email, o.customer.phone, o.branch.name, o.purchase.foreignCurrency]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(q))
     })
-  }, [orders, statusFilter, query])
+  }, [orders, statusFilter, query, datePreset, month])
 
+  const groups = useMemo(() => groupByDay(filtered), [filtered])
+  const months = useMemo(() => uniqueMonths(orders), [orders])
   const selected = orders.find((o) => o.id === selectedId) || null
+  const todayKey = dayKey(new Date().toISOString())
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: orders.length }
@@ -92,6 +119,19 @@ export default function AdminOrdersPage() {
     })
     return c
   }, [orders])
+
+  function isDayOpen(key: string) {
+    if (openDays[key] !== undefined) return openDays[key]
+    if (groups.some((g) => g.key === key && g.items.some((item) => item.id === selectedId))) return true
+    return key === todayKey || groups[0]?.key === key
+  }
+
+  function selectOrder(o: OrderRecord) {
+    setSelectedId(o.id)
+    setNotice('')
+    setChangeReceiver(false)
+    setReadyTo(lastReady(o)?.to || o.customer.email)
+  }
 
   async function act(body: Record<string, unknown>, confirmText?: string) {
     if (!selected) return
@@ -113,8 +153,36 @@ export default function AdminOrdersPage() {
         setForwardTo('')
         setForwardNote('')
       }
+      if (body.action === 'ready') {
+        setChangeReceiver(false)
+        setReadyTo(data.order.readyEmailedTo || selected.customer.email)
+      }
     } catch (e) {
       setNotice(e instanceof Error ? e.message : 'Action failed')
+    } finally {
+      setBusy('')
+    }
+  }
+
+  async function removeOrder() {
+    if (!selected || !canDelete) return
+    if (!window.confirm(`Permanently delete order ${selected.id} from this admin list? This does not cancel it in the branch system.`)) {
+      return
+    }
+    setBusy('delete')
+    setNotice('')
+    try {
+      const res = await fetch(`/api/admin/orders/${encodeURIComponent(selected.id)}`, {
+        method: 'DELETE',
+        headers: authHeaders(),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Could not delete order')
+      setOrders((prev) => prev.filter((o) => o.id !== selected.id))
+      setSelectedId(null)
+      setNotice('Order deleted from admin.')
+    } catch (e) {
+      setNotice(e instanceof Error ? e.message : 'Could not delete order')
     } finally {
       setBusy('')
     }
@@ -131,6 +199,10 @@ export default function AdminOrdersPage() {
     )
   }
 
+  const readyInfo = selected ? lastReady(selected) : null
+  const readySent = !!(readyInfo?.to || selected?.status === 'ready')
+  const sendTo = (changeReceiver ? readyTo : readyInfo?.to || selected?.customer.email || '').trim()
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
       <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -141,7 +213,7 @@ export default function AdminOrdersPage() {
             </Link>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Click & Collect orders</h1>
-              <p className="text-sm text-gray-500">Order history, receipts and pickup notifications</p>
+              <p className="text-sm text-gray-500">Grouped by date — search, filter, then open an order</p>
             </div>
           </div>
           <button
@@ -168,6 +240,19 @@ export default function AdminOrdersPage() {
               </button>
             ))}
           </div>
+          <DateToolbar
+            preset={datePreset}
+            month={month}
+            months={months}
+            onPreset={(p) => {
+              setDatePreset(p)
+              setMonth('')
+            }}
+            onMonth={(m) => {
+              setMonth(m)
+              setDatePreset('all')
+            }}
+          />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -175,32 +260,55 @@ export default function AdminOrdersPage() {
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
           />
           {error && <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-          <div className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 overflow-hidden">
-            {loading && orders.length === 0 && <p className="p-4 text-sm text-gray-500">Loading orders…</p>}
-            {!loading && filtered.length === 0 && <p className="p-4 text-sm text-gray-500">No orders found.</p>}
-            {filtered.map((o) => (
-              <button
-                key={o.id}
-                onClick={() => {
-                  setSelectedId(o.id)
-                  setNotice('')
-                }}
-                className={`w-full text-left p-4 hover:bg-gray-50 ${selectedId === o.id ? 'bg-primary-50' : ''}`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-semibold text-gray-900">{o.customer.name || o.customer.email}</span>
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_STYLES[o.status]}`}>
-                    {STATUS_LABELS[o.status]}
-                  </span>
+          <div className="space-y-3">
+            {loading && orders.length === 0 && (
+              <p className="rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-500">Loading orders…</p>
+            )}
+            {!loading && filtered.length === 0 && (
+              <p className="rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-500">No orders found.</p>
+            )}
+            {groups.map((group) => {
+              const open = isDayOpen(group.key)
+              return (
+                <div key={group.key} className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setOpenDays((prev) => ({ ...prev, [group.key]: !open }))}
+                    className="w-full flex items-center justify-between gap-2 px-4 py-3 bg-gray-50 hover:bg-gray-100"
+                  >
+                    <span className="font-semibold text-gray-900">{group.label}</span>
+                    <span className="inline-flex items-center gap-2 text-xs text-gray-500">
+                      {group.items.length} {group.items.length === 1 ? 'order' : 'orders'}
+                      <ChevronDownIcon className={`w-4 h-4 transition ${open ? 'rotate-180' : ''}`} />
+                    </span>
+                  </button>
+                  {open && (
+                    <div className="divide-y divide-gray-100">
+                      {group.items.map((o) => (
+                        <button
+                          key={o.id}
+                          onClick={() => selectOrder(o)}
+                          className={`w-full text-left p-4 hover:bg-gray-50 ${selectedId === o.id ? 'bg-primary-50' : ''}`}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-semibold text-gray-900">{o.customer.name || o.customer.email}</span>
+                            <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_STYLES[o.status]}`}>
+                              {STATUS_LABELS[o.status]}
+                            </span>
+                          </div>
+                          <div className="mt-1 text-sm text-gray-600">
+                            {money(o.purchase.foreignAmount, o.purchase.foreignCurrency)} · {o.branch.name || 'No branch'}
+                          </div>
+                          <div className="mt-0.5 text-xs text-gray-400">
+                            {o.id} · {o.country} · {fmtDate(o.createdAt)}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="mt-1 text-sm text-gray-600">
-                  {money(o.purchase.foreignAmount, o.purchase.foreignCurrency)} · {o.branch.name || 'No branch'}
-                </div>
-                <div className="mt-0.5 text-xs text-gray-400">
-                  {o.id} · {o.country} · {fmtDate(o.createdAt)}
-                </div>
-              </button>
-            ))}
+              )
+            })}
           </div>
         </section>
 
@@ -252,22 +360,62 @@ export default function AdminOrdersPage() {
                   ))}
               </dl>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="rounded-lg border border-blue-100 bg-blue-50/60 p-3 space-y-3">
+                {readySent && readyInfo?.to && (
+                  <p className="text-sm text-blue-900">
+                    Ready pickup email sent to <span className="font-semibold">{readyInfo.to}</span>
+                    {readyInfo.at ? ` · ${fmtDate(readyInfo.at)}` : ''}
+                  </p>
+                )}
                 <button
                   disabled={!!busy}
                   onClick={() =>
                     act(
-                      { action: 'ready' },
-                      `Email ${selected.customer.email} that their currency is ready to collect?`
+                      { action: 'ready', to: sendTo },
+                      readySent
+                        ? `Send the ready-for-pickup email again to ${sendTo}?`
+                        : `Email ${sendTo} that their currency is ready to collect?`
                     )
                   }
                   className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {busy === 'ready' ? 'Sending…' : 'Ready for pickup — email customer'}
+                  {busy === 'ready'
+                    ? 'Sending…'
+                    : readySent
+                      ? 'Ready pickup email sent — click to send again'
+                      : 'Ready for pickup — email customer'}
                 </button>
+                {readySent && (
+                  <label className="flex items-start gap-2 text-sm text-gray-800">
+                    <input
+                      type="checkbox"
+                      className="mt-1"
+                      checked={changeReceiver}
+                      onChange={(e) => {
+                        setChangeReceiver(e.target.checked)
+                        if (e.target.checked && !readyTo) setReadyTo(selected.customer.email)
+                      }}
+                    />
+                    <span>
+                      Change receiver
+                      {changeReceiver && (
+                        <input
+                          type="email"
+                          value={readyTo}
+                          onChange={(e) => setReadyTo(e.target.value)}
+                          placeholder="new.email@example.com"
+                          className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm"
+                        />
+                      )}
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-2">
                 <button
                   disabled={!!busy}
-                  onClick={() => act({ action: 'resend' }, `Resend the receipt to ${selected.customer.email}?`)}
+                  onClick={() => act({ action: 'resend', to: selected.customer.email }, `Resend the receipt to ${selected.customer.email}?`)}
                   className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50 disabled:opacity-50"
                 >
                   {busy === 'resend' ? 'Sending…' : 'Resend receipt'}
@@ -293,6 +441,15 @@ export default function AdminOrdersPage() {
                     className="rounded-lg px-3 py-2 text-sm text-gray-500 underline disabled:opacity-50"
                   >
                     Reset to received
+                  </button>
+                )}
+                {canDelete && (
+                  <button
+                    disabled={!!busy}
+                    onClick={removeOrder}
+                    className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"
+                  >
+                    {busy === 'delete' ? 'Deleting…' : 'Delete order'}
                   </button>
                 )}
               </div>

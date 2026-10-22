@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { isAdminRequest } from '@/lib/admin-auth'
+import { isFullAdminRequest } from '@/lib/admin-auth'
 import { mergeSiteStats, type SiteStats } from '@/config/stats'
 import { readSiteStats, writeSiteStats } from '@/lib/site-stats-server'
 
 function isAuthed(request: NextRequest) {
-  return isAdminRequest(request)
+  return isFullAdminRequest(request)
 }
 
 export async function GET(request: NextRequest) {

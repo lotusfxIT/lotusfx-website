@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 import { sendMail } from '@/lib/mailjet'
-import { getRecord, listRecords, saveRecord } from '@/lib/records-store'
+import { deleteRecord, getRecord, listRecords, saveRecord } from '@/lib/records-store'
 import {
   buildClickCollectReceiptHtml,
   buildClickCollectStaffHtml,
@@ -40,6 +40,8 @@ export type OrderRecord = {
   branch: { id?: string; name?: string; address?: string; phone?: string }
   backendStatusText?: string
   events: OrderEvent[]
+  readyEmailedAt?: string
+  readyEmailedTo?: string
 }
 
 const TIMEZONES: Record<string, string> = {
@@ -142,6 +144,7 @@ export function buildOrderRecord(
 export const saveOrder = (order: OrderRecord) => saveRecord(PREFIX, order.id, order)
 export const getOrder = (id: string) => getRecord<OrderRecord>(PREFIX, id)
 export const listOrders = () => listRecords<OrderRecord>(PREFIX)
+export const deleteOrder = (id: string) => deleteRecord(PREFIX, id)
 
 export function addEvent(order: OrderRecord, action: string, detail?: string): OrderRecord {
   return { ...order, events: [...order.events, { at: new Date().toISOString(), action, detail }] }
@@ -241,10 +244,11 @@ export function staffEmail(order: OrderRecord, heading = `New ${ORDER_PRODUCT_NA
   }
 }
 
-export async function sendCustomerEmail(order: OrderRecord, kind: 'receipt' | 'ready') {
+export async function sendCustomerEmail(order: OrderRecord, kind: 'receipt' | 'ready', toOverride?: string) {
   const mail = kind === 'ready' ? readyEmail(order) : receiptEmail(order)
+  const to = (toOverride || order.customer.email).trim().toLowerCase()
   return sendMail({
-    to: order.customer.email,
+    to,
     country: order.country,
     subject: mail.subject,
     html: mail.html,

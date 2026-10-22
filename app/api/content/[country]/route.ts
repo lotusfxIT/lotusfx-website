@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { isAdminRequest } from '@/lib/admin-auth'
+import { isFullAdminRequest } from '@/lib/admin-auth'
 import { readSiteStats, readSiteStatsFile, writeSiteStats } from '@/lib/site-stats-server'
 import { readAdminJson, writeAdminJson } from '@/lib/admin-json-store'
 
 function isAuthed(request: NextRequest) {
-  return isAdminRequest(request)
+  return isFullAdminRequest(request)
 }
 
 function contentPath(country: string) {

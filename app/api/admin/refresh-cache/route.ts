@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { isAdminRequest } from '@/lib/admin-auth'
+import { isFullAdminRequest } from '@/lib/admin-auth'
 
 /**
  * Admin Cache Refresh Endpoint
@@ -14,7 +14,7 @@ import { isAdminRequest } from '@/lib/admin-auth'
 
 export async function POST(request: NextRequest) {
   try {
-    if (!isAdminRequest(request)) {
+    if (!isFullAdminRequest(request)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

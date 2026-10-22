@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
-import { isAdminRequest } from '@/lib/admin-auth'
+import { isFullAdminRequest } from '@/lib/admin-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -95,7 +95,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    if (!isAdminRequest(request)) {
+    if (!isFullAdminRequest(request)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

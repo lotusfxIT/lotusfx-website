@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { get, list, put } from '@vercel/blob'
+import { del, get, list, put } from '@vercel/blob'
 
 /**
  * One private JSON blob per record (orders/, messages/). Private blobs are only
@@ -91,4 +91,21 @@ export async function listRecords<T extends { createdAt: string }>(
     }
   }
   return records.sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, limit)
+}
+
+export async function deleteRecord(prefix: string, id: string): Promise<boolean> {
+  const key = `${prefix}/${safeId(id)}.json`
+  const token = blobToken()
+  if (token) {
+    try {
+      await del(key, { token })
+      return true
+    } catch {
+      return false
+    }
+  }
+  const file = path.join(localDir(prefix), `${safeId(id)}.json`)
+  if (!fs.existsSync(file)) return false
+  fs.unlinkSync(file)
+  return true
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { isAdminRequest } from '@/lib/admin-auth'
+import { isFullAdminRequest } from '@/lib/admin-auth'
 import { normalizeCurrenciesFile, type CurrenciesDenominationsFile } from '@/lib/currencies'
 import {
   getDefaultCurrenciesFile,
@@ -8,7 +8,7 @@ import {
 } from '@/lib/currencies-server'
 
 function isAuthed(request: NextRequest) {
-  return isAdminRequest(request)
+  return isFullAdminRequest(request)
 }
 
 export async function GET(request: NextRequest) {

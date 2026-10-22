@@ -23,6 +23,13 @@ interface DashboardStats {
   totalUsers: number
 }
 
+type AdminSessionInfo = {
+  email: string
+  role: 'full' | 'au-ops'
+  country: 'AU' | null
+  modules: Array<'orders' | 'messages'> | 'all'
+}
+
 function AdminLoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -45,8 +52,8 @@ function AdminLoginPage() {
       if (response.ok) {
         const data = await response.json()
         localStorage.setItem('admin_token', data.token)
-        localStorage.setItem('adminToken', data.token) // Also store as adminToken for content API
-        // Wait a moment for cookie to be set, then reload
+        localStorage.setItem('adminToken', data.token)
+        if (data.session) localStorage.setItem('admin_session', JSON.stringify(data.session))
         setTimeout(() => {
           window.location.href = '/admin'
         }, 500)
@@ -139,18 +146,24 @@ export default function AdminDashboard() {
     totalUsers: 1,
   })
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [session, setSession] = useState<AdminSessionInfo | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check authentication
     const checkAuth = async () => {
       try {
         const response = await fetch('/api/admin/auth', {
           method: 'GET',
-          credentials: 'include', // Include cookies
+          credentials: 'include',
         })
-        setIsAuthenticated(response.ok)
-      } catch (error) {
+        if (response.ok) {
+          const data = await response.json()
+          setSession(data.session || null)
+          setIsAuthenticated(true)
+        } else {
+          setIsAuthenticated(false)
+        }
+      } catch {
         setIsAuthenticated(false)
       } finally {
         setLoading(false)
@@ -172,6 +185,7 @@ export default function AdminDashboard() {
     return <AdminLoginPage />
   }
 
+  const limited = session?.role === 'au-ops'
   const menuItems = [
     {
       icon: ShoppingBagIcon,
@@ -189,6 +203,8 @@ export default function AdminDashboard() {
       color: 'from-green-600 to-green-700',
       stat: 'View',
     },
+    ...(!limited
+      ? [
     {
       icon: PencilSquareIcon,
       title: 'Country Content',
@@ -253,6 +269,8 @@ export default function AdminDashboard() {
       color: 'from-accent-800 to-accent-900',
       stat: 1,
     },
+      ]
+      : []),
   ]
 
   return (
@@ -285,10 +303,21 @@ export default function AdminDashboard() {
           className="mb-12"
         >
           <h2 className="text-4xl font-bold text-gray-900 mb-2">Welcome back! 👋</h2>
-          <p className="text-xl text-gray-600">Manage your LotusFX website content and settings</p>
+          {limited ? (
+            <div className="mt-4 rounded-xl border border-primary-200 bg-primary-50 px-5 py-4">
+              <p className="text-lg font-semibold text-primary-900">
+                You have been given access for these 2 modules for AU region
+              </p>
+              <p className="mt-1 text-sm text-primary-800">
+                Click &amp; Collect orders and Contact messages — Australia only.
+              </p>
+            </div>
+          ) : (
+            <p className="text-xl text-gray-600">Manage your LotusFX website content and settings</p>
+          )}
         </motion.div>
 
-        {/* Stats Grid */}
+        {!limited && (
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
           initial={{ opacity: 0 }}
@@ -318,6 +347,7 @@ export default function AdminDashboard() {
             </motion.div>
           ))}
         </motion.div>
+        )}
 
         {/* Menu Grid */}
         <motion.div
@@ -359,7 +389,7 @@ export default function AdminDashboard() {
           })}
         </motion.div>
 
-        {/* Quick Actions */}
+        {!limited && (
         <motion.div
           className="mt-12 bg-white rounded-lg shadow-lg p-8"
           initial={{ opacity: 0, y: 20 }}
@@ -388,6 +418,7 @@ export default function AdminDashboard() {
             </Link>
           </div>
         </motion.div>
+        )}
       </div>
     </div>
   )
