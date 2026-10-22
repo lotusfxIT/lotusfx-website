@@ -241,7 +241,7 @@ function Toast({
   )
 }
 
-export default function QuickOrderWizard() {
+export default function QuickOrderWizard({ preview = false }: { preview?: boolean }) {
   const searchParams = useSearchParams()
   const { selectedCountry, countryReady } = useCountry()
   const { stats: siteStats } = useSiteStats()
@@ -249,7 +249,8 @@ export default function QuickOrderWizard() {
     selectedCountry === 'NZ' || selectedCountry === 'FJ' || selectedCountry === 'AU'
       ? selectedCountry
       : 'AU'
-  const quickOrderAllowed = isQuickOrderEnabled(selectedCountry)
+  const quickOrderAllowed =
+    isQuickOrderEnabled(selectedCountry) || (preview && marketCountry === 'AU')
 
   const lookupTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -548,7 +549,7 @@ export default function QuickOrderWizard() {
   }, [searchParams])
 
   useEffect(() => {
-    if (!countryReady || !isQuickOrderEnabled(marketCountry)) return
+    if (!countryReady || !quickOrderAllowed) return
     const load = async () => {
       setLoadingMeta(true)
       setServiceDown(false)
@@ -642,7 +643,7 @@ export default function QuickOrderWizard() {
     }
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [marketCountry, countryReady, reloadTick])
+  }, [marketCountry, countryReady, reloadTick, quickOrderAllowed])
 
   const lookupRate = useCallback(
     async (amountOverride?: number) => {

@@ -7,6 +7,9 @@ export type QuickOrderParams = {
 /** Countries where guest Click & Collect is shown. Empty = hidden (bring AU back with `['AU']`). */
 const QUICK_ORDER_LIVE_COUNTRIES: readonly string[] = []
 
+/** Unlinked staff test path. Not in nav, sitemap, or calculator CTAs. */
+export const CLICK_COLLECT_PREVIEW_PATH = '/click-and-collect-preview'
+
 export function isQuickOrderEnabled(country?: string | null): boolean {
   return QUICK_ORDER_LIVE_COUNTRIES.includes(String(country || '').toUpperCase())
 }

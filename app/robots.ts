@@ -13,7 +13,15 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/api/', '/_next/', '/auth/', '/clear-tokens/'],
+        disallow: [
+          '/admin/',
+          '/api/',
+          '/_next/',
+          '/auth/',
+          '/clear-tokens/',
+          '/click-and-collect',
+          '/click-and-collect-preview',
+        ],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
