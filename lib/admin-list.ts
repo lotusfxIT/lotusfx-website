@@ -64,7 +64,7 @@ export function groupByDay<T extends { createdAt: string }>(items: T[], tz = DEF
       groups.set(key, { key, label: dayLabel(item.createdAt, tz) || 'Unknown date', items: [item] })
     }
   }
-  return [...groups.values()]
+  return Array.from(groups.values())
 }
 
 export function uniqueMonths<T extends { createdAt: string }>(items: T[], tz = DEFAULT_TZ): string[] {
@@ -73,5 +73,5 @@ export function uniqueMonths<T extends { createdAt: string }>(items: T[], tz = D
     const key = monthKey(item.createdAt, tz)
     if (key) keys.add(key)
   }
-  return [...keys].sort().reverse()
+  return Array.from(keys).sort().reverse()
 }
