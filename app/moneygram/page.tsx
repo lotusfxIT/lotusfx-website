@@ -9,6 +9,7 @@ import {
   GlobeAltIcon,
   BuildingLibraryIcon,
   WalletIcon,
+  ComputerDesktopIcon,
 } from '@heroicons/react/24/outline'
 import MotionWrapper from '@/components/MotionWrapper'
 import {
@@ -23,12 +24,13 @@ import {
   MoneygramAppFooterNote,
   MoneygramAppSendCta,
   MoneygramHeroCtas,
+  MoneygramWebSendCta,
 } from '@/components/MoneygramAppCtas'
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'MoneyGram Money Transfers',
   description:
-    'Send money worldwide with MoneyGram through Lotus FX. Use our app or visit us in-store for fast, secure international money transfers.',
+    'Send money worldwide with MoneyGram through Lotus FX. Send on our website, in the app, or visit us in-store for fast, secure international money transfers.',
   path: '/moneygram',
   keywords: ['MoneyGram', 'money transfer', 'international remittance', 'LotusFX'],
 })
@@ -62,6 +64,20 @@ const features = [
 
 const sendOptions = [
   {
+    icon: ComputerDesktopIcon,
+    title: 'Send on the Lotus FX website',
+    description:
+      'Log in to your Lotus FX account and send a MoneyGram transfer online — same as in the app, from your computer.',
+    points: [
+      'Send from the customer portal',
+      'Save recipient details',
+      'See the rate and fees before you confirm',
+      'Track your transfer online',
+    ],
+    cta: 'Send on the website',
+    useWebCta: true,
+  },
+  {
     icon: DevicePhoneMobileIcon,
     title: 'Send with the Lotus FX app',
     description:
@@ -88,7 +104,6 @@ const sendOptions = [
     ],
     href: '/locations',
     cta: 'Find a branch',
-    useAppCta: false,
   },
 ]
 
@@ -96,7 +111,7 @@ const steps = [
   {
     number: '01',
     title: 'Choose how you send',
-    description: 'Use the Lotus FX app for convenience, or visit a branch for personal assistance.',
+    description: 'Send on the Lotus FX website, in the app, or visit a branch for personal assistance.',
   },
   {
     number: '02',
@@ -108,7 +123,7 @@ const steps = [
     number: '03',
     title: 'Complete payment',
     description:
-      'Pay securely in the app or in store. You\u2019ll get a reference number to track the transfer.',
+      'Pay securely on the website, in the app, or in store. You\u2019ll get a reference number to track the transfer.',
   },
   {
     number: '04',
@@ -122,7 +137,7 @@ const faqs = [
   {
     question: 'Can I send MoneyGram transfers through Lotus FX?',
     answer:
-      'Yes. You can send MoneyGram transfers through the Lotus FX app or at participating Lotus FX branches, depending on availability in your location.',
+      'Yes. You can send MoneyGram transfers on the Lotus FX website, through the Lotus FX app, or at participating Lotus FX branches, depending on availability in your location.',
   },
   {
     question: 'How long does a MoneyGram transfer take?',
@@ -173,8 +188,8 @@ export default function MoneyGramPage() {
               </h1>
               <div className="space-y-3.5 pr-0 lg:pr-2">
                 <p className="text-base sm:text-lg text-white leading-relaxed">
-                  Send money through MoneyGram with Lotus FX — by app or in branch — with clear
-                  guidance, competitive options and support when you need it.
+                  Send money through MoneyGram with Lotus FX — on the website, in the app, or in
+                  branch — with clear guidance, competitive options and support when you need it.
                 </p>
                 <p className="text-sm sm:text-base text-white/85 leading-relaxed">
                   Cash pickup, bank deposit or mobile wallet where available, across a trusted global
@@ -199,8 +214,8 @@ export default function MoneyGramPage() {
                 title="At a glance"
                 items={[
                   {
-                    label: 'App or in branch',
-                    detail: 'Send when it suits you — phone or face-to-face',
+                    label: 'Website, app or branch',
+                    detail: 'Send online, from your phone, or face-to-face',
                   },
                   {
                     label: 'Global network',
@@ -228,10 +243,10 @@ export default function MoneyGramPage() {
             <SectionHeading
               align="center"
               title="How would you like to send?"
-              subtitle="Start in the Lotus FX app, or walk into a branch for personal help."
+              subtitle="Send on the website, start in the Lotus FX app, or walk into a branch for personal help."
             />
           </div>
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-10 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-8 max-w-6xl mx-auto">
             {sendOptions.map((option, i) => (
               <MotionWrapper
                 key={option.title}
@@ -255,8 +270,10 @@ export default function MoneyGramPage() {
                       </li>
                     ))}
                   </ul>
-                  {option.useAppCta ? (
-                    <MoneygramAppSendCta className={`${btnPrimary} self-start`} label={option.cta} />
+                  {option.useWebCta ? (
+                    <MoneygramWebSendCta className={`${btnPrimary} self-start`} label={option.cta} />
+                  ) : option.useAppCta ? (
+                    <MoneygramAppSendCta className={`${btnPrimary} self-start`} />
                   ) : (
                     <Link href={option.href!} className={`${btnPrimary} self-start`}>
                       {option.cta}
@@ -277,7 +294,7 @@ export default function MoneyGramPage() {
             <SectionHeading
               align="center"
               title="How it works"
-              subtitle="Four clear steps whether you send from the app or in branch."
+              subtitle="Four clear steps whether you send from the website, the app, or in branch."
             />
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">

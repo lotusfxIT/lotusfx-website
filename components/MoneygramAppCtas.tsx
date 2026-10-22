@@ -16,15 +16,20 @@ export function MoneygramHeroCtas({
   const portal = getCountryPortalLinks(selectedCountry)
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 mt-7 sm:mt-8">
-      {portal.showApps && portal.playStore ? (
-        <a href={portal.playStore} target="_blank" rel="noopener noreferrer" className={primaryClass}>
-          Google Play
+    <div className="flex flex-col sm:flex-row flex-wrap gap-3 mt-7 sm:mt-8">
+      {portal.showLogin && portal.web ? (
+        <a href={portal.web} target="_blank" rel="noopener noreferrer" className={primaryClass}>
+          Send on the website
         </a>
       ) : null}
       {portal.showApps && portal.appStore ? (
         <a href={portal.appStore} target="_blank" rel="noopener noreferrer" className={primaryClass}>
           App Store
+        </a>
+      ) : null}
+      {portal.showApps && portal.playStore ? (
+        <a href={portal.playStore} target="_blank" rel="noopener noreferrer" className={primaryClass}>
+          Google Play
         </a>
       ) : null}
       <Link href="/locations" className={secondaryClass}>
@@ -54,16 +59,16 @@ export function MoneygramAppFooterNote({ linkClass }: { linkClass: string }) {
   )
 }
 
-export function MoneygramAppSendCta({
+export function MoneygramWebSendCta({
   className,
-  label = 'Get the app',
+  label = 'Send on the website',
 }: {
   className: string
   label?: string
 }) {
   const { selectedCountry } = useCountry()
   const portal = getCountryPortalLinks(selectedCountry)
-  if (!portal.showApps || !portal.playStore) {
+  if (!portal.showLogin || !portal.web) {
     return (
       <Link href="/locations" className={className}>
         Find a branch
@@ -71,8 +76,39 @@ export function MoneygramAppSendCta({
     )
   }
   return (
-    <a href={portal.playStore} target="_blank" rel="noopener noreferrer" className={className}>
+    <a href={portal.web} target="_blank" rel="noopener noreferrer" className={className}>
       {label}
     </a>
+  )
+}
+
+export function MoneygramAppSendCta({
+  className,
+}: {
+  className: string
+  label?: string
+}) {
+  const { selectedCountry } = useCountry()
+  const portal = getCountryPortalLinks(selectedCountry)
+  if (!portal.showApps || (!portal.appStore && !portal.playStore)) {
+    return (
+      <Link href="/locations" className={className}>
+        Find a branch
+      </Link>
+    )
+  }
+  return (
+    <div className="flex flex-wrap gap-2">
+      {portal.appStore ? (
+        <a href={portal.appStore} target="_blank" rel="noopener noreferrer" className={className}>
+          App Store
+        </a>
+      ) : null}
+      {portal.playStore ? (
+        <a href={portal.playStore} target="_blank" rel="noopener noreferrer" className={className}>
+          Google Play
+        </a>
+      ) : null}
+    </div>
   )
 }

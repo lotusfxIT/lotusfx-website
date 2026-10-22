@@ -48,7 +48,7 @@ const transferMethods = [
   {
     title: 'MoneyGram transfers',
     description:
-      'Send and receive money worldwide through MoneyGram across more than 200 countries and territories, with cash pickup and direct bank deposit options.',
+      'Send and receive money worldwide through MoneyGram across more than 200 countries and territories — on the website, in the app, or in branch — with cash pickup and direct bank deposit options.',
     href: '/moneygram',
     icon: <CurrencyDollarIcon className="w-6 h-6" />,
     badge: '200+ countries',

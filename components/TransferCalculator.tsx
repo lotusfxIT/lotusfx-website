@@ -188,7 +188,27 @@ function TransferCalculatorActive() {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">You send</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Receive country</label>
+        <select
+          value={toCountryCode}
+          onChange={(e) => {
+            const dest = toCountryOptions.find((c) => c.countryCode === e.target.value)
+            if (!dest) return
+            setToCountryCode(dest.countryCode)
+            setToCurrency(dest.currency)
+          }}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+        >
+          {toCountryOptions.map((c) => (
+            <option key={c.countryCode} value={c.countryCode}>
+              {c.country} ({c.currency})
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{baseCurrency} amount</label>
         <div className="flex gap-2">
           <div className="w-24 shrink-0 flex items-center justify-center px-3 py-3 border border-gray-300 rounded-lg bg-gray-50 font-semibold text-gray-800">
             {baseCurrency}
@@ -210,7 +230,7 @@ function TransferCalculatorActive() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Recipient gets</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Receive amount</label>
         <div className="flex gap-2">
           <div className="w-24 shrink-0 flex items-center justify-center px-3 py-3 border border-gray-300 rounded-lg bg-gray-50 font-semibold text-gray-800">
             {toCurrency}
@@ -234,26 +254,6 @@ function TransferCalculatorActive() {
             1 {baseCurrency} = {rate.toFixed(4)} {toCurrency}
           </p>
         )}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">To country</label>
-        <select
-          value={toCountryCode}
-          onChange={(e) => {
-            const dest = toCountryOptions.find((c) => c.countryCode === e.target.value)
-            if (!dest) return
-            setToCountryCode(dest.countryCode)
-            setToCurrency(dest.currency)
-          }}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-        >
-          {toCountryOptions.map((c) => (
-            <option key={c.countryCode} value={c.countryCode}>
-              {c.country} ({c.currency})
-            </option>
-          ))}
-        </select>
       </div>
 
       <div>

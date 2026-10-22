@@ -16,6 +16,7 @@ import {
   DevicePhoneMobileIcon,
 } from '@heroicons/react/24/outline'
 import { getCountryPortalLinks } from '@/lib/country-portals'
+import { StepCard } from '@/components/marketing/MarketingBlocks'
 
 const partnerships = [
   {
@@ -174,16 +175,6 @@ export default function InternationalWirePage() {
                     Login / Sign Up
                   </a>
                 ) : null}
-                {portal.showApps && playStoreUrl ? (
-                  <a
-                    href={playStoreUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg border-2 border-white/80 px-5 py-3 text-base font-semibold text-white hover:bg-white/10 transition"
-                  >
-                    Google Play
-                  </a>
-                ) : null}
                 {portal.showApps && appStoreUrl ? (
                   <a
                     href={appStoreUrl}
@@ -192,6 +183,16 @@ export default function InternationalWirePage() {
                     className="inline-flex items-center gap-2 rounded-lg border-2 border-white/80 px-5 py-3 text-base font-semibold text-white hover:bg-white/10 transition"
                   >
                     App Store
+                  </a>
+                ) : null}
+                {portal.showApps && playStoreUrl ? (
+                  <a
+                    href={playStoreUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg border-2 border-white/80 px-5 py-3 text-base font-semibold text-white hover:bg-white/10 transition"
+                  >
+                    Google Play
                   </a>
                 ) : null}
                 {!portal.showLogin && !portal.showApps ? (
@@ -309,14 +310,14 @@ export default function InternationalWirePage() {
                 Login / Sign Up
               </a>
             ) : null}
-            {portal.showApps && playStoreUrl ? (
-              <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary">
-                Google Play
-              </a>
-            ) : null}
             {portal.showApps && appStoreUrl ? (
               <a href={appStoreUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary">
                 App Store
+              </a>
+            ) : null}
+            {portal.showApps && playStoreUrl ? (
+              <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary">
+                Google Play
               </a>
             ) : null}
             {!portal.showLogin ? (
@@ -457,21 +458,16 @@ export default function InternationalWirePage() {
             </h2>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {steps.map((step, index) => (
-              <MotionWrapper
+              <StepCard
                 key={step.number}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.06 }}
-                viewport={{ once: true }}
-              >
-                <div className="text-sm font-bold text-primary-600 mb-3">{step.number}</div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2 !leading-[1.4] pb-0.5">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600 !leading-[1.75] text-sm sm:text-base">{step.description}</p>
-              </MotionWrapper>
+                number={step.number}
+                title={step.title}
+                description={step.description}
+                delay={index * 0.06}
+                tone="lotus"
+              />
             ))}
           </div>
         </div>
@@ -498,16 +494,6 @@ export default function InternationalWirePage() {
                   Login / Sign Up
                 </a>
               ) : null}
-              {portal.showApps && playStoreUrl ? (
-                <a
-                  href={playStoreUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-lg border-2 border-white/80 px-5 py-3 font-semibold text-white hover:bg-white/10 transition"
-                >
-                  Google Play
-                </a>
-              ) : null}
               {portal.showApps && appStoreUrl ? (
                 <a
                   href={appStoreUrl}
@@ -516,6 +502,16 @@ export default function InternationalWirePage() {
                   className="inline-flex items-center gap-2 rounded-lg border-2 border-white/80 px-5 py-3 font-semibold text-white hover:bg-white/10 transition"
                 >
                   App Store
+                </a>
+              ) : null}
+              {portal.showApps && playStoreUrl ? (
+                <a
+                  href={playStoreUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg border-2 border-white/80 px-5 py-3 font-semibold text-white hover:bg-white/10 transition"
+                >
+                  Google Play
                 </a>
               ) : null}
               <Link
