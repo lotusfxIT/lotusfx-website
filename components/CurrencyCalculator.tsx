@@ -1050,12 +1050,11 @@ function CurrencyCalculatorActive({
       {/* CTA + footer — transfer pins to bottom; FX spaces evenly with the form */}
       <div className={`space-y-3 shrink-0 ${quoteType === 'transfer' ? 'mt-auto pt-2' : 'pt-1'}`}>
         <div className="space-y-2.5">
-          {quoteType === 'cash' && isQuickOrderEnabled(selectedCountry) && (
+          {quoteType === 'cash' && buyOrSell === 'buy' && isQuickOrderEnabled(selectedCountry) && (
             <Link
               href={buildQuickOrderUrl({
-                to: buyOrSell === 'buy' ? toCurrency : fromCurrency,
+                to: toCurrency,
                 amount,
-                isBuy: buyOrSell === 'sell',
               })}
               onClick={() =>
                 trackEvent('order_initiation', {

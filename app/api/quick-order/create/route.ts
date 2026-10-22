@@ -11,6 +11,7 @@ import {
   staffNotifyEmail,
 } from '@/lib/orders'
 import { CLICK_COLLECT_UNAVAILABLE_MESSAGE, publicServiceError } from '@/lib/service-availability'
+import { walkInCustomerIDForBranch } from '@/lib/walk-in-customers'
 
 /** Never throws: the order already exists in 4D, so storage/email problems must not fail it. */
 async function recordAndNotify(
@@ -74,9 +75,45 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Match 4dDev standalone payload shape
+    const walkInCustomerID = walkInCustomerIDForBranch({
+      country: config.country,
+      branchName: paymentMethod.branchName || paymentMethod.branch?.BranchName,
+      branchId: paymentMethod.branchId || paymentMethod.branch?.BranchID,
+    })
+
+    if (config.country === 'AU' && !walkInCustomerID) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Walk-in customer is not configured for ${
+            paymentMethod.branchName || paymentMethod.branch?.BranchName || 'this branch'
+          }.`,
+        },
+        { status: 400 }
+      )
+    }
+
+    const guestOnlyKeys = new Set([
+      'guestName',
+      'guestPhone',
+      'guestDateOfBirth',
+      'fulfillmentMethod',
+      'deliveryLocation',
+    ])
+    const purchaseFor4d = Object.fromEntries(
+      Object.entries(purchase).filter(([key]) => !guestOnlyKeys.has(key))
+    )
+
+    // Book against the branch walk-in profile (e.g. 000-PM for Parramatta).
+    // Guest details stay on `body` for emails; they are not the 4D customer.
     const payload = {
-      purchase,
+      ...(walkInCustomerID
+        ? { customerID: walkInCustomerID, customerUUID: walkInCustomerID }
+        : {}),
+      purchase: {
+        ...purchaseFor4d,
+        ...(walkInCustomerID ? { customerName: walkInCustomerID } : {}),
+      },
       paymentMethod,
       ...(body?.payer ? { payer: body.payer } : {}),
       ...(body?.consent ? { consent: body.consent } : {}),
@@ -90,6 +127,7 @@ export async function POST(request: NextRequest) {
       totalDebitAmount: purchase.totalDebitAmount,
       paymentMethod: paymentMethod.paymentMethod || paymentMethod.type,
       branchId: paymentMethod.branchId,
+      walkInCustomerID: walkInCustomerID || null,
       // email for ops logs only — never sent to analytics
       hasCustomerRef: !!purchase.customerReference,
     })

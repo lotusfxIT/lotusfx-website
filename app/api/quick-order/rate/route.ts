@@ -17,13 +17,8 @@ export async function POST(request: NextRequest) {
     }
 
     const base = getQuickOrderBaseCurrency(country)
-    const {
-      fromCcy,
-      toCcy = base.code,
-      toAmount,
-      isBuy = true,
-      transferMode = 'booking',
-    } = body || {}
+    const { fromCcy, toCcy = base.code, toAmount, isBuy, transferMode = 'booking', customerID, promoGroup } =
+      body || {}
 
     if (!fromCcy || toAmount === undefined) {
       return NextResponse.json(
@@ -40,19 +35,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Same shape as calculator You Buy: booking only. Do not send isBuy unless
+    // the caller explicitly asks for a sell quote (isBuy: true).
+    const requestPayload: Record<string, unknown> = {
+      toCcy,
+      fromCcy,
+      toAmount: amount,
+    }
+    if (transferMode) requestPayload.transferMode = transferMode
+    if (isBuy === true) requestPayload.isBuy = true
+    if (promoGroup) requestPayload.promoGroup = promoGroup
+    if (customerID) requestPayload.customerID = customerID
+
     const response = await quickOrderApiPost(
       '/rst/Currencies/getExchangeRate',
-      [
-        {
-          toCcy,
-          fromCcy,
-          toAmount: amount,
-          isBuy,
-          promoGroup: '',
-          customerID: '',
-          transferMode,
-        },
-      ],
+      [requestPayload],
       country
     )
 
