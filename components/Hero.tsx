@@ -113,7 +113,7 @@ export default function Hero() {
   })
 
   return (
-    <section className="relative min-h-0 lg:min-h-[100svh] flex flex-col overflow-x-clip w-full pt-[calc(4rem+1rem)] pb-5 sm:pt-[calc(4rem+1.75rem)] sm:pb-7 lg:pt-[calc(5rem+2rem)] lg:pb-8">
+    <section className="relative min-h-0 xl:min-h-[100svh] flex flex-col overflow-x-clip w-full pt-[calc(4rem+1rem)] pb-5 sm:pt-[calc(4rem+1.75rem)] sm:pb-7 xl:pt-[calc(5rem+2rem)] xl:pb-8">
       {/* Background with red gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800"></div>
 
@@ -125,7 +125,7 @@ export default function Hero() {
       </div>
       
       <div className="container-custom relative z-10 px-4 sm:px-6 flex-1 flex flex-col min-h-0">
-        <div className="grid lg:grid-cols-[1.3fr_0.7fr] gap-6 sm:gap-8 lg:gap-8 xl:gap-12 items-stretch flex-1 min-h-0 min-w-0">
+        <div className="grid xl:grid-cols-[minmax(0,1.3fr)_minmax(20rem,0.7fr)] gap-6 sm:gap-8 xl:gap-12 items-stretch flex-1 min-h-0 min-w-0">
           {/* Left Column */}
           <motion.div
             initial={{ opacity: 0, x: -48 }}
@@ -141,12 +141,12 @@ export default function Hero() {
               </h1>
 
               {/* 2. Brief description — wrap freely on mobile; break after "across" from sm up */}
-              <p className="text-base sm:text-xl lg:text-[1.35rem] xl:text-xl text-white/90 !leading-[1.5] pb-[0.1em]">
-                <span className="md:whitespace-nowrap">{subtitleBefore}</span>
+              <p className="text-base sm:text-xl xl:text-xl text-white/90 !leading-[1.5] pb-[0.1em]">
+                <span className="xl:whitespace-nowrap">{subtitleBefore}</span>
                 {subtitleAfter ? (
                   <>
-                    <br className="hidden sm:block" />
-                    <span className="sm:hidden"> </span>
+                    <br className="hidden xl:block" />
+                    <span className="xl:hidden"> </span>
                     {subtitleAfter}
                   </>
                 ) : null}
@@ -160,7 +160,7 @@ export default function Hero() {
                     initial={{ opacity: 0, x: -24 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.45, delay: 0.35 + index * 0.08, ease: 'easeOut' }}
-                    className={`${index >= 4 ? 'hidden lg:flex' : 'flex'} items-start gap-3 min-w-0`}
+                    className={`${index >= 4 ? 'hidden xl:flex' : 'flex'} items-start gap-3 min-w-0`}
                   >
                     <CheckCircleIcon className="w-5 h-5 sm:w-7 sm:h-7 text-white/90 flex-shrink-0 mt-0.5" />
                     <span className="text-white font-medium text-base sm:text-xl !leading-[1.4] pb-0.5">
@@ -171,8 +171,8 @@ export default function Hero() {
               </ul>
             </div>
 
-            <div className="mt-7 lg:mt-auto pt-2 sm:pt-8 space-y-3 sm:space-y-4">
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="mt-7 xl:mt-auto pt-2 sm:pt-8 space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
                 {isQuickOrderEnabled(selectedCountry) && (
                   <Link
                     href={buildQuickOrderUrl({ to: 'USD' })}
@@ -184,7 +184,7 @@ export default function Hero() {
                         location: 'hero',
                       })
                     }
-                    className="hero-qo-pulse col-span-1 lg:col-span-2 w-full text-base lg:text-lg px-5 py-3.5 flex items-center justify-center gap-2 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] shadow-lg hover:shadow-xl bg-white hover:bg-gray-50 text-primary-700 relative z-[1]"
+                    className="hero-qo-pulse col-span-1 xl:col-span-2 w-full text-base xl:text-lg px-4 sm:px-5 py-3.5 flex items-center justify-center gap-2 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] shadow-lg hover:shadow-xl bg-white hover:bg-gray-50 text-primary-700 relative z-[1]"
                   >
                     <span>Click & Collect</span>
                     <span className="ml-1 inline-flex items-center rounded-full bg-primary-600 px-2 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wide text-white">
@@ -203,13 +203,13 @@ export default function Hero() {
                   }
                   className={`${
                     isQuickOrderEnabled(selectedCountry) ? 'col-span-1' : 'col-span-2'
-                  } lg:col-span-2 w-full text-base lg:text-lg px-5 py-3.5 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] border-2 border-white text-white bg-white/10 hover:bg-white/20 flex items-center justify-center gap-2`}
+                  } xl:col-span-2 w-full text-base xl:text-lg px-4 sm:px-5 py-3.5 rounded-lg font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] border-2 border-white text-white bg-white/10 hover:bg-white/20 flex items-center justify-center gap-2`}
                 >
                   <span>Find a local branch</span>
                 </Link>
               </div>
 
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
                 {stats.map((stat) => (
                   <Link
                     key={stat.href}
@@ -247,10 +247,10 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
             className="relative h-full min-h-0 min-w-0 w-full flex flex-col"
           >
-            <div className="bg-white rounded-2xl shadow-strong p-4 sm:p-6 border border-gray-100 relative z-10 w-full max-w-lg h-full mx-auto lg:ml-auto lg:mr-0 flex flex-col min-h-0 min-w-0">
+            <div className="bg-white rounded-2xl shadow-strong p-4 sm:p-6 border border-gray-100 relative z-10 w-full max-w-lg h-full mx-auto xl:ml-auto xl:mr-0 flex flex-col min-h-0 min-w-0">
               {/* Currency symbols - LEFT — soft white + pink/light red */}
               <div
-                className="absolute top-0 bottom-0 pointer-events-none hidden lg:block overflow-visible"
+                className="absolute top-0 bottom-0 pointer-events-none hidden xl:block overflow-visible"
                 style={{
                   right: '100%',
                   width: '120px',
@@ -303,7 +303,7 @@ export default function Hero() {
 
               {/* Currency symbols - RIGHT — soft white + pink/light red */}
               <div
-                className="absolute top-0 bottom-0 pointer-events-none hidden lg:block overflow-visible"
+                className="absolute top-0 bottom-0 pointer-events-none hidden xl:block overflow-visible"
                 style={{
                   left: '100%',
                   width: '120px',

@@ -124,25 +124,25 @@ export default function Header() {
     {/* Solid header — avoid backdrop-filter here; it traps position:fixed children. */}
     <header className="fixed inset-x-0 top-0 z-50 bg-white shadow-lg border-b border-gray-100">
       <nav className="container-custom min-w-0" aria-label="Main navigation">
-        <div className="flex items-center justify-between h-16 lg:h-20 gap-3 min-w-0">
+        <div className="flex items-center justify-between h-16 xl:h-20 gap-3 min-w-0">
           {/* Left: Logo + Navigation */}
-          <div className="flex items-center space-x-8 min-w-0">
+          <div className="flex items-center gap-6 min-w-0">
             {/* Logo */}
             <Link href="/" className="flex shrink-0 items-center hover:opacity-80 transition-opacity">
               <img
                 src="/images/lotus-logo-horizontal.jpg"
                 alt="Lotus Foreign Exchange"
-                className="h-7 min-[360px]:h-9 sm:h-10 lg:h-12 w-auto object-contain"
+                className="h-7 min-[360px]:h-9 sm:h-10 xl:h-12 w-auto object-contain"
               />
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex lg:items-center lg:space-x-6">
+            {/* Desktop Navigation — tablet/hamburger until xl so items don't crush */}
+            <div className="hidden xl:flex xl:items-center xl:gap-x-4 min-w-0">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
                     pathname === item.href
                       ? 'text-primary-600'
                       : 'text-gray-700 hover:text-primary-600'
@@ -154,7 +154,7 @@ export default function Header() {
               {isQuickOrderEnabled(selectedCountry) ? (
                 <Link
                   href="/click-and-collect"
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
                     pathname === '/click-and-collect'
                       ? 'text-primary-600'
                       : 'text-gray-700 hover:text-primary-600'
@@ -168,7 +168,7 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={() => setPartnerMenuOpen(!partnerMenuOpen)}
-                  className="flex items-center space-x-1 text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors duration-200"
+                  className="flex items-center space-x-1 text-sm font-medium whitespace-nowrap text-gray-700 hover:text-primary-600 transition-colors duration-200"
                 >
                   <span>Our Partners</span>
                   <ChevronDownIcon className="w-4 h-4" />
@@ -204,15 +204,18 @@ export default function Header() {
           </div>
 
           {/* Right: Country Selector + Login/Sign Up */}
-          <div className="hidden lg:flex lg:items-center lg:space-x-4">
+          <div className="hidden xl:flex xl:items-center xl:gap-x-3 shrink-0">
             {/* Country Selector */}
             <div className="relative">
               <button
                 onClick={() => setCountryMenuOpen(!countryMenuOpen)}
-                className="flex items-center gap-2.5 text-base font-semibold text-gray-800 hover:text-primary-600 transition-colors duration-200"
+                className="flex items-center gap-2 text-sm font-semibold text-gray-800 hover:text-primary-600 transition-colors duration-200"
               >
                 <CountryFlag code={selectedCountry} />
-                <span>{countries.find(c => c.code === selectedCountry)?.name || ''}</span>
+                <span className="hidden 2xl:inline">
+                  {countries.find(c => c.code === selectedCountry)?.name || ''}
+                </span>
+                <span className="2xl:hidden">{selectedCountry}</span>
                 <ChevronDownIcon className="w-5 h-5" />
               </button>
 
@@ -252,7 +255,7 @@ export default function Header() {
                   href={portal.web}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-primary shadow-lg hover:shadow-xl"
+                  className="btn-primary shadow-lg hover:shadow-xl whitespace-nowrap shrink-0 px-4 py-2.5 text-sm"
                 >
                   Login / Sign Up
                 </a>
@@ -261,7 +264,7 @@ export default function Header() {
           </div>
 
           {/* Mobile: country selector + menu */}
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-2 xl:hidden">
             <div className="relative">
               <button
                 type="button"
@@ -336,7 +339,7 @@ export default function Header() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="lg:hidden"
+                className="xl:hidden"
               >
                 <div className="fixed inset-0 z-[100]">
                   <div
