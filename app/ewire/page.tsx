@@ -93,21 +93,21 @@ const steps = [
   },
   {
     number: '02',
-    title: 'Choose eWire',
+    title: 'Enter the details',
     description:
-      'Log in and select eWire for Australia, New Zealand or Fiji — cash pickup, bank transfer, or Fiji mobile wallet.',
+      'Add the amount, destination and recipient, and how they should get paid — cash pickup, bank transfer, or Fiji mobile wallet. We’ll show the rate and fees before you confirm.',
   },
   {
     number: '03',
-    title: 'Enter the details',
+    title: 'Complete and send',
     description:
-      'Add the amount, destination and recipient details. We’ll show the rate and fees before you confirm.',
+      'Confirm and send your eWire on the website or in the app. You’ll get a reference to track the transfer.',
   },
   {
     number: '04',
-    title: 'Send — recipient receives',
+    title: 'Recipient receives',
     description:
-      'Complete your transfer online or in the app. Your recipient gets cash, a bank deposit, or a Fiji mobile wallet credit.',
+      'Your recipient collects cash at a Lotus FX branch, receives a bank deposit, or gets a Fiji mobile wallet credit.',
   },
 ]
 

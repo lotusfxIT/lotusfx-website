@@ -93,21 +93,21 @@ const steps = [
   },
   {
     number: '02',
-    title: 'Share bank details',
+    title: 'Enter the details',
     description:
-      'Provide the beneficiary’s full name, bank account details and any routing information required.',
+      'Provide the beneficiary’s full name, bank account and routing details, and the amount you’re sending. We’ll show the rate and fees before you confirm.',
   },
   {
     number: '03',
-    title: 'Confirm rate & fees',
+    title: 'Complete and send',
     description:
-      'We’ll show the send rate and fees clearly before you proceed — no surprises.',
+      'Confirm the rate and fees, then complete your international wire on the website or in the app through our banking partners.',
   },
   {
     number: '04',
-    title: 'Send the wire',
+    title: 'Recipient receives',
     description:
-      'Complete your international wire online or in the app through our banking partners.',
+      'Funds are paid into the beneficiary’s bank account. Timing depends on the destination bank.',
   },
 ]
 
