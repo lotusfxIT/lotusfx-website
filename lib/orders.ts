@@ -245,6 +245,7 @@ export async function sendCustomerEmail(order: OrderRecord, kind: 'receipt' | 'r
   const mail = kind === 'ready' ? readyEmail(order) : receiptEmail(order)
   return sendMail({
     to: order.customer.email,
+    country: order.country,
     subject: mail.subject,
     html: mail.html,
     text: mail.text,
@@ -256,6 +257,7 @@ export async function sendStaffEmail(order: OrderRecord, to: string, heading?: s
   const mail = staffEmail(order, heading)
   return sendMail({
     to,
+    country: order.country,
     subject: mail.subject,
     html: mail.html,
     text: mail.text,

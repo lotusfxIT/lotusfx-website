@@ -24,20 +24,27 @@ export function contactRecipient(country: Country): string {
   return process.env[`CONTACT_TO_EMAIL_${country}`] || process.env.CONTACT_TO_EMAIL || CARE_EMAILS[country]
 }
 
+/** Public From address for website mail — country customer care, never contactus@. */
+export function fromEmail(country?: string | null): string {
+  const c = normalizeCountry(country)
+  return process.env[`MAILJET_FROM_EMAIL_${c}`] || CARE_EMAILS[c]
+}
+
 export function newsletterListId(country: Country): string | undefined {
   return process.env[`MAILJET_LIST_ID_${country}`] || process.env.MAILJET_LIST_ID || undefined
 }
 
 export async function sendMail(opts: {
   to: string
+  country?: string
   subject: string
   text: string
   html: string
   replyTo?: { email: string; name?: string }
 }): Promise<{ ok: boolean; error?: string }> {
   const from = {
-    Email: process.env.MAILJET_FROM_EMAIL || 'no-reply@lotusfx.com',
-    Name: process.env.MAILJET_FROM_NAME || 'Lotus Foreign Exchange',
+    Email: fromEmail(opts.country),
+    Name: 'Lotus Foreign Exchange',
   }
   const res = await fetch('https://api.mailjet.com/v3.1/send', {
     method: 'POST',

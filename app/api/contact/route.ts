@@ -116,6 +116,7 @@ export async function POST(request: NextRequest) {
       try {
         const result = await sendMail({
           to,
+          country,
           subject: `[Website ${country}] ${subjectLabel} — ${name}`,
           text,
           html,
