@@ -129,7 +129,6 @@ export async function POST(request: NextRequest) {
     const paymentData = bookingPaymentData({
       branchId,
       branchName,
-      amountDue,
     })
 
     // Match createPurchaseOrder PAYINSTORE: gateway must be set or 4D defaults to Monoova

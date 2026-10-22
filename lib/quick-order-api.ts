@@ -257,14 +257,50 @@ async function quickOrderApiGet(
 export function bookingPaymentData(input: {
   branchId?: string | null
   branchName?: string | null
-  amountDue?: number | null
 }): Record<string, unknown> {
   return {
     deliveryLocation: String(input.branchId || ''),
     deliveryLocationName: String(input.branchName || ''),
     promotionCode: '',
     payInFull: false,
-    payInFullDeposit: Number(input.amountDue) || 0,
+    payInFullDeposit: 0,
+  }
+}
+
+/** WEBAWEB143 (test J): unpaid booking. Deposit 0, no AmountPaid/PaymentAmount. */
+function unpaidStorePaymentInfo(input: {
+  existing?: Record<string, unknown>
+  branchId?: string | null
+  branchName?: string | null
+}): Record<string, unknown> {
+  const existing = input.existing && typeof input.existing === 'object' ? input.existing : {}
+  const {
+    AmountPaid: _amountPaid,
+    PaymentAmount: _paymentAmount,
+    ...rest
+  } = existing
+  const branchId = String(input.branchId || rest.deliveryLocation || '')
+  const branchName = String(input.branchName || rest.deliveryLocationName || '')
+  return {
+    ...rest,
+    bookingType: 'booking',
+    gateway: 'transfer',
+    status: 'NEW',
+    deliveryMethod: 'D',
+    deliveryMethod2: '',
+    paymentMethod: 'transfer',
+    payinfull: 'off',
+    payInFull: false,
+    payInFullDeposit: 0,
+    deliveryLocation: branchId,
+    deliveryLocationName: branchName,
+    paymentData: {
+      deliveryLocation: branchId,
+      deliveryLocationName: branchName,
+      promotionCode: '',
+      payInFull: false,
+      payInFullDeposit: 0,
+    },
   }
 }
 
@@ -280,13 +316,6 @@ export async function attachWalkInCustomerToWebEwire(input: {
   const webEwireID = String(input.webEwireID || '').trim()
   const orderUUID = String(input.orderUUID || '').trim()
   if (!webEwireID && !orderUUID) return null
-
-  const amountDue = Number(input.amountDue) || 0
-  const paymentData = bookingPaymentData({
-    branchId: input.branchId,
-    branchName: input.branchName,
-    amountDue,
-  })
 
   const filter = webEwireID
     ? `"WebEwireID='${webEwireID.replace(/'/g, "''")}'"`
@@ -309,12 +338,10 @@ export async function attachWalkInCustomerToWebEwire(input: {
           __KEY: orderUUID,
           __STAMP: 1,
           CustomerID: input.customerID,
-          paymentInfo: {
-            AmountPaid: 0,
-            PaymentAmount: amountDue,
-            bookingType: 'booking',
-            paymentData,
-          },
+          paymentInfo: unpaidStorePaymentInfo({
+            branchId: input.branchId,
+            branchName: input.branchName,
+          }),
         },
       ],
       input.country
@@ -323,32 +350,11 @@ export async function attachWalkInCustomerToWebEwire(input: {
     return { CustomerID: updated?.CustomerID, AmountPaid: updated?.paymentInfo?.AmountPaid }
   }
 
-  const existingPayment =
-    rec.paymentInfo && typeof rec.paymentInfo === 'object' ? rec.paymentInfo : {}
-  const existingData =
-    existingPayment.paymentData && typeof existingPayment.paymentData === 'object'
-      ? (existingPayment.paymentData as Record<string, unknown>)
-      : {}
-  const paymentInfo: Record<string, unknown> = {
-    ...existingPayment,
-    AmountPaid: 0,
-    PaymentAmount: amountDue || Number(rec.fromAmount) || 0,
-    bookingType: existingPayment.bookingType || 'booking',
-    paymentData: {
-      ...existingData,
-      ...paymentData,
-      deliveryLocation:
-        paymentData.deliveryLocation ||
-        existingData.deliveryLocation ||
-        existingPayment.deliveryLocation ||
-        '',
-      deliveryLocationName:
-        paymentData.deliveryLocationName ||
-        existingData.deliveryLocationName ||
-        existingPayment.deliveryLocationName ||
-        '',
-    },
-  }
+  const paymentInfo = unpaidStorePaymentInfo({
+    existing: rec.paymentInfo && typeof rec.paymentInfo === 'object' ? rec.paymentInfo : {},
+    branchId: input.branchId,
+    branchName: input.branchName,
+  })
 
   const saved = await quickOrderApiPost(
     '/rst/WebEWires?$method=update',
