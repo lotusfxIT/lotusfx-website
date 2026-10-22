@@ -187,6 +187,139 @@ export async function quickOrderApiPost(
   }
 }
 
+type WebEwireRecord = {
+  __KEY?: string
+  __STAMP?: number
+  WebEwireID?: string
+  CustomerID?: string
+  fromAmount?: number
+  paymentInfo?: Record<string, unknown>
+}
+
+async function quickOrderApiGet(
+  path: string,
+  country?: string | null
+): Promise<unknown> {
+  const config = getQuickOrderConfig(country)
+  if ('error' in config) {
+    throw new Error(config.error)
+  }
+
+  if (
+    process.env.ALLOW_INSECURE_SSL === 'true' ||
+    config.baseUrl.includes('test.lotusfx.com')
+  ) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+  }
+
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), config.timeoutMs)
+  try {
+    const response = await fetch(`${config.baseUrl}${path.startsWith('/') ? path : `/${path}`}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'X-KEY': config.xKey,
+        'X-CLIENT': config.xClient,
+        'User-Agent': 'LotusFX-Website/1.0',
+      },
+      cache: 'no-store',
+      signal: controller.signal,
+    })
+    const text = await response.text()
+    let body: unknown = null
+    if (text.trim()) {
+      try {
+        body = JSON.parse(text)
+      } catch {
+        body = text
+      }
+    }
+    if (!response.ok) {
+      if (response.status >= 500) throw new BackendUnavailableError()
+      throw new Error(`HTTP ${response.status} ${response.statusText}`)
+    }
+    return body
+  } catch (error) {
+    if (error instanceof BackendUnavailableError) throw error
+    if (isBackendUnavailable(error)) throw new BackendUnavailableError()
+    throw error
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+/**
+ * createPublicPurchaseOrder does not copy customerID onto the WebEwire.
+ * Head Office then books it with a blank customer and treats PAYINSTORE as paid.
+ * Stamp CustomerID + AmountPaid=0 immediately after create.
+ */
+export async function attachWalkInCustomerToWebEwire(input: {
+  webEwireID?: string | null
+  orderUUID?: string | null
+  customerID: string
+  amountDue?: number
+  country?: string | null
+}): Promise<{ CustomerID?: string; AmountPaid?: unknown } | null> {
+  const webEwireID = String(input.webEwireID || '').trim()
+  const orderUUID = String(input.orderUUID || '').trim()
+  if (!webEwireID && !orderUUID) return null
+
+  const filter = webEwireID
+    ? `"WebEwireID='${webEwireID.replace(/'/g, "''")}'"`
+    : `"UUID='${orderUUID.replace(/'/g, "''")}'"`
+  const listed = await quickOrderApiGet(
+    `/rst/WebEWires?$filter=${encodeURIComponent(filter)}`,
+    input.country
+  )
+  const entities =
+    listed && typeof listed === 'object' && Array.isArray((listed as { __ENTITIES?: unknown }).__ENTITIES)
+      ? ((listed as { __ENTITIES: WebEwireRecord[] }).__ENTITIES)
+      : []
+  const rec = entities[0]
+  if (!rec?.__KEY || rec.__STAMP == null) {
+    if (!orderUUID) return null
+    const fallback = await quickOrderApiPost(
+      '/rst/WebEWires?$method=update',
+      [
+        {
+          __KEY: orderUUID,
+          __STAMP: 1,
+          CustomerID: input.customerID,
+          paymentInfo: {
+            AmountPaid: 0,
+            PaymentAmount: Number(input.amountDue) || 0,
+          },
+        },
+      ],
+      input.country
+    )
+    const updated = unwrapPayload(fallback) as WebEwireRecord
+    return { CustomerID: updated?.CustomerID, AmountPaid: updated?.paymentInfo?.AmountPaid }
+  }
+
+  const paymentInfo: Record<string, unknown> = {
+    ...(rec.paymentInfo && typeof rec.paymentInfo === 'object' ? rec.paymentInfo : {}),
+    AmountPaid: 0,
+    PaymentAmount: Number(input.amountDue ?? rec.fromAmount) || 0,
+  }
+
+  const saved = await quickOrderApiPost(
+    '/rst/WebEWires?$method=update',
+    [
+      {
+        __KEY: rec.__KEY,
+        __STAMP: rec.__STAMP,
+        CustomerID: input.customerID,
+        paymentInfo,
+      },
+    ],
+    input.country
+  )
+  const updated = unwrapPayload(saved) as WebEwireRecord
+  return { CustomerID: updated?.CustomerID, AmountPaid: updated?.paymentInfo?.AmountPaid }
+}
+
 export function unwrapPayload(response: unknown): unknown {
   return Array.isArray(response) ? response[0] : response
 }

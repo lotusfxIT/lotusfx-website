@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getQuickOrderConfig, quickOrderApiPost, unwrapResult } from '@/lib/quick-order-api'
+import {
+  attachWalkInCustomerToWebEwire,
+  getQuickOrderConfig,
+  quickOrderApiPost,
+  unwrapResult,
+} from '@/lib/quick-order-api'
 import { rateLimit } from '@/lib/rate-limit'
 import { mailjetConfigured } from '@/lib/mailjet'
 import {
@@ -119,19 +124,24 @@ export async function POST(request: NextRequest) {
     // and can treat the booking as already paid (amount due 0.00).
     const payload = {
       gateway: paymentCode,
-      ...(walkInCustomerID
-        ? { customerID: walkInCustomerID, customerUUID: walkInCustomerID }
-        : {}),
+      ...(walkInCustomerID ? { customerID: walkInCustomerID, CustomerID: walkInCustomerID } : {}),
       purchase: {
         ...purchaseFor4d,
-        ...(walkInCustomerID ? { customerID: walkInCustomerID } : {}),
-        amountPaid: 0,
+        ...(walkInCustomerID ? { customerID: walkInCustomerID, CustomerID: walkInCustomerID } : {}),
       },
       paymentMethod: {
         type: paymentCode,
         paymentMethod: paymentCode,
-        ...(paymentMethod.branchId ? { branchId: paymentMethod.branchId } : {}),
-        ...(paymentMethod.branchName ? { branchName: paymentMethod.branchName } : {}),
+        ...(paymentMethod.branchId
+          ? { branchId: paymentMethod.branchId }
+          : paymentMethod.branch?.BranchID
+            ? { branchId: paymentMethod.branch.BranchID }
+            : {}),
+        ...(paymentMethod.branchName
+          ? { branchName: paymentMethod.branchName }
+          : paymentMethod.branch?.BranchName
+            ? { branchName: paymentMethod.branch.BranchName }
+            : {}),
       },
     }
 
@@ -174,13 +184,31 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const webEwireID = String(result.WebEwireID || result.orderId || result.OrderID || '')
+    const orderUUID = String(result.orderUUID || '')
+
+    if (walkInCustomerID && (webEwireID || orderUUID)) {
+      try {
+        const attached = await attachWalkInCustomerToWebEwire({
+          webEwireID,
+          orderUUID,
+          customerID: walkInCustomerID,
+          amountDue: Number(purchase.totalDebitAmount) || 0,
+          country: config.country,
+        })
+        console.log('[Quick Order] walk-in attached', {
+          webEwireID,
+          customerID: attached?.CustomerID || null,
+          amountPaid: attached?.AmountPaid,
+        })
+      } catch (error) {
+        console.error('[Quick Order] walk-in attach failed', webEwireID, error)
+      }
+    }
+
     console.log('[Quick Order] create success', {
       country: config.country,
-      orderId:
-        result.WebEwireID ||
-        result.orderId ||
-        result.OrderID ||
-        result.orderUUID,
+      orderId: webEwireID || orderUUID,
       statusText: result.statusText,
     })
 
