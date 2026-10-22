@@ -37,7 +37,7 @@ export async function sendMail(opts: {
 }): Promise<{ ok: boolean; error?: string }> {
   const from = {
     Email: process.env.MAILJET_FROM_EMAIL || 'no-reply@lotusfx.com',
-    Name: process.env.MAILJET_FROM_NAME || 'Lotus FX Website',
+    Name: process.env.MAILJET_FROM_NAME || 'Lotus Foreign Exchange',
   }
   const res = await fetch('https://api.mailjet.com/v3.1/send', {
     method: 'POST',

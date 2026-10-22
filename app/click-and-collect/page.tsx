@@ -9,7 +9,6 @@ export const metadata: Metadata = buildPageMetadata({
     'Order foreign currency online with LotusFX and pay in store when you collect. Guest Click & Collect across Australia.',
   path: '/click-and-collect',
   keywords: ['quick order', 'buy currency online', 'currency pickup', 'LotusFX order'],
-  noIndex: true,
 })
 
 export default function QuickOrderPage() {

@@ -8,11 +8,23 @@ export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const headerStore = headers()
-  const baseUrl = getRequestSiteUrl(headerStore.get('x-forwarded-host') || headerStore.get('host'))
+  const host = String(headerStore.get('x-forwarded-host') || headerStore.get('host') || '').toLowerCase()
+  const baseUrl = getRequestSiteUrl(host)
+  const isAuHost = /(^|\.)au\.(staff)?lotusfx\.com$/.test(host.split(':')[0]) || host.includes('localhost')
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
     { url: `${baseUrl}/locations`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    ...(isAuHost
+      ? [
+          {
+            url: `${baseUrl}/click-and-collect`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly' as const,
+            priority: 0.85,
+          },
+        ]
+      : []),
     { url: `${baseUrl}/customer-reviews`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
     { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/currency-exchange`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },

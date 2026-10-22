@@ -151,6 +151,18 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
+              {isQuickOrderEnabled(selectedCountry) ? (
+                <Link
+                  href="/click-and-collect"
+                  className={`text-sm font-medium transition-colors duration-200 ${
+                    pathname === '/click-and-collect'
+                      ? 'text-primary-600'
+                      : 'text-gray-700 hover:text-primary-600'
+                  }`}
+                >
+                  Click & Collect
+                </Link>
+              ) : null}
 
               <div className="relative">
                 <button

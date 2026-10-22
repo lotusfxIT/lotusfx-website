@@ -13,8 +13,11 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   MagnifyingGlassIcon,
-  ClipboardDocumentIcon,
+  ArrowDownTrayIcon,
+  EnvelopeIcon,
+  PhoneIcon,
 } from '@heroicons/react/24/outline'
+import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid'
 import { trackEvent } from '@/lib/analytics'
 import { FLAG_CDN, getCurrencyFlagCode } from '@/lib/currencies'
 import { findStaticLocationByBranchName } from '@/data/locations-static'
@@ -25,6 +28,10 @@ import { isQuickOrderEnabled } from '@/lib/quick-order-url'
 import { getCountryPortalLinks } from '@/lib/country-portals'
 import { CLICK_COLLECT_UNAVAILABLE_MESSAGE, isBackendUnavailable } from '@/lib/service-availability'
 import RatesUnavailableNotice from '@/components/RatesUnavailableNotice'
+import {
+  downloadClickCollectReceiptPdf,
+  officialBranchName,
+} from '@/lib/click-collect-receipt'
 
 type StepId = 'purchase' | 'fulfillment' | 'details' | 'payment'
 
@@ -107,6 +114,15 @@ function formatBranchAddress(branch: Branch) {
   return [branch.Address, branch.City, branch.Province, branch.CountryCode]
     .filter(Boolean)
     .join(', ')
+}
+
+function googleMapsDirectionsUrl(name?: string, address?: string) {
+  const destination = [name, address]
+    .map((part) => String(part || '').trim())
+    .filter(Boolean)
+    .join(', ')
+  if (!destination) return ''
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`
 }
 
 /** Short UI label: keep text through "Branch", drop address / trailing detail. */
@@ -323,6 +339,7 @@ export default function QuickOrderWizard({ preview = false }: { preview?: boolea
   const [storeSearch, setStoreSearch] = useState('')
   const [expandedProvinces, setExpandedProvinces] = useState<string[]>([])
   const [nudgeNext, setNudgeNext] = useState(true)
+  const [downloadingReceipt, setDownloadingReceipt] = useState(false)
   const toastId = useRef(0)
   const overLimitTracked = useRef(false)
   const currencyDropdownRef = useRef<HTMLDivElement>(null)
@@ -645,6 +662,28 @@ export default function QuickOrderWizard({ preview = false }: { preview?: boolea
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [marketCountry, countryReady, reloadTick, quickOrderAllowed])
 
+  // Staff preview only: /click-and-collect-preview?ui=confirmed
+  useEffect(() => {
+    if (!preview || loadingMeta) return
+    if (searchParams.get('ui') !== 'confirmed') return
+    setPaymentResult({ WebEwireID: 'WEBAWEB133' })
+    setLocalAmount('100.00')
+    setTotalAmountDue('145.23')
+    setLastRate(1.4523)
+    setGuest((prev) => ({
+      ...prev,
+      firstName: prev.firstName.trim() || 'Ash',
+      email: prev.email.trim() || 'li@lotusfx.com',
+    }))
+    setCollectionPlace({
+      name: 'Penrith',
+      address: 'Kiosk 15, Westfield Penrith, 585 High Street, Penrith, NSW, 2750, AU',
+      phone: '(02) 4721 5657',
+      email: supportEmailForCountry(marketCountry, siteStats.emails),
+      slug: 'penrith',
+    })
+  }, [preview, loadingMeta, searchParams, marketCountry, siteStats.emails])
+
   const lookupRate = useCallback(
     async (amountOverride?: number) => {
       const amount = amountOverride != null ? amountOverride : parseFloat(localAmount || '0')
@@ -727,7 +766,7 @@ export default function QuickOrderWizard({ preview = false }: { preview?: boolea
   )
 
   useEffect(() => {
-    if (loadingMeta || serviceDown) return
+    if (loadingMeta || serviceDown || paymentResult) return
     if (amountSide.current === 'pay') return
     if (lookupTimer.current) clearTimeout(lookupTimer.current)
     lookupTimer.current = setTimeout(() => {
@@ -736,7 +775,7 @@ export default function QuickOrderWizard({ preview = false }: { preview?: boolea
     return () => {
       if (lookupTimer.current) clearTimeout(lookupTimer.current)
     }
-  }, [localAmount, selectedCurrency.code, loadingMeta, lookupRate])
+  }, [localAmount, selectedCurrency.code, loadingMeta, lookupRate, paymentResult])
 
   function onForeignAmountChange(value: string) {
     amountSide.current = 'buy'
@@ -1023,6 +1062,45 @@ export default function QuickOrderWizard({ preview = false }: { preview?: boolea
   }
 
   const orderRef = extractOrderReference(paymentResult)
+  const collectName =
+    collectionPlace?.name ||
+    (selectedBranch ? formatSelectedBranchLabel(selectedBranch) : '')
+  const collectAddress =
+    collectionPlace?.address ||
+    (selectedBranch ? formatBranchAddress(selectedBranch) : '')
+  const collectPhone = collectionPlace?.phone || selectedBranch?.BranchPhone || ''
+  const collectEmail =
+    collectionPlace?.email || supportEmailForCountry(marketCountry, siteStats.emails)
+  const collectOfficialName = officialBranchName(collectName)
+  const collectMapsUrl = googleMapsDirectionsUrl(collectOfficialName, collectAddress)
+  const receiptEmailTo = guest.email.trim()
+  const careEmail = supportEmailForCountry(marketCountry, siteStats.emails)
+
+  async function downloadReceipt() {
+    if (downloadingReceipt) return
+    setDownloadingReceipt(true)
+    try {
+      await downloadClickCollectReceiptPdf({
+        orderRef: orderRef || 'Pending',
+        firstName: guest.firstName.trim(),
+        buyAmount: localAmount,
+        buyCurrency: selectedCurrency.code,
+        exchangeRate: lastRate != null ? String(lastRate) : rateDisplay,
+        totalAmount: totalAmountDue,
+        payCurrency: baseCurrency.code,
+        branchName: collectOfficialName,
+        branchAddress: collectAddress,
+        mapsUrl: collectMapsUrl,
+        careEmail,
+        siteBase: typeof window !== 'undefined' ? window.location.origin : 'https://au.lotusfx.com',
+        country: marketCountry,
+      })
+    } catch {
+      showToast('Could not download the receipt. Please try again.', 'error')
+    } finally {
+      setDownloadingReceipt(false)
+    }
+  }
 
   const stepTitle =
     activeStep === 'purchase'
@@ -1194,147 +1272,174 @@ export default function QuickOrderWizard({ preview = false }: { preview?: boolea
                 onRetry={() => setReloadTick((n) => n + 1)}
               />
             ) : paymentResult ? (
-              <div className="space-y-6">
-                <div className="flex items-start gap-3">
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 shrink-0">
-                    <CheckCircleIcon className="h-6 w-6" />
+              <div className="space-y-5 sm:space-y-6">
+                <div className="flex items-start gap-4 rounded-2xl bg-emerald-50 border border-emerald-100 px-4 py-4 sm:px-5 sm:py-5">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white shrink-0 shadow-md">
+                    <CheckCircleSolidIcon className="h-7 w-7" />
                   </span>
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                      Click &amp; Collect
+                    </p>
+                    <h2 className="mt-0.5 text-2xl font-bold text-gray-900 tracking-tight">
                       Order confirmed
                     </h2>
-                    <p className="mt-1 text-sm text-gray-600 max-w-2xl">
+                    <p className="mt-1.5 text-sm sm:text-base text-gray-600 leading-relaxed">
                       Thank you
-                      {guest.firstName.trim() ? `, ${guest.firstName.trim()}` : ''}. You will
-                      receive an email when your currency is ready to be collected.
+                      {guest.firstName.trim() ? `, ${guest.firstName.trim()}` : ''}.
+                      {receiptEmailTo ? (
+                        <>
+                          {' '}
+                          We&apos;ve emailed a receipt to{' '}
+                          <span className="font-semibold text-gray-800">{receiptEmailTo}</span>.
+                        </>
+                      ) : null}{' '}
+                      We will email you again when your currency is ready to collect.
                     </p>
                   </div>
                 </div>
 
-                <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-start pt-2 border-t border-gray-100">
-                  <div className="space-y-5 min-w-0 lg:pr-2">
+                <div className="grid lg:grid-cols-2 gap-4 sm:gap-5 items-stretch">
+                  <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5 sm:p-6 flex flex-col min-w-0">
                     <div>
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                          Order reference
-                        </p>
-                        {orderRef ? (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              void navigator.clipboard?.writeText(orderRef).then(
-                                () => showToast('Reference copied', 'success'),
-                                () => showToast('Could not copy reference', 'error')
-                              )
-                            }}
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-primary-700 hover:text-primary-800"
-                          >
-                            <ClipboardDocumentIcon className="h-3.5 w-3.5" />
-                            Copy
-                          </button>
-                        ) : null}
-                      </div>
-                      <p className="mt-1 text-2xl font-bold font-mono text-primary-700 tracking-tight">
+                      <p className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                        Order reference
+                      </p>
+                      <p className="mt-1 text-2xl font-bold font-mono text-primary-700 tracking-tight break-all">
                         {orderRef || 'Pending confirmation'}
                       </p>
                     </div>
 
-                    {guest.email.trim() ? (
-                      <div>
-                        <p className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                          Receipt emailed to
-                        </p>
-                        <p className="mt-0.5 text-sm font-semibold text-gray-900 break-all">
-                          {guest.email.trim()}
-                        </p>
+                    <dl className="mt-5 space-y-3 text-sm">
+                      <div className="flex justify-between gap-4">
+                        <dt className="text-gray-500">You&apos;re buying</dt>
+                        <dd className="m-0 font-semibold text-gray-900 text-right">
+                          {localAmount} {selectedCurrency.code}
+                        </dd>
                       </div>
-                    ) : null}
+                      <div className="flex justify-between gap-4 pt-3 border-t border-gray-200">
+                        <dt className="font-semibold text-gray-900">Total to pay in store</dt>
+                        <dd className="m-0 font-bold text-primary-700 text-right">
+                          {baseCurrency.code} {totalAmountDue}
+                        </dd>
+                      </div>
+                    </dl>
 
-                    <div>
-                      <p className="text-sm font-semibold text-gray-800 mb-2">Please note:</p>
-                      <ul className="list-disc pl-5 space-y-1.5 text-sm text-gray-500 marker:text-primary-600">
-                        <li>Bring a valid photo ID with you.</li>
-                        <li>Pay in store — cash &amp; Eftpos.</li>
-                      </ul>
-                    </div>
-
-                    <button type="button" onClick={resetForNext} className="btn-primary">
-                      Place another order
+                    <button
+                      type="button"
+                      onClick={() => void downloadReceipt()}
+                      disabled={downloadingReceipt}
+                      className="btn-secondary mt-5 inline-flex w-full items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-wait"
+                    >
+                      <ArrowDownTrayIcon className="h-5 w-5" />
+                      {downloadingReceipt ? 'Preparing PDF…' : 'Download receipt'}
                     </button>
                   </div>
 
-                  <aside className="lg:border-l lg:border-gray-100 lg:pl-10 min-w-0 space-y-4">
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">
-                        Collection branch
-                      </p>
-                      <p className="text-lg font-bold text-gray-900">
-                        {collectionPlace?.name ||
-                          (selectedBranch
-                            ? formatSelectedBranchLabel(selectedBranch)
-                            : '—')}
-                      </p>
-                    </div>
+                  <aside className="rounded-2xl border border-gray-100 p-5 sm:p-6 flex flex-col min-w-0">
+                    <p className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                      Collection branch
+                    </p>
+                    <p className="mt-1 text-xl font-bold text-gray-900">
+                      {collectName ? collectOfficialName : '—'}
+                    </p>
 
                     {collectionPlace || selectedBranch ? (
-                      <dl className="space-y-3 text-sm">
-                        {(collectionPlace?.address ||
-                          (selectedBranch && formatBranchAddress(selectedBranch))) && (
-                          <div>
-                            <dt className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                              Address
-                            </dt>
-                            <dd className="mt-0.5 font-semibold text-gray-900 m-0 leading-snug">
-                              {collectionPlace?.address ||
-                                (selectedBranch ? formatBranchAddress(selectedBranch) : '—')}
-                            </dd>
-                          </div>
-                        )}
-                        {(collectionPlace?.phone || selectedBranch?.BranchPhone) && (
-                          <div>
-                            <dt className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                              Phone
-                            </dt>
-                            <dd className="mt-0.5 font-semibold text-gray-900 m-0">
-                              <a
-                                href={`tel:${collectionPlace?.phone || selectedBranch?.BranchPhone}`}
-                                className="hover:text-primary-700"
-                              >
-                                {collectionPlace?.phone || selectedBranch?.BranchPhone}
-                              </a>
-                            </dd>
-                          </div>
-                        )}
-                        <div>
-                          <dt className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                            Email
-                          </dt>
-                          <dd className="mt-0.5 font-semibold text-gray-900 m-0 break-all">
-                            <a
-                              href={`mailto:${collectionPlace?.email || supportEmailForCountry(marketCountry, siteStats.emails)}`}
-                              className="hover:text-primary-700"
-                            >
-                              {collectionPlace?.email || supportEmailForCountry(marketCountry, siteStats.emails)}
+                      <ul className="mt-4 space-y-3 text-sm text-gray-700 flex-1">
+                        {collectAddress ? (
+                          <li className="flex gap-3">
+                            <MapPinIcon className="h-5 w-5 text-primary-600 shrink-0 mt-0.5" />
+                            <span className="font-medium leading-snug">{collectAddress}</span>
+                          </li>
+                        ) : null}
+                        {collectPhone ? (
+                          <li className="flex gap-3">
+                            <PhoneIcon className="h-5 w-5 text-primary-600 shrink-0 mt-0.5" />
+                            <a href={`tel:${collectPhone}`} className="font-medium hover:text-primary-700">
+                              {collectPhone}
                             </a>
-                          </dd>
-                        </div>
-                      </dl>
+                          </li>
+                        ) : null}
+                        {collectEmail ? (
+                          <li className="flex gap-3">
+                            <EnvelopeIcon className="h-5 w-5 text-primary-600 shrink-0 mt-0.5" />
+                            <a
+                              href={`mailto:${collectEmail}`}
+                              className="font-medium hover:text-primary-700 break-all"
+                            >
+                              {collectEmail}
+                            </a>
+                          </li>
+                        ) : null}
+                      </ul>
                     ) : (
-                      <p className="text-sm text-gray-500">No branch selected.</p>
+                      <p className="mt-4 text-sm text-gray-500 flex-1">No branch selected.</p>
                     )}
 
-                    {collectionPlace?.slug ? (
-                      <a
-                        href={`/locations/${collectionPlace.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-700 hover:text-primary-800"
-                      >
-                        View location details
-                        <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-                      </a>
-                    ) : null}
+                    <div className="mt-5 flex flex-col sm:flex-row gap-3">
+                      {collectMapsUrl ? (
+                        <a
+                          href={collectMapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-secondary inline-flex items-center justify-center gap-2 flex-1 text-center"
+                        >
+                          <MapPinIcon className="h-5 w-5" />
+                          Get directions
+                        </a>
+                      ) : null}
+                      {collectionPlace?.slug ? (
+                        <a
+                          href={`/locations/${collectionPlace.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-primary inline-flex items-center justify-center gap-2 flex-1 text-center"
+                        >
+                          View location details
+                          <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+                        </a>
+                      ) : null}
+                    </div>
                   </aside>
+                </div>
+
+                <div className="rounded-2xl border border-gray-100 p-5 sm:p-6">
+                  <p className="text-sm font-bold text-gray-900">When you come in</p>
+                  <ol className="mt-4 space-y-3">
+                    <li className="flex gap-3 text-sm text-gray-700">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary-600 text-white text-xs font-bold shrink-0">
+                        1
+                      </span>
+                      <span className="pt-0.5">Bring valid photo ID in the same name as this order.</span>
+                    </li>
+                    <li className="flex gap-3 text-sm text-gray-700">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary-600 text-white text-xs font-bold shrink-0">
+                        2
+                      </span>
+                      <span className="pt-0.5">Pay in store by cash or EFTPOS when you collect.</span>
+                    </li>
+                    <li className="flex gap-3 text-sm text-gray-700">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary-600 text-white text-xs font-bold shrink-0">
+                        3
+                      </span>
+                      <span className="pt-0.5">
+                        Quote your order reference
+                        {orderRef ? (
+                          <>
+                            {' '}
+                            <strong>{orderRef}</strong>
+                          </>
+                        ) : null}{' '}
+                        at the counter.
+                      </span>
+                    </li>
+                  </ol>
+                </div>
+
+                <div>
+                  <button type="button" onClick={resetForNext} className="btn-secondary">
+                    Place another order
+                  </button>
                 </div>
               </div>
             ) : (

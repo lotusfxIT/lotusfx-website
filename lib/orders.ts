@@ -1,7 +1,12 @@
 import crypto from 'crypto'
-import { escapeHtml, sendMail } from '@/lib/mailjet'
+import { sendMail } from '@/lib/mailjet'
 import { getRecord, listRecords, saveRecord } from '@/lib/records-store'
-import { getSiteUrl } from '@/lib/site-url'
+import {
+  buildClickCollectReceiptHtml,
+  buildClickCollectStaffHtml,
+  clickCollectMapsUrl,
+  clickCollectSiteBase,
+} from '@/lib/click-collect-receipt'
 
 export const ORDER_PRODUCT_NAME = 'Click & Collect'
 
@@ -144,117 +149,95 @@ export function addEvent(order: OrderRecord, action: string, detail?: string): O
 
 // ---------- Emails ----------
 
-const WRAP_START =
-  '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#1f2937;line-height:1.5;max-width:600px;margin:0 auto">' +
-  '<div style="background:#d7262e;padding:18px 24px;border-radius:12px 12px 0 0"><span style="color:#fff;font-size:20px;font-weight:bold">Lotus Foreign Exchange</span></div>' +
-  '<div style="border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px;padding:24px">'
-const WRAP_END = '</div></div>'
-
-function detailRows(rows: Array<[string, string]>): { html: string; text: string } {
-  const filtered = rows.filter(([, v]) => v)
+function receiptData(order: OrderRecord, kind: 'receipt' | 'ready' = 'receipt') {
+  const p = order.purchase
+  const care = customerCareEmail(order.country)
+  const siteBase = clickCollectSiteBase(order.country)
   return {
-    html: `<table cellpadding="6" cellspacing="0" style="width:100%;border-collapse:collapse;margin:12px 0">${filtered
-      .map(
-        ([k, v]) =>
-          `<tr><td style="color:#6b7280;border-bottom:1px solid #f3f4f6;width:40%">${escapeHtml(
-            k
-          )}</td><td style="font-weight:bold;border-bottom:1px solid #f3f4f6">${escapeHtml(v)}</td></tr>`
-      )
-      .join('')}</table>`,
-    text: filtered.map(([k, v]) => `${k}: ${v}`).join('\n'),
+    orderRef: order.id,
+    firstName: order.customer.name.split(' ')[0] || '',
+    buyAmount: String(p.foreignAmount),
+    buyCurrency: p.foreignCurrency,
+    exchangeRate: p.exchangeRate ? String(p.exchangeRate) : '',
+    totalAmount: String(p.totalDebitAmount),
+    payCurrency: p.baseCurrency,
+    branchName: order.branch.name || '',
+    branchAddress: order.branch.address || '',
+    mapsUrl: clickCollectMapsUrl(order.branch.name, order.branch.address),
+    careEmail: care,
+    siteBase,
+    country: order.country,
+    kind,
   }
 }
 
-function orderRows(order: OrderRecord): Array<[string, string]> {
+const WHAT_TO_BRING_TEXT =
+  'When you come in:\n- Bring valid photo ID in the same name as this order.\n- Pay in store by cash or EFTPOS when you collect.\n- Quote your order reference at the counter.'
+
+function orderText(order: OrderRecord) {
   const p = order.purchase
   return [
-    ['Order reference', order.id],
-    ["You're buying", money(p.foreignAmount, p.foreignCurrency)],
-    ['Exchange rate', p.exchangeRate ? String(p.exchangeRate) : ''],
-    ['Fee', p.feeAmount ? money(p.feeAmount, p.baseCurrency) : ''],
-    ['Total to pay in store', money(p.totalDebitAmount, p.baseCurrency)],
-    ['Collect from', order.branch.name || ''],
-    ['Branch address', order.branch.address || ''],
-    ['Branch phone', order.branch.phone || ''],
-    ['Rate held until', formatDate(p.rateExpiresAt, order.country)],
+    `Order reference: ${order.id}`,
+    `You're buying: ${money(p.foreignAmount, p.foreignCurrency)}`,
+    p.exchangeRate ? `Exchange rate: ${p.exchangeRate}` : '',
+    `Total to pay in store: ${money(p.totalDebitAmount, p.baseCurrency)}`,
+    order.branch.name ? `Collect from: ${order.branch.name}` : '',
+    order.branch.address ? `Branch address: ${order.branch.address}` : '',
+    order.branch.phone ? `Branch phone: ${order.branch.phone}` : '',
   ]
+    .filter(Boolean)
+    .join('\n')
 }
-
-const WHAT_TO_BRING_HTML =
-  '<p style="margin:16px 0 4px"><strong>When you come in</strong></p>' +
-  '<ul style="margin:0 0 12px;padding-left:20px"><li>Bring valid photo ID in the same name as this order.</li>' +
-  '<li>Pay in store by cash or Eftpos when you collect.</li>' +
-  '<li>Quote your order reference at the counter.</li></ul>'
-const WHAT_TO_BRING_TEXT =
-  'When you come in:\n- Bring valid photo ID in the same name as this order.\n- Pay in store by cash or Eftpos when you collect.\n- Quote your order reference at the counter.'
 
 export function receiptEmail(order: OrderRecord) {
   const first = order.customer.name.split(' ')[0] || 'there'
-  const rows = detailRows(orderRows(order))
   const care = customerCareEmail(order.country)
   return {
-    subject: `Your Lotus FX order ${order.id} — ${money(order.purchase.foreignAmount, order.purchase.foreignCurrency)}`,
-    html:
-      WRAP_START +
-      `<p>Hi ${escapeHtml(first)},</p><p>Thanks for your ${ORDER_PRODUCT_NAME} order. We've received it and our team is getting your currency ready. We'll email you when it's ready to collect.</p>` +
-      rows.html +
-      WHAT_TO_BRING_HTML +
-      `<p>Questions? Just reply to this email or contact <a href="mailto:${care}">${care}</a>.</p>` +
-      WRAP_END,
-    text: `Hi ${first},\n\nThanks for your ${ORDER_PRODUCT_NAME} order. We've received it and our team is getting your currency ready. We'll email you when it's ready to collect.\n\n${rows.text}\n\n${WHAT_TO_BRING_TEXT}\n\nQuestions? Reply to this email or contact ${care}.`,
+    subject: `Your Lotus Foreign Exchange order ${order.id} — ${money(order.purchase.foreignAmount, order.purchase.foreignCurrency)}`,
+    html: buildClickCollectReceiptHtml(receiptData(order, 'receipt')),
+    text: `Hi ${first},\n\nThanks for your ${ORDER_PRODUCT_NAME} order. We've received it and our team is getting your currency ready. We'll email you when it's ready to collect.\n\n${orderText(order)}\n\n${WHAT_TO_BRING_TEXT}\n\nQuestions? Reply to this email or contact ${care}.`,
     replyTo: care,
   }
 }
 
 export function readyEmail(order: OrderRecord) {
   const first = order.customer.name.split(' ')[0] || 'there'
-  const rows = detailRows([
-    ['Order reference', order.id],
-    ['Currency', money(order.purchase.foreignAmount, order.purchase.foreignCurrency)],
-    ['Total to pay in store', money(order.purchase.totalDebitAmount, order.purchase.baseCurrency)],
-    ['Collect from', order.branch.name || ''],
-    ['Branch address', order.branch.address || ''],
-    ['Branch phone', order.branch.phone || ''],
-  ])
   const care = customerCareEmail(order.country)
   return {
     subject: `Your currency is ready to collect — order ${order.id}`,
-    html:
-      WRAP_START +
-      `<p>Hi ${escapeHtml(first)},</p><p><strong>Good news — your currency is ready to collect.</strong> Pop into the branch below during opening hours.</p>` +
-      rows.html +
-      WHAT_TO_BRING_HTML +
-      `<p>Questions? Reply to this email or contact <a href="mailto:${care}">${care}</a>.</p>` +
-      WRAP_END,
-    text: `Hi ${first},\n\nGood news — your currency is ready to collect. Pop into the branch below during opening hours.\n\n${rows.text}\n\n${WHAT_TO_BRING_TEXT}\n\nQuestions? Reply to this email or contact ${care}.`,
+    html: buildClickCollectReceiptHtml(receiptData(order, 'ready')),
+    text: `Hi ${first},\n\nGood news — your currency is ready to collect. Pop into the branch below during opening hours.\n\n${orderText(order)}\n\n${WHAT_TO_BRING_TEXT}\n\nQuestions? Reply to this email or contact ${care}.`,
     replyTo: care,
   }
 }
 
 export function staffEmail(order: OrderRecord, heading = `New ${ORDER_PRODUCT_NAME} order`) {
-  const rows = detailRows([
-    ['Customer', order.customer.name],
-    ['Email', order.customer.email],
-    ['Phone', order.customer.phone || ''],
-    ['Country', order.country],
-    ...orderRows(order),
-    ['Customer notes', order.purchase.notes || ''],
-    ['Backend status', order.backendStatusText || ''],
-    ['Placed', formatDate(order.createdAt, order.country)],
-  ])
-  const adminUrl = `${getSiteUrl()}/admin/orders?id=${encodeURIComponent(order.id)}`
+  const siteBase = clickCollectSiteBase(order.country)
+  const adminUrl = `${siteBase}/admin/orders?id=${encodeURIComponent(order.id)}`
+  const p = order.purchase
   return {
     subject: `[${ORDER_PRODUCT_NAME} ${order.country}] ${order.id} — ${money(
-      order.purchase.foreignAmount,
-      order.purchase.foreignCurrency
+      p.foreignAmount,
+      p.foreignCurrency
     )} — ${order.customer.name}`,
-    html:
-      WRAP_START +
-      `<p><strong>${escapeHtml(heading)}</strong></p>` +
-      rows.html +
-      `<p><a href="${adminUrl}">Open in admin</a></p>` +
-      WRAP_END,
-    text: `${heading}\n\n${rows.text}\n\nOpen in admin: ${adminUrl}`,
+    html: buildClickCollectStaffHtml({
+      orderRef: order.id,
+      country: order.country,
+      customerName: order.customer.name,
+      customerEmail: order.customer.email,
+      customerPhone: order.customer.phone || '',
+      placed: formatDate(order.createdAt, order.country),
+      buyAmount: String(p.foreignAmount),
+      buyCurrency: p.foreignCurrency,
+      exchangeRate: p.exchangeRate ? String(p.exchangeRate) : '',
+      totalAmount: String(p.totalDebitAmount),
+      payCurrency: p.baseCurrency,
+      branchName: order.branch.name || '',
+      branchAddress: order.branch.address || '',
+      notes: p.notes,
+      adminUrl,
+    }),
+    text: `${heading}\n\nCustomer: ${order.customer.name}\nEmail: ${order.customer.email}\nPhone: ${order.customer.phone || ''}\n${orderText(order)}\n\nOpen in admin: ${adminUrl}`,
   }
 }
 
@@ -265,7 +248,7 @@ export async function sendCustomerEmail(order: OrderRecord, kind: 'receipt' | 'r
     subject: mail.subject,
     html: mail.html,
     text: mail.text,
-    replyTo: { email: mail.replyTo, name: 'Lotus FX' },
+    replyTo: { email: mail.replyTo, name: 'Lotus Foreign Exchange' },
   })
 }
 

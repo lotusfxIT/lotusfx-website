@@ -4,8 +4,8 @@ export type QuickOrderParams = {
   isBuy?: boolean
 }
 
-/** Countries where guest Click & Collect is shown. Empty = hidden (bring AU back with `['AU']`). */
-const QUICK_ORDER_LIVE_COUNTRIES: readonly string[] = []
+/** Countries where guest Click & Collect is shown. */
+const QUICK_ORDER_LIVE_COUNTRIES: readonly string[] = ['AU']
 
 /** Unlinked staff test path. Not in nav, sitemap, or calculator CTAs. */
 export const CLICK_COLLECT_PREVIEW_PATH = '/click-and-collect-preview'

@@ -19,7 +19,6 @@ export default function robots(): MetadataRoute.Robots {
           '/_next/',
           '/auth/',
           '/clear-tokens/',
-          '/click-and-collect',
           '/click-and-collect-preview',
         ],
       },
